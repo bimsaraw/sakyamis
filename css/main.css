@@ -1,0 +1,192 @@
+body {
+  font-size: 14px;
+  font-family: 'Nunito', sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Nunito', sans-serif;
+
+}
+
+strong {
+  font-weight: 600;
+}
+
+h6 {
+  margin-bottom: 20px;
+}
+
+sidebar .nav-item .nav-link {
+    padding: 5px 15px;
+}
+
+.module-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.course3 {
+    background:#d39e00 !important;
+    border: 0 !important;
+}
+
+.course3:hover {
+    background:#b88a00!important;
+}
+
+.chkAllocations {
+    width: auto;
+}
+
+.required {
+	color: red;
+}
+
+.info {
+	color: #5cb85c;
+	font-size: 12px;
+}
+
+.info-box {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.info-box-title {
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  background-color: #eee;
+  padding-top: 10px;
+}
+
+.info-box-body {
+  text-align: center;
+  padding: 10px 20px 20px 20px;
+}
+
+.info-box-insight {
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.info-box-link {
+  display: block;
+  margin-top: 5px;
+}
+
+.inq-status span {
+  display: block;
+  font-size: 12px;
+}
+
+.inq-status .Pending {
+  color: #17a2b8;
+}
+
+.inq-status .Positive {
+  color: #ffc107;
+}
+
+.inq-status .Registered {
+  color: #28a745;
+}
+
+.inq-status .Failed {
+  color: #dc3545;
+}
+
+.inq-collapse {
+  margin-top: 10px;
+}
+
+.dropdown-item {
+  font-size: 14px;
+}
+
+.stepwizard-step p {
+    margin-top: 0px;
+    color:#666;
+}
+.stepwizard-row {
+    display: table-row;
+}
+.stepwizard {
+    display: table;
+    width: 100%;
+    position: relative;
+}
+.stepwizard-step button[disabled] {
+    /*opacity: 1 !important;
+    filter: alpha(opacity=100) !important;*/
+}
+.stepwizard .btn.disabled, .stepwizard .btn[disabled], .stepwizard fieldset[disabled] .btn {
+    opacity:1 !important;
+    color:#bbb;
+}
+.stepwizard-row:before {
+    top: 14px;
+    bottom: 0;
+    position: absolute;
+    content:" ";
+    width: 100%;
+    height: 1px;
+    background-color: #ccc;
+    z-index: 0;
+}
+.stepwizard-step {
+    display: table-cell;
+    text-align: center;
+    position: relative;
+}
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+}
+
+.progress-span {
+  font-weight: 600;
+  display: inline-block;
+  margin: 5px 0;
+}
+
+.progress-info {
+  border: 1px solid #007bff;
+  display: inline-block;
+  padding: 2px 10px;
+  margin: 10px 2px;
+  border-radius: 5px;
+}
+
+.progress-pending {
+  border: 1px solid #17a2b8;
+  color: #17a2b8
+}
+
+.progress-positive {
+  border: 1px solid #ffc107;
+  color: #ffc107;
+}
+
+.progress-registered {
+  border: 1px solid #28a745;
+  color: #28a745;
+}
+
+.progress-failed {
+  border: 1px solid #dc3545;
+  color: #dc3545;
+}
+
+.variable-row, .select-row, .join-row {
+  margin-bottom: 10px;
+}
+
+.tab-pane {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
