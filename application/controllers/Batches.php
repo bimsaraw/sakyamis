@@ -17,7 +17,7 @@ class Batches extends CI_Controller
     {
         $username = $this->session->userdata('username');
 
-        if ($this->user_model->validate_permission($username, 2)) {
+        if ($this->user_model->validate_permission($username, 34)) {
             $data['title'] = 'Batch Details';
 
             $data['batches'] = $this->batch_model->get_batches();
@@ -38,7 +38,7 @@ class Batches extends CI_Controller
     {
         $username = $this->session->userdata('username');
 
-        if ($this->user_model->validate_permission($username, 2)) {
+        if ($this->user_model->validate_permission($username, 34)) {
             $response = $this->batch_model->add_batch();
             $data['title'] = 'Course Details';
             $data['batches'] = $this->batch_model->get_batches();
@@ -58,6 +58,46 @@ class Batches extends CI_Controller
             redirect('/?msg=noperm', 'refresh');
         }
     }
+
+    public function edit_batch() {
+        $username = $this->session->userdata('username');
+  
+        if($this->user_model->validate_permission($username,34)) {
+          $response = $this->batch_model->edit_batch();
+       
+          if($response) {
+              $data['msg'] = 1;
+          } else {
+              $data['msg'] = 0;
+          }
+          $this->session->set_flashdata('info', 'Batch Edit Successfully..!');
+          redirect(base_url() . 'index.php/Batches');
+        } else {
+          $this->session->set_flashdata('info', 'Batch Edit Unsuccessfully..!');
+          redirect('/?msg=noperm', 'refresh');
+        }
+      }
+  
+      public function delete_batch() {
+        $username = $this->session->userdata('username');
+  
+        if($this->user_model->validate_permission($username,34)) {
+        
+          $batchid = $this->input->get('batchid');
+          $response = $this->batch_model->delete_batch($batchid);
+          if($response) {
+            $this->session->set_flashdata('info', 'Batch Delete Successfully..!');
+            redirect(base_url() . 'index.php/Batches');
+           
+          } else {
+            $this->session->set_flashdata('info', 'Batch Delete Unsuccessfully..!');
+              redirect(base_url() . 'index.php/Batches');
+          }
+  
+        } else {
+          redirect('/?msg=noperm', 'refresh');
+        }
+      }
 
     public function get_batches_by_course()
     {
@@ -94,4 +134,12 @@ class Batches extends CI_Controller
           echo $response->status;
         }
     }
+
+    public function get_batch_detail() {
+      $batchid= $this->input->get('batchid');
+      $data = $this->batch_model->get_batch_detail($batchid);
+
+      header('Content-Type: application/json');
+      echo json_encode($data);
+  }
 }

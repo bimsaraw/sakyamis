@@ -24,4 +24,30 @@ class Course_model extends CI_Model {
         $data = array('name'=>$this->input->post('courseName'));
         return $this->db->insert('course', $data);
     }
+
+    public function edit_course() {
+        $courseid = $this->input->post('courseid');
+        $coursename = $this->input->post('coursename');
+        $data = array('name'=>$coursename);
+        $this->db->where('id',$courseid);
+        return $this->db->update('course',$data);
+      }
+
+      public function delete_course($courseid) {
+        $this->db->where('id',$courseid);
+        return $this->db->delete('course');
+      }
+
+      public function get_course_detail($courseid) {
+        $this->db->select('*');
+        $this->db->from('course');
+        $this->db->where('id',$courseid);
+  
+        $query = $this->db->get();
+        foreach ($query->result() as $data) {
+            $response[] = $data;
+        }
+  
+        return $response;
+      }
 }

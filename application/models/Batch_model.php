@@ -100,4 +100,37 @@ class Batch_model extends CI_Model
       $query = $this->db->get('batch');
       return $query->row();
     }
+
+    public function edit_batch() {
+      $batchId = $this->input->post('batchId');
+     
+      $data = array(
+        'name'=>$this->input->post('batchName'),
+        'heads'=>$this->input->post('batchHeads'),
+        'batch_color'=>$this->input->post('batch_color'),
+        'batch_color'=>$this->input->post('batch_color'),
+      );
+      $this->db->where('id',$batchId);
+      return $this->db->update('batch',$data);
+    }
+
+    public function delete_batch($batchid) {
+    
+      $this->db->where('id',$batchid);
+      return $this->db->delete('batch');
+    }
+    
+
+    public function get_batch_detail($batchid) {
+      $this->db->select('*');
+      $this->db->from('batch');
+      $this->db->where('id',$batchid);
+
+      $query = $this->db->get();
+      foreach ($query->result() as $data) {
+          $response[] = $data;
+      }
+
+      return $response;
+    }
 }

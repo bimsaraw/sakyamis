@@ -496,10 +496,50 @@ class Inquiries extends CI_Controller {
 
   public function search_inquiries(){
     $mobile = $this->input->get('mobile');
-
     if($data = $this->inquiry_model->search_inquiries($mobile)) {
       header('Content-Type: application/json');
       echo json_encode( $data );
     }
   }
+  public function edit_intake() {
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,34)) {
+      $response = $this->inquiry_model->edit_intake();
+      if($response) {
+          $data['msg'] = 1;
+      } else {
+          $data['msg'] = 0;
+      }
+      $this->session->set_flashdata('info', 'Intake Edit Successfully..!');
+      redirect(base_url() . 'index.php/inquiries/intakes');
+    } else {
+      $this->session->set_flashdata('info', 'Intake Edit Unsuccessfully..!');
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
+  public function delete_intake() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,34)) {  
+      $intakeid = $this->input->get('intakeid');
+      $response = $this->inquiry_model->delete_intake($intakeid);
+      if($response) {
+        $this->session->set_flashdata('info', 'Intake Delete Successfully..!');
+        redirect(base_url() . 'index.php/inquiries/intakes');
+      } else {
+        $this->session->set_flashdata('info', 'Intake Delete Unsuccessfully..!');
+          redirect(base_url() . 'index.php/inquiries/intakes');
+      }
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+  public function get_intake_detail() {
+    $intakeid= $this->input->get('intakeid');
+    $data = $this->inquiry_model->get_intake_detail($intakeid);
+
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
 }

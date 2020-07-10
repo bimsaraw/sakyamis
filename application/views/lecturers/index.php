@@ -35,6 +35,7 @@
                         <input type="text" name="lecturerName" class="form-control" required>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm">Add Lecturer</button>
+                    <a class="btn btn-danger btn-sm"  data-lecturename="" data-toggle="modal" href="#deletelecturer"><i class="far fa-edit"></i> Delete Lecturer</a>
                 <?php echo form_close(); ?>
             </div>
         </div>
@@ -97,6 +98,41 @@
     </div>
 </div>
 
+</div>
+
+
+<div class="modal fade" id="deletelecturer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation!</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        </div>
+        <div class="modal-body"> 
+            <div class="form-group">
+              ​<p>Select Lecturer </p>
+              <div class="form-group">
+              <?php $attributes = array('id' => 'deletelecturer', 'method' => 'post');
+                        echo form_open('lecturers/delete_lecturer', $attributes); ?>
+                                <select id="selectAllocations" name="lecturer_id" class="form-control" required="" >
+                                    <?php foreach($lecturers as $lecturer) { ?>
+                                        <option value="<?php echo $lecturer['id']; ?>"><?php echo $lecturer['name']; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>                       
+           
+              <div class="validation-feedback fb_new2" id="fb_new2"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+        <button  type="submit" class="btn btn-outline-danger ">Delete</button>
+        <?php echo form_close(); ?>
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
 </div>
 
 <script>

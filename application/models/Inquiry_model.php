@@ -29,6 +29,36 @@ class Inquiry_model extends CI_Model {
     return $this->db->insert('intakes', $data);
   }
 
+  public function edit_intake() {
+    $intakeid = $this->input->post('m_intakeid');
+   
+    $data = array(
+      'name'=>$this->input->post('m_name'),
+      'startDate'=>$this->input->post('m_startDate'),
+      'endDate'=>$this->input->post('m_endDate'),
+      'status'=>$this->input->post('m_status'),
+    );
+    $this->db->where('id',$intakeid);
+    return $this->db->update('intakes',$data);
+  }
+  
+  public function delete_intake($intakeid) {
+    $this->db->where('id',$intakeid);
+    return $this->db->delete('intakes');
+  }
+  
+  public function get_intake_detail($intakeid) {
+    $this->db->select('*');
+    $this->db->from('intakes');
+    $this->db->where('id',$intakeid);
+    $query = $this->db->get();
+    foreach ($query->result() as $data) {
+        $response[] = $data;
+    }
+
+    return $response;
+  }
+
   public function get_targets($intakeId) {
     $this->db->select('t.*,course.name AS courseName, users.username');
     $this->db->from('targets t');
@@ -515,6 +545,7 @@ class Inquiry_model extends CI_Model {
     return $query->result_array();
   }
 
+  
 }
 
  ?>

@@ -15,7 +15,7 @@ class Lecturers extends CI_Controller {
     public function index() {
       $username = $this->session->userdata('username');
 
-      if($this->user_model->validate_permission($username,2)) {
+      if($this->user_model->validate_permission($username,36)) {
         $data['title'] = 'Lecturers';
 
         $data['lecturers'] = $this->lecturer_model->get_lecturers();
@@ -33,7 +33,7 @@ class Lecturers extends CI_Controller {
     public function add() {
       $username = $this->session->userdata('username');
 
-      if($this->user_model->validate_permission($username,2)) {
+      if($this->user_model->validate_permission($username,36)) {
         $response = $this->lecturer_model->add_lecturer();
         $data['title'] = 'Lecturers';
         $data['lecturers'] = $this->lecturer_model->get_lecturers();
@@ -54,10 +54,30 @@ class Lecturers extends CI_Controller {
       }
     }
 
+    public function delete_lecturer() {
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,36)) {
+        $response = $this->lecturer_model->delete_lecturer();
+     
+        if($response) {
+          $this->session->set_flashdata('info', 'Lecturer delete Successfully..!');
+          redirect(base_url() . 'index.php/lecturers');
+        } else {
+          $this->session->set_flashdata('info', 'Lecturer delete Unsuccessfully..!');
+          redirect(base_url() . 'index.php/lecturers');
+        }
+      
+      } else {
+        $this->session->set_flashdata('info', 'you cannot access to delete..!');
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
     public function allocate() {
       $username = $this->session->userdata('username');
 
-      if($this->user_model->validate_permission($username,2)) {
+      if($this->user_model->validate_permission($username,36)) {
         $response = $this->lecturer_model->allocate_lecturer();
         $data['title'] = 'Lecturers';
         $data['lecturers'] = $this->lecturer_model->get_lecturers();
@@ -81,7 +101,7 @@ class Lecturers extends CI_Controller {
     public function remove_allocation() {
       $username = $this->session->userdata('username');
 
-      if($this->user_model->validate_permission($username,2)) {
+      if($this->user_model->validate_permission($username,36)) {
         $module_list = $this->input->post('selectAllocated');
         $lecturerId = $this->input->post('allocateName');
 

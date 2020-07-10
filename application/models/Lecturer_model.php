@@ -68,4 +68,10 @@ class Lecturer_model extends CI_Model {
 
         return $response;
     }
+    public function delete_lecturer() {
+        $lecturer_id = $this->input->post('lecturer_id');   
+        $this->db->where('id',$lecturer_id);
+        return $this->db->delete('lecturer');
+      }
+
 }
