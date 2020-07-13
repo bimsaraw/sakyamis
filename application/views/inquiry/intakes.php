@@ -21,6 +21,7 @@
                                     <th>Intake Name</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
+                                    <th>Status</th>
                                     <th></th>
                                     <th>Action</th>
                                 </tr>
@@ -31,6 +32,7 @@
                                       <td><?php echo $intake['name']; ?></td>
                                       <td><?= $intake['startDate']; ?></td>
                                       <td><?= $intake['endDate']; ?></td>
+                                      <td><input type="checkbox" <?php if($intake['status']==1) { echo "checked"; } ?> id="status_<?= $intake['id']; ?>" onchange="set_status('<?= $intake['id']; ?>')" data-toggle="toggle" data-size="sm" value="1"></td>
                                       <td><a href="<?= base_url(); ?>index.php/inquiries/targets?intakeId=<?= $intake['id']; ?>&intakeName=<?= $intake['name']; ?>" class="btn btn-sm btn-warning">Targets</a></td>
                                       <td>
                                             <button class="btn btn-primary btn-sm" onclick="get_intake_details('<?= $intake['id']; ?>')"><i class="far fa-edit"></i></button>             
@@ -98,10 +100,6 @@
                     <input type="hidden" id="m_startDate" name="m_startDate">
                     <input type="hidden" id="m_endDate" name="m_endDate">
             </div>
-            <div class="form-group">
-                    <label for="dateRange">Status</label>
-                    <input type="checkbox"  name="m_status" id="checkbox" data-toggle="toggle" data-size="sm" value="1" >
-            </div>
         </div>
         <div class="modal-footer">
         <button type="submit" class="btn btn-outline-primary">Save Changes</button>
@@ -132,9 +130,9 @@
             </div>
         </div>
         <div class="modal-footer">
-        <a href="somelink" type="button" class="btn btn-outline-danger " data-dismiss="modal" onclick="delete_confirm()">Delete</a>
+        <a href="somelink" type="button" class="btn btn-outline-danger btn-sm " data-dismiss="modal" onclick="delete_confirm()">Delete</a>
        
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+        <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal">Close</button>
         </div>
     </div>
     </div>
@@ -259,4 +257,29 @@
         var id =document.getElementById("md_intakeid").value;
         window.location.assign("delete_intake?intakeid="+id)
     }
+
+    function set_status(intakeId) {
+
+        if($('#status_'+intakeId).is(":checked")) {
+            $('#status_'+intakeId).val(1);
+        } else {
+            $('#status_'+intakeId).val(0);
+        }
+
+        var status = $('#status_'+intakeId).val();
+
+        $.blockUI();
+        $.ajax({
+            type : "POST",
+            //set the data type
+            url: '<?php echo base_url(); ?>index.php/inquiries/set_intakestatus', // target element(s) to be updated with server response
+            data: {intakeId:intakeId,status:status},
+            cache : false,
+            //check this in Firefox browser
+            success : function(response){
+            $('#status_'+intakeId).val(response);
+            $.unblockUI();
+            }
+        });
+        }
 </script>

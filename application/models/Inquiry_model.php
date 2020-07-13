@@ -35,8 +35,7 @@ class Inquiry_model extends CI_Model {
     $data = array(
       'name'=>$this->input->post('m_name'),
       'startDate'=>$this->input->post('m_startDate'),
-      'endDate'=>$this->input->post('m_endDate'),
-      'status'=>$this->input->post('m_status'),
+      'endDate'=>$this->input->post('m_endDate')
     );
     $this->db->where('id',$intakeid);
     return $this->db->update('intakes',$data);
@@ -58,6 +57,20 @@ class Inquiry_model extends CI_Model {
 
     return $response;
   }
+
+  public function set_intakestatus($intake_id,$status)
+    {
+      $data = array(
+        'status' => $status
+      );
+      $this->db->where('id',$intake_id);
+      $response = $this->db->update('intakes',$data);
+
+      if($response) {
+        $this->db->where('id',$intake_id);
+        return $this->db->get('intakes')->row();
+      }
+    }
 
   public function get_targets($intakeId) {
     $this->db->select('t.*,course.name AS courseName, users.username');

@@ -41,6 +41,7 @@
                     </ul>
                 </div>
                 <button type="button" id="btnAdd" class="btn btn-primary btn-sm" data-toggle="modal" style="display:none;" data-target="#modalAddModule">Add Module</button>
+                <button type="button" id="btnDelete" class="btn btn-danger btn-sm" data-toggle="modal" style="display:none;" data-target="" Onclick="get_Deletemodules()">Delete Module</button>
             </div>
         </div>
     </div>
@@ -87,11 +88,78 @@
 </div>
 <!--/ Add course modal -->
 
+<!-- Add Module Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="modalAddModule">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add Course</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <?php echo form_open('modules/addModule', array('id'=>'frmAddModule')); ?>
+        <div class="modal-body">
+            <input type="hidden" id="moduleCourse" class="form-control form-control-sm" readonly>
+            <div class="form-group">
+                <label for="moduleName">Module Name</label>
+                <input type="text" class="form-control form-control-sm" id="moduleName" required>
+            </div>
+            <div class="form-group">
+                <label for="moduleSemester">Semester</label>
+                <select id="moduleSemester" class="form-control form-control-sm" required>
+                    <option value="">- Select Semester -</option>
+                    <?php foreach($semesters as $semester) { ?>
+                        <option value="<?php echo $semester['id']; ?>"><?php echo $semester['name']; ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" name="btnAddModule" class="btn btn-outline-danger btn-sm">Save changes</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        </div>
+        <?php echo form_close(); ?>
+    </div>
+</div>
+</div>
+<!--/ Add course modal -->
+
+<div class="modal" tabindex="-1" role="dialog" id="modalDeleteModule" role="dialog">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Delete Module</h5>
+            <button type="button" onclick="close_Dmodal()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <?php echo form_open('modules/delete', array('id'=>'frmDeleteModule')); ?>
+        <div class="modal-body">      
+            <div class="form-group">
+            <input type="hidden" id="moduledeleteCourse" name="moduledeleteCourse" class="form-control form-control-sm" readonly>
+                <label for="moduleSemester">Course Modules</label>
+                <select id="moduleDeleteList" name="moduleid" class="form-control form-control-sm" required>
+                        <option value="">---Select module----</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" name="btnAddModule" class="btn btn-outline-danger btn-sm">Delete</button>
+            <button class="btn btn-secondary btn-sm" onclick="close_Dmodal()" type="button" data-dismiss="modal">Close</button>
+        </div>
+        <?php echo form_close(); ?>
+    </div>
+</div>
+</div>
+
 <script>
     function get_modules(courseId) {
         document.getElementById('moduleList').innerHTML ="";
         $('#btnAdd').show();
+        $('#btnDelete').show();
         $('#moduleCourse').val(courseId);
+       
         $.ajax({
             type : "GET",
             //set the data type
@@ -106,6 +174,32 @@
                 });
             }
         });
+        console.log(course_id=courseId);
+    }
+
+    function get_Deletemodules() {
+        var courseId=window.course_id;
+        document.getElementById('moduleDeleteList').innerHTML ="";
+        $.ajax({
+            type : "GET",
+            //set the data type
+            url: '<?php echo base_url(); ?>index.php/modules/show', // target element(s) to be updated with server response
+            data: {courseId:courseId},
+            cache : false,
+            //check this in Firefox browser
+            success : function(response){
+                $.each(response,function(key, val) {
+                    console.log(val.name);
+                    $('<option value="'+val.id+'">'+val.name+'</option>').appendTo('#moduleDeleteList');
+                });
+                $('#moduledeleteCourse').val(courseId);
+                $('#modalDeleteModule').show();
+            }
+        });
+    }
+
+    function close_Dmodal() {
+        $('#modalDeleteModule').hide();
     }
 
     $(document).ready(function () {

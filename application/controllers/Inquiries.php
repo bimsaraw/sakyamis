@@ -503,25 +503,41 @@ class Inquiries extends CI_Controller {
   }
   public function edit_intake() {
     $username = $this->session->userdata('username');
-    if($this->user_model->validate_permission($username,34)) {
+    if($this->user_model->validate_permission($username,7)) {
       $response = $this->inquiry_model->edit_intake();
       if($response) {
-          $data['msg'] = 1;
+        $data['msg'] = 1;
+        $this->session->set_flashdata('info', 'Intake Edit Successfully..!');
+        redirect(base_url() . 'index.php/inquiries/intakes');
       } else {
           $data['msg'] = 0;
+          $this->session->set_flashdata('info', 'Intake Edit Unsuccessfully..!');
       }
-      $this->session->set_flashdata('info', 'Intake Edit Successfully..!');
-      redirect(base_url() . 'index.php/inquiries/intakes');
     } else {
-      $this->session->set_flashdata('info', 'Intake Edit Unsuccessfully..!');
       redirect('/?msg=noperm', 'refresh');
     }
   }
+  public function set_intakestatus()
+    {
+      $username = $this->session->userdata('username');
+      if($this->user_model->validate_permission($username,7)) {
+        $status = $this->input->post('status');
+        $intake_id = $this->input->post('intakeId');
+
+        $response = $this->inquiry_model->set_intakestatus($intake_id,$status);
+
+        if($response) {
+          echo $response->status;
+        }
+      } else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
 
   public function delete_intake() {
     $username = $this->session->userdata('username');
 
-    if($this->user_model->validate_permission($username,34)) {  
+    if($this->user_model->validate_permission($username,7)) {  
       $intakeid = $this->input->get('intakeid');
       $response = $this->inquiry_model->delete_intake($intakeid);
       if($response) {

@@ -56,20 +56,41 @@ class Modules extends CI_Controller {
 
         if($courseId != "" && $semesterId != "") {
             $data = $this->module_model->get_modules_by_course_semester($courseId,$semesterId);
-
             header('Content-Type: application/json');
             echo json_encode( $data );
         }
     }
 
     public function add() {
-        $response = $this->module_model->add_module();
-
-        if($response) {
-            echo "1";
+        $username = $this->session->userdata('username');
+        if($this->user_model->validate_permission($username,37)) {
+            $response = $this->module_model->add_module();
+                if($response) {
+                    echo "1";
+                    $this->session->set_flashdata('info', 'Course Module Added Successfully..!');
+                } else {
+                    echo "0";
+                    $this->session->set_flashdata('info', 'Course Module Added Unsuccessfully..!');  
+                }
         } else {
-            echo "0";
-        }
+            redirect('/?msg=noperm', 'refresh');
+        }  
     }
 
+    public function delete() {
+        $username = $this->session->userdata('username');
+        if($this->user_model->validate_permission($username,37)) {
+
+            $response = $this->module_model->delete_module();
+            if($response) {
+                $this->session->set_flashdata('info', 'Course Module Delete Successfully..!');
+                redirect(base_url() . 'index.php/modules');
+            } else {
+                $this->session->set_flashdata('info', 'Course Module Delete Unsuccessfully..!');
+                redirect(base_url() . 'index.php/modules');
+            }
+        } else {
+            redirect('/?msg=noperm', 'refresh');
+        }
+    }
 }

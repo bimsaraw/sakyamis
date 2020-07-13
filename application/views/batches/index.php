@@ -101,7 +101,7 @@
         <?php $attributes = array('id' => 'updatebatch', 'method' => 'post');
                         echo form_open('Batches/edit_batch', $attributes); ?>
             <div class="form-group">
-                <input type="text" class="form-control form-control-sm" name="batchId" id="m_batchid" required>
+                <input type="text" class="form-control form-control-sm" name="batchId" id="m_batchid" readonly required>
             </div>
             <div class="form-group">
                 <label for="batchName">Batch Name</label>
@@ -156,9 +156,9 @@
             </div>
         </div>
         <div class="modal-footer">
-        <a href="somelink" type="button" class="btn btn-outline-danger " data-dismiss="modal" onclick="delete_confirm()">Delete</a>
+        <a href="somelink" type="button" class="btn btn-outline-danger btn-sm " data-dismiss="modal" onclick="delete_confirm()">Delete</a>
        
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+        <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal">Close</button>
         </div>
 
     </div>

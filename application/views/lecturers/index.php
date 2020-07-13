@@ -127,9 +127,9 @@
             </div>
         </div>
         <div class="modal-footer">
-        <button  type="submit" class="btn btn-outline-danger ">Delete</button>
+        <button  type="submit" class="btn btn-outline-danger btn-sm ">Delete</button>
         <?php echo form_close(); ?>
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+        <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal">Close</button>
         </div>
     </div>
     </div>

@@ -112,9 +112,9 @@
             </div>
         </div>
         <div class="modal-footer">
-        <a href="somelink" type="button" class="btn btn-outline-danger " data-dismiss="modal" onclick="delete_confirm()">Delete</a>
+        <a href="somelink" type="button" class="btn btn-outline-danger btn-sm" data-dismiss="modal" onclick="delete_confirm()">Delete</a>
        
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+        <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal">Close</button>
         </div>
     </div>
     </div>

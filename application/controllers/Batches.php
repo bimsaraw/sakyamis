@@ -125,6 +125,8 @@ class Batches extends CI_Controller
 
     public function set_status()
     {
+      $username = $this->session->userdata('username');
+      if($this->user_model->validate_permission($username,34)) {
         $status = $this->input->post('status');
         $batchId = $this->input->post('batchId');
 
@@ -133,6 +135,9 @@ class Batches extends CI_Controller
         if($response) {
           echo $response->status;
         }
+      } else {
+        redirect('/?msg=noperm', 'refresh');
+      }
     }
 
     public function get_batch_detail() {

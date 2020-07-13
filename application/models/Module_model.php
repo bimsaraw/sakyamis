@@ -75,5 +75,20 @@ class Module_model extends CI_Model {
         );
         return $this->db->insert('module', $data);
     }
+    public function delete_module() {
+        $this->load->helper('url');
+        $course_id=$this->input->post('moduledeleteCourse');
+        $module_id = $this->input->post('moduleid');
+     
+        $this->db->where('id', $module_id);
+        $this->db->where('course', $course_id);
+
+        $query = $this->db->delete('module');
+        if($query) {
+            return true;
+          } else {
+            return false;
+          }
+    }
 
 }
