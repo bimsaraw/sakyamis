@@ -91,7 +91,7 @@
                       <div class="table table-responsive">
                         <table class="table table-stripped" id="dataTable">
                           <thead>
-                            <h6 class="text-center" style="text-decoration:underline">Outstanding Report</h6>
+                            <h6 class="text-center" style="text-decoration:underline">Attendance Summary</h6>
                             <tr>
                               <th>Student ID</th>
                               <th>Name with Initials</th>

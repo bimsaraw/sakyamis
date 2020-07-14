@@ -62,10 +62,105 @@ class Attendance extends CI_Controller {
   }
 
   public function get_attendance_history() {
-      $studentId = $this->input->post('studentId');
-      $data = $this->attendance_model->get_attendance_history($studentId);
-
-      header('Content-Type: application/json');
-      echo json_encode( $data );
+    $studentId = $this->input->post('studentId');
+    $data = $this->attendance_model->get_attendance_history($studentId);
+    header('Content-Type: application/json');
+    echo json_encode( $data );
   }
+
+  public function get_attendance_detail() {
+    $username = $this->session->userdata('username');
+      if($this->user_model->validate_permission($username,39)) { 
+          $studentID= $this->input->post('studentId');
+          $data = $this->attendance_model->get_attendance_detail($studentID);
+          header('Content-Type: application/json');
+          echo json_encode($data);
+      } else {
+        echo "no-perm";
+      }
+}
+
+public function get_single_detail() {
+  $username = $this->session->userdata('username');
+  if($this->user_model->validate_permission($username,39)) { 
+      $studentID= $this->input->post('studentId');
+      $date= $this->input->post('date');
+      $time= $this->input->post('time');
+      $data = $this->attendance_model->get_single_detail($studentID,$date,$time);
+      header('Content-Type: application/json');
+      echo json_encode($data);
+  } else {
+    echo "no-perm";
+  }
+}
+
+  public function report() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,24)) {
+      $data['title'] = 'Student Attendance - Report';
+
+      $this->load->view('templates/header', $data);
+      $this->load->view('templates/sidebar', $data);
+      $this->load->view('attendance/report', $data);
+      $this->load->view('templates/footer');
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
+  public function delete_attendance() {
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,40)) {  
+      $response = $this->attendance_model->delete_attendance();
+     
+      if($response) {
+        $this->session->set_flashdata('info', 'Attendance Delete Successfully..!');
+        echo "success";
+       
+      } else {
+        $this->session->set_flashdata('info', 'Attendance Delete Unsuccessfully..!');
+        echo "unsuccess";
+      }
+
+    } else {
+      echo "no-perm";
+    }
+  }
+
+  public function add_remark() {
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,40)) {  
+      $response = $this->attendance_model->add_remark();
+     
+      if($response) {
+        $this->session->set_flashdata('info', 'Attendance remark added Successfully..!');
+        echo "success";
+      } else {
+        $this->session->set_flashdata('error', 'Attendance remark added Unsuccessfully..!');
+          echo "unsuccess";
+      }
+
+    } else {
+      echo "no-perm";
+    }
+  }
+
+  public function change_status() {
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,40)) {  
+      $response = $this->attendance_model->change_status();
+     
+      if($response) {
+        $this->session->set_flashdata('info', 'Attendance finance visit update Successfully..!');
+        echo "success";
+      } else {
+        $this->session->set_flashdata('error', 'Attendance finance visit update Unsuccessfully..!'); 
+        echo "unsuccess";
+      }
+    } else {
+      echo "no-perm";
+    }
+  }
+
 }

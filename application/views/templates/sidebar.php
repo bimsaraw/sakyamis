@@ -18,6 +18,7 @@
           <div class="dropdown-divider"></div>
 
           <h6 class="dropdown-header">Advance Options:</h6>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/attendance/report">Report</a>
       </div>
   </li>
   <li class="nav-item dropdown">
@@ -37,7 +38,7 @@
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/courses">Courses</a>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/modules">Modules</a>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/lecturers">Lecturers</a>
-
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/branches">Branches</a>  
 
       </div>
   </li>

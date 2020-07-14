@@ -8,7 +8,7 @@
         </li>
         <li class="breadcrumb-item active"><?php echo $title; ?></li>
     </ol>
-
+    <div id="alertArea" class="alert" style="display:none;"> </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -39,6 +39,7 @@
                                 if($response>0) { ?>
                                   Completed.
                                                                     <button type="button" onclick="printReceipt('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>')" class="btn btn-outline-secondary btn-sm">Receipt</button>
+                                                                    <button type="button" onclick="deleteReceipt('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>')" class="btn btn-outline-danger btn-sm">Delete</button>
                                 <?php } else { ?>
                                   <button type="button" onclick="fillModal('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>','<?= $installment['amount']; ?>','<?= $installment['currency']; ?>','<?= $installment['name']; ?>')" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#paymentModal">Payment</button>
                                 <?php } ?>
@@ -125,6 +126,35 @@
   </div>
 </div>
 
+<div class="modal fade" id="deletePayment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation!</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        </div>
+     
+        <form id="deletePayment">
+        <div class="modal-body"> 
+            <div class="form-group">
+              ​<p>Are you sure you want to delete this Payment?</p>
+              <input type="hidden" name="m_studentID" id="m_studentID" />
+              <input type="hidden" name="m_pplanId" id="m_pplanId" />
+              <input type="hidden" name="m_installmentId" id="m_installmentId" />
+              <div class="validation-feedback fb_new2" id="fb_new2"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-danger btn-sm" >Delete</button>
+        <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal">Close</button>
+        </div>
+        </form>
+    </div>
+    </div>
+</div>
+
 <script>
 
 function fillModal(studentId,pplanId,installmentId,amount,currency,name) {
@@ -185,6 +215,8 @@ $(document).ready(function() {
        document.location.reload();
      }
    });
+
+
   });
 
   $('#rate').change(function() {
@@ -196,6 +228,53 @@ $(document).ready(function() {
     $('#amount').val(amount);
   })
 
+  $('#deletePayment').submit(function(e) {
+    e.preventDefault();
+
+    var form = $('#deletePayment');
+
+    var studentId = $('#m_studentID').val();
+    var pplanId = $('#m_pplanId').val();
+    var installmentId = $('#m_installmentId').val();
+
+    $.ajax({
+      type: "POST",
+      url: '<?php echo base_url(); ?>index.php/payments/delete_payment',
+      data: 
+      { studentId:studentId,
+        pplanId:pplanId,
+        installmentId:installmentId
+      },
+      cache : false,
+      success: function(response) {
+        console.log(response);
+        if(response=='no-perm'){
+               $('#alertArea').show();
+               $('#alertArea').addClass("alert-warning");
+               $('#alertArea').html("Permissions denied!");
+              }else if (response=='success'){
+               $('#alertArea').show();
+               $('#alertArea').addClass("alert-success");
+               $('#alertArea').html("Deleted Successfully.");
+              }else if (response=='error'){
+               $('#alertArea').show();
+               $('#alertArea').addClass("alert-success");
+               $('#alertArea').html("Deleted Unsuccessfully.");
+              }
+          }
+         
+      });
+      document.location.reload();
+    });
+  
+
 });
+
+function deleteReceipt(studentId,pplanId,installmentId) {
+  document.getElementById("m_studentID").value = studentId;
+  document.getElementById("m_pplanId").value = pplanId;
+  document.getElementById("m_installmentId").value = installmentId;
+  $('#deletePayment').modal('show');
+}
 
 </script>

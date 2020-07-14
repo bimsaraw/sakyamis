@@ -346,7 +346,6 @@ class Payments extends CI_Controller {
 
   public function delete_payment() {
     $username = $this->session->userdata('username');
-
     if($this->user_model->validate_permission($username,26)) {
       if($this->payment_model->delete_payment()) {
         echo "success";
@@ -354,7 +353,7 @@ class Payments extends CI_Controller {
         echo "error";
       }
     } else {
-      echo "no-permission";
+      echo "no-perm";
     }
   }
 
