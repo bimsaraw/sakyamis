@@ -175,7 +175,7 @@ $(document).ready(function() {
                             counter,
                             val.date,
                             val.time,
-                            "<input class='form-check-input' type='checkbox' "+checked+" id='visitstatus' onclick=visitstatus('" + val.studentId+"','"+val.date+"','"+val.time + "')>" + vstatus,
+                            "<input class='form-check-input' type='checkbox' "+checked+" id='vstatus"+ val.studentId+val.date+val.time +"' onclick=visitstatus('" + val.studentId+"','"+val.date+"','"+val.time + "')>" + vstatus,
                             val.finance_remarks,
                             "<button class='btn btn-info btn-sm' onclick=get_attendance_remark('" + val.studentId+"','"+val.date+"','"+val.time + "')>Remarks</button> <button class='btn btn-danger btn-sm' onclick=get_delete_attendance('" + val.studentId+"','"+val.date+"','"+val.time + "')><i class='far fa-trash-alt'></i></button>"
                             
@@ -315,7 +315,7 @@ $(document).ready(function() {
     }
   
       function visitstatus(studentid,date,time) {
-        var checkBox = document.getElementById("visitstatus");
+        var checkBox = document.getElementById("vstatus"+studentid+date+time);
         var status= "";
         if (checkBox.checked == true){
           status = 1;

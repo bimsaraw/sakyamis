@@ -72,6 +72,8 @@
                 <th>Date</th>
                 <th>Time</th>
                 <th>Remarks</th>
+                <th>Visited Finance</th>
+                <th>Finance Remarks</th>
             </thead>
             <tbody id="tblHistory">
             </tbody>
@@ -146,8 +148,10 @@
      success: function(response) {
        var markup;
        $.each(response,function(key, val) {
+          var vstatus = "";
+          if (val.visited_finance==1) {vstatus="Visited"; checked="checked"} else {vstatus="Not Visited";};
            markup += "<tr>";
-           markup += "<td>"+val.date+"</td><td>"+val.time+"</td><td>"+val.remarks+"</td>";
+           markup += "<td>"+val.date+"</td><td>"+val.time+"</td><td>"+val.remarks+"</td><td>"+vstatus+"</td><td>"+val.finance_remarks+"</td>";   
            markup += "</tr>"
        });
 
