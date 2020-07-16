@@ -20,7 +20,7 @@ class Attendance_model extends CI_Model {
 
   public function get_attendance_history($studentId) {
     $this->db->where('studentId',$studentId);
-    $this->db->limit(8);
+    $this->db->limit(14);
     $this->db->order_by('date desc,time desc');
     $query = $this->db->get('attendance');
 
