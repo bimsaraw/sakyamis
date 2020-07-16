@@ -42,7 +42,7 @@ class Branches extends CI_Controller {
         $this->session->set_flashdata('info', 'Branch Edit Successfully..!');
         redirect(base_url() . 'index.php/branches');
       } else {
-        $this->session->set_flashdata('info', 'Branch Edit Unsuccessfully..!');
+        $this->session->set_flashdata('danger', 'Branch Edit Unsuccessfully..!');
         redirect('/?msg=noperm', 'refresh');
       }
     }

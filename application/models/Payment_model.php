@@ -59,6 +59,38 @@ class Payment_model extends CI_Model {
       return $query->result_array();
     }
 
+    public function copy_pplan($oldppid,$type) {
+
+      $this->db->where('id',$oldppid);
+      $query = $this->db->get('payment_plan');
+      $data= $query->result_array();
+      $name='';
+      $courseid='';
+      $intakeId='';
+
+      foreach($data as $data){
+        $name=$data['name'];
+        $courseid=$data['courseId'];
+        $intakeId=$data['intakeId'];
+      }
+
+      $data = array(
+        'name'=> $name,
+        'courseId'=> $courseid,
+        'intakeId'=> $intakeId,
+        'datetime'=>date('Y-m-d h:i:sa'),
+        'pp_type'=> $type
+      );
+
+      $this->db->insert('payment_plan', $data);
+      return array(
+        'id'=> $this->db->insert_id(),
+        'courseid'=>$courseid
+      );
+      
+     
+    }
+
     public function add_payment_plan() {
       $data = array(
         'name'=> $this->input->post('name'),
@@ -128,6 +160,16 @@ class Payment_model extends CI_Model {
 
         return $this->db->insert('pp_installment',$data);
       }
+    }
+
+    public function update_course_enroll($studentId,$pplanId,$courseId) {
+        $this->db->where('studentId',$studentId);
+        $this->db->where('courseId',$courseId);
+        $data = array(
+          'pplanId'=>$pplanId,
+        );
+        return $this->db->update('course_enroll',$data);
+      
     }
 
     public function delete_installment($id,$pplanId) {

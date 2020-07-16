@@ -8,7 +8,17 @@
     </li>
     <li class="breadcrumb-item active"><?php echo $title; ?></li>
 </ol>
-
+<?php 
+    if ($this->session->flashdata('success')) {
+    echo '<div class="alert alert-success">'; echo $this->session->flashdata('success'); echo'</div> ';
+    }else if ($this->session->flashdata('danger')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('danger'); echo'</div> ';
+    }else if ($this->session->flashdata('warning')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('warning'); echo'</div> ';
+    }else if ($this->session->flashdata('info')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('info'); echo'</div> ';
+    }
+    ?>
 <div class="row">
     <div class="col-xl-6 col-sm-6 mb-6">
         <div class="card">

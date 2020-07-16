@@ -190,3 +190,13 @@ sidebar .nav-item .nav-link {
   padding-top: 15px;
   padding-bottom: 15px;
 }
+.no-border {
+  border: 0;
+  box-shadow: none; 
+}
+.bottom-border {
+  border: 0;
+  border-bottom: 1px solid #17a2b8;
+  box-shadow: none; 
+}
+

@@ -18,7 +18,7 @@
                     <form id="frmPaymentStudent">
                         <div class="form-row">
                           <div class="form-group col-md-2">
-                            <input type="text" id="studentId" name="studentId" class="form-control" placeholder="19S08002" required>
+                            <input type="text" id="studentId" name="studentId" class="form-control" placeholder="19S08002" autofocus required>
                           </div>
                           <div class="form-group col-md-1">
                             <button class="btn btn-primary">Search</button>

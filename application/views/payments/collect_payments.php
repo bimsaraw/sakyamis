@@ -8,12 +8,23 @@
         </li>
         <li class="breadcrumb-item active"><?php echo $title; ?></li>
     </ol>
-    <div id="alertArea" class="alert" style="display:none;"> </div>
+    <?php 
+    if ($this->session->flashdata('success')) {
+    echo '<div class="alert alert-success">'; echo $this->session->flashdata('success'); echo'</div> ';
+    }else if ($this->session->flashdata('danger')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('danger'); echo'</div> ';
+    }else if ($this->session->flashdata('warning')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('warning'); echo'</div> ';
+    }else if ($this->session->flashdata('info')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('info'); echo'</div> ';
+    }
+    ?>
+
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Payment Plan</h5>
+                    <h5 class="card-title">Payment Plan | <button type="button" class="btn btn-info btn-sm"  data-toggle="modal" data-target="#editplan" >Edit Plan</button></h5>
                     <div class="table-responsive">
                       <table class="table table-stripped" id="dataTable">
                         <thead>
@@ -101,13 +112,14 @@
             </div>
             <div class="form-group col-md-4">
               <label>Amount (Foreign)</label>
-              <input type="text" id="currency_amount" name="currency_amount" class="form-control form-control-sm" readonly>
+              <input type="text" id="currency_amount" name="currency_amount" class="form-control form-control-sm" readonly>            
             </div>
             <div class="form-group col-md-4">
               <label>Rate</label>
               <input type="text" id="rate" name="rate" class="form-control form-control-sm" readonly>
             </div>
           </div>
+        
           <div class="form-group">
             <label>Amount</label>
             <input type="text" id="amount" name="amount" class="form-control form-control-sm" readonly required>
@@ -155,7 +167,77 @@
     </div>
 </div>
 
+<div class="modal fade" id="editplan" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Payment Plan</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <?php $attributes = array('id' => 'plan_edittable', 'method' => 'post');
+                        echo form_open('payments/edit_payment_plan', $attributes); ?>
+
+                        <input type="hidden" name="studentId" id="studentId" value="<?= $studentId; ?>">
+                        <input type="hidden" name="oldppid" id="oldppid" value="<?= $pplanId; ?>">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Payment Plan Details | <button type="button" class="btn btn-info btn-sm" onclick=" new_row()">Insert Row</button></label>
+          </div>
+          <div class="form-group">
+            <div class="table-responsive">
+              <table id="tablepp" class="table table-stripped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>   
+                
+                <?php foreach($installments as $installment) { ?>
+                            <tr>
+                              <td><input type="hidden" class="no-border" name="installmentId[]" value="<?= $installment['id']; ?>" required><?= $installment['id']; ?></td>
+                              <td><input type="text" class="no-border"  name="installmentName[]" value="<?= $installment['name']; ?>" required></td>
+                              <td><input type="text" class="no-border"  name="amount[]" value="<?= number_format($installment['amount'],2,".",","); ?>" required></td>
+                              <td><input type="text" class="no-border"  name="currency[]"value="<?= $installment['currency']; ?>" required> </td>
+                              <td><input type="text" class="date no-border"   name="date[]" id="date" Value="<?= $installment['date']; ?>" autocomplete="off" required></td> 
+                            </tr>
+                          <?php } ?>               
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="Submit" class="btn btn-primary btn-sm" onclick=" edit_pplan(<?php echo $this->input->get('pplanId');?>)">Save Changes</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        </div>
+      <?php echo form_close(); ?>
+    </div>
+  </div>
+</div>
+
 <script>
+  $(document).ready(function() {
+    $('body').on('focus',".date", function(){
+      $(this).daterangepicker(
+        {
+      locale: {format: 'YYYY-MM-DD'},
+      singleDatePicker: true,
+      showDropdowns: true,
+      minYear: 2018,
+      maxYear: parseInt(moment().format('YYYY'),10)
+    }, function(start, end, label) {
+      $(this).val(end.format('YYYY-MM-DD'));
+    }
+      );
+    })
+  });
 
 function fillModal(studentId,pplanId,installmentId,amount,currency,name) {
   $('#studentId').val(studentId);
@@ -276,5 +358,23 @@ function deleteReceipt(studentId,pplanId,installmentId) {
   document.getElementById("m_installmentId").value = installmentId;
   $('#deletePayment').modal('show');
 }
+
+function new_row() {
+    
+    var table = document.getElementById("tablepp");
+    var totalRowCount = table.rows.length;
+    var row = table.insertRow(totalRowCount);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    cell1.innerHTML = '<input type="hidden" class="bottom-border" required  name="installmentId[]" value="'+ totalRowCount +'">'+ totalRowCount;
+    cell2.innerHTML = '<input type="text" class="bottom-border" required name="installmentName[]" value="" >';
+    cell3.innerHTML = '<input type="text" class="bottom-border" required name="amount[]" value="">';
+    cell4.innerHTML = '<input type="text" class="bottom-border" required name="currency[]" value="">';
+    cell5.innerHTML = '<input type="text" class="date bottom-border" required name="date[]" value="">';
+    
+     }
 
 </script>

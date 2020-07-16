@@ -63,16 +63,16 @@ class Attendance_model extends CI_Model {
   }
 
   public function add_remark(){
-    $id= $this->input->post('studentId');
-    $date= $this->input->post('date');
-    $time = $this->input->post('time');
+    $id= $this->input->post('mr_studentID');
+    $date= $this->input->post('mr_date');
+    $time = $this->input->post('mr_time');
    
     $this->db-> where('studentId', $id);
     $this->db-> where('date', $date);
     $this->db-> where('time', $time);
 
     $data = array(
-      'finance_remarks'=> $this->input->post('remark')
+      'finance_remarks'=> $this->input->post('m_remarks')
     );
     return $this->db->update('attendance',$data);
   }

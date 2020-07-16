@@ -97,7 +97,7 @@ public function get_single_detail() {
   public function report() {
     $username = $this->session->userdata('username');
 
-    if($this->user_model->validate_permission($username,24)) {
+    if($this->user_model->validate_permission($username,39)) {
       $data['title'] = 'Student Attendance - Report';
 
       $this->load->view('templates/header', $data);
@@ -152,10 +152,10 @@ public function get_single_detail() {
       $response = $this->attendance_model->change_status();
      
       if($response) {
-        $this->session->set_flashdata('info', 'Attendance finance visit update Successfully..!');
+        $this->session->set_flashdata('success', 'Attendance finance visit update Successfully..!');
         echo "success";
       } else {
-        $this->session->set_flashdata('error', 'Attendance finance visit update Unsuccessfully..!'); 
+        $this->session->set_flashdata('danger', 'Attendance finance visit update Unsuccessfully..!'); 
         echo "unsuccess";
       }
     } else {

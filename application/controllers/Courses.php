@@ -79,10 +79,8 @@ class Courses extends CI_Controller {
 
         if($response) {
           $this->session->set_flashdata('info', 'Course Insert Successfully..!');
-            $data['msg'] = 1;
         } else {
           $this->session->set_flashdata('info', 'Course Insert Unsuccessfully..!');
-            $data['msg'] = 0;
         }
 
         $this->load->view('templates/header', $data);

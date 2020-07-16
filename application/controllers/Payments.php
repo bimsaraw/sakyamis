@@ -193,6 +193,42 @@ class Payments extends CI_Controller {
     }
   }
 
+  public function edit_payment_plan() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,41)) {
+      $oldpplanId = $this->input->post('oldppid');
+
+      $response = $this->payment_model->copy_pplan($oldpplanId,1);
+      $pplanId=$response['id'];
+      $courseId=$response['courseid'];
+      $studentId = $this->input->post('studentId');
+      $pplan_ids = $this->input->post('installmentId');
+      $cname = $this->input->post('installmentName');
+      $camount = $this->input->post('amount');
+      $ccurrency = $this->input->post('currency');
+      $cdate = $this->input->post('date');
+      
+      for ($i = 0; $i < count($pplan_ids); $i++) {
+        $id = $pplan_ids[$i];
+        $name = $cname[$i];
+        $amount = $camount[$i];
+        $currency = $ccurrency[$i];
+        $date = $cdate[$i];
+
+        $this->payment_model->update_installment($id,$name,$amount,$currency,$date,$pplanId);
+      }
+      if ($response){
+        $uce = $this->payment_model->update_course_enroll($studentId,$pplanId,$courseId);
+        $this->session->set_flashdata('success', 'Payment Plan Edited successfully..!');
+        redirect(base_url() . "index.php/payments/view_installments_by_pplan?pplanId=".$pplanId."&studentId=".$studentId);
+      }else{
+        $this->session->set_flashdata('success', 'Payment Plan Edited Unuccessfully..!');
+      }
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
   public function view_pplan() {
     $data = $this->payment_model->view_pplan();
 
