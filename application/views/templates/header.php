@@ -15,7 +15,7 @@ if($username=="") {
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title><?php echo $title; ?></title>
+<title>SaegisMIS</title>
 
 <!-- Bootstrap core CSS-->
 <link href="<?php echo base_url(); ?>vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -46,7 +46,7 @@ if($username=="") {
 
 <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-    <a class="navbar-brand mr-1" href="index.html">Sakya MIS</a>
+    <a class="navbar-brand mr-1" href="index.html">Saegis MIS</a>
 
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
     <i class="fas fa-bars"></i>

@@ -8,7 +8,7 @@
   </li>
   <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <i class="fas fa-fw fa-table"></i>
+      <i class="fas fa-tasks"></i>
       <span>Student Attendance</span>
       </a>
       <div class="dropdown-menu" aria-labelledby="pagesDropdown">
@@ -45,7 +45,7 @@
 
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-fw fa-table"></i>
+        <i class="fas fa-user-plus"></i>
         <span>Sales Department</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
@@ -67,7 +67,7 @@
 
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-fw fa-table"></i>
+        <i class="fas fa-user-graduate"></i>
         <span>Enrollments</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
@@ -78,7 +78,7 @@
 
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-fw fa-table"></i>
+        <i class="fas fa-money-check-alt"></i>
         <span>Finance Department</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
@@ -95,7 +95,7 @@
 
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-fw fa-table"></i>
+        <i class="fas fa-file-alt"></i>
         <span>Reports</span>
         </a>
         <div class="dropdown-menu" aria-labelledby="pagesDropdown">
