@@ -10,6 +10,7 @@ class Payment_model extends CI_Model {
       $this->db->select('intakes.name AS intakeName, course.name AS courseName, payment_plan.*,');
       $this->db->join('intakes', 'intakes.id = payment_plan.intakeId', 'inner');
       $this->db->join('course', 'course.id = payment_plan.courseId', 'inner');
+      $this->db->where('payment_plan.pp_type',0);
       $this->db->order_by('datetime','DESC');
 
       $query = $this->db->get('payment_plan');
@@ -35,7 +36,7 @@ class Payment_model extends CI_Model {
       $this->db->select('intakes.name AS intakeName, course.name AS courseName, payment_plan.*,');
       $this->db->join('intakes', 'intakes.id = payment_plan.intakeId', 'inner');
       $this->db->join('course', 'course.id = payment_plan.courseId', 'inner');
-
+      $this->db->where('payment_plan.pp_type',0);
       if($this->input->post('intakeId')!="") {
         $this->db->where('payment_plan.intakeId',$this->input->post('intakeId'));
       }
@@ -55,6 +56,7 @@ class Payment_model extends CI_Model {
       $this->db->join('course', 'course.id = payment_plan.courseId', 'inner');
       $this->db->where('intakeId',$intakeId);
       $this->db->where('courseId',$courseId);
+      $this->db->where('payment_plan.pp_type',0);
       $this->db->order_by('datetime','DESC');
       $query = $this->db->get('payment_plan');
 
