@@ -613,7 +613,7 @@ $('#btnCourseEnrollments').click(function() {
 
        if(val.is_enroll_valid==1) {
          status = "Confirmed";
-         buttons += "<a class='btn btn-outline-primary btn-sm' href='<?= base_url(); ?>index.php/enrollments/edit_course_enrollment?studentId="+val.studentId+"&courseId="+val.courseId+"&intakeId="+val.intakeId+"'><i class='fas fa-pencil-alt'></i></a>";
+         
        } else {
          status = "Pending";
          buttons += "<a class='btn btn-outline-primary btn-sm' href='<?= base_url(); ?>index.php/enrollments/edit_course_enrollment?studentId="+val.studentId+"&courseId="+val.courseId+"&intakeId="+val.intakeId+"'><i class='fas fa-pencil-alt'></i></a>&nbsp;";

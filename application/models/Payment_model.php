@@ -404,6 +404,18 @@ class Payment_model extends CI_Model {
       }
     }
 
+    public function verify_payment_status($studentId,$pplanId) {
+      $this->db->where('studentId',$studentId);
+      $this->db->where('pplanId',$pplanId);
+      $query = $this->db->get('payments');
+
+      if($query->num_rows()>0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     public function save_correction($studentId, $batchId, $courseId, $pplanId) {
 
       $this->db->where('studentId',$studentId);

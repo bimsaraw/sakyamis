@@ -20,6 +20,12 @@
               <input type="hidden" name="studentId" id="studentId" value="<?= $studentId; ?>">
               <input type="hidden" name="courseId" id="courseId" value="<?= $courseId; ?>">
 
+              <?php foreach($course_enroll as $row) {
+                $pplanId = $row['pplanId'];
+              } 
+                
+              ?>
+
               <div class="form-row">
                 <div class="form-group col-md-4">
                   <label>Batch ID</label>
@@ -34,19 +40,21 @@
 
                 </div>
 
-                <div class="form-group col-md-4">
-                  <label>Payment Plan</label>
+                <?php if(!$this->payment_model->verify_payment_status($studentId,$pplanId)) { ?>
+                  <div class="form-group col-md-4">
+                    <label>Payment Plan</label>
 
-                  <select name="pplanId" id="pplanId" class="form-control form-control-sm">
-                    <?php foreach($course_enroll as $row) { ?>
-                      <option value="<?= $row['pplanId']; ?>"><?= $row['paymentplanName']; ?></option>
-                    <?php } ?>
-                    <?php foreach($payment_plans as $payment_plan) { ?>
-                      <option value="<?= $payment_plan['id']; ?>"><?= $payment_plan['name']; ?></option>
-                    <?php } ?>
-                  </select>
+                    <select name="pplanId" id="pplanId" class="form-control form-control-sm">
+                      <?php foreach($course_enroll as $row) { ?>
+                        <option value="<?= $row['pplanId']; ?>"><?= $row['paymentplanName']; ?></option>
+                      <?php } ?>
+                      <?php foreach($payment_plans as $payment_plan) { ?>
+                        <option value="<?= $payment_plan['id']; ?>"><?= $payment_plan['name']; ?></option>
+                      <?php } ?>
+                    </select>
 
-                </div>
+                  </div>
+                <?php } ?>
               </div>
               <button class="btn btn-primary btn-sm" type="submit">Save</button>
               <button type="button" class="btn btn-default btn-sm" onclick="window.history.back();">Go Back</button>

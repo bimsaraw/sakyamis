@@ -585,12 +585,15 @@ class Enrollment_model extends CI_Model {
     $studentId = $this->input->post('studentId');
     $courseId = $this->input->post('courseId');
     $batchId = $this->input->post('batchId');
-    $pplanId = $this->input->post('pplanId');
 
     $data = array(
-      'batchId' => $batchId,
-      'pplanId' => $pplanId
+      'batchId' => $batchId
     );
+
+    if(isset($_POST['pplanId'])) {
+      $pplanId = $this->input->post('pplanId');
+      $data['pplanId'] = $pplanId;
+    } 
 
     $this->db->where('studentId',$studentId);
     $this->db->where('courseId',$courseId);

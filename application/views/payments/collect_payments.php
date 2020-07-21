@@ -217,7 +217,7 @@
                               <td><input type="text" class="form-control form-control-sm no-border form-control-currency edit"  name="amount[]" value="<?= $installment['amount']; ?>" data-currency-type="<?= $installment['currency']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
                               <?php if($paid==false) {?> 
                               <td>  
-                                <select class="form-control form-control-sm no-border edit" name="currency[]" onchange="change_attribute(this)" value="<?= $installment['amount']; ?>" <?php if($paid==true){echo "readonly";}?>  required>
+                                <select class="form-control form-control-sm no-border edit selectCurrency" name="currency[]" onchange="change_attribute(this)" value="<?= $installment['amount']; ?>" <?php if($paid==true){echo "readonly";}?>  required>
                                 <option value="lkr" <?php if ($installment['currency']=="lkr"){echo "selected";}  ?> >lkr</option>
                                 <option value="gbp"<?php if ($installment['currency']=="gbp"){echo "selected";}  ?>>gbp</option>
                                 <option value="usd"<?php if ($installment['currency']=="usd"){echo "selected";}  ?>>usd</option>
@@ -290,6 +290,11 @@
 
     $('#editplan').on('click','.deleteRow',function() {
       $(this).closest("tr").remove();
+      verify();
+    });
+
+    $('.selectCurrency').on('change','.selectCurrency', function(){
+      document.getElementById("submit_button").disabled =true;
       verify();
     });
   });
