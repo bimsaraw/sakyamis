@@ -22,6 +22,15 @@ class Payment_model extends CI_Model {
       return $query->row();
     }
 
+    public function get_payment_plans_by_approval() {
+      $this->db->select('payment_plan.*,course_enroll.studentId');
+      $this->db->join('course_enroll', 'course_enroll.pplanId = payment_plan.id', 'inner');
+      $this->db->Where('payment_plan.pp_type',1);
+      $this->db->Where('payment_plan.Approved',0);
+      $query = $this->db->get('payment_plan');
+      return $query->result_array();
+    }
+
     public function filter_payment_plans() {
       $this->db->select('intakes.name AS intakeName, course.name AS courseName, payment_plan.*,');
       $this->db->join('intakes', 'intakes.id = payment_plan.intakeId', 'inner');
@@ -79,7 +88,8 @@ class Payment_model extends CI_Model {
         'courseId'=> $courseid,
         'intakeId'=> $intakeId,
         'datetime'=>date('Y-m-d h:i:sa'),
-        'pp_type'=> $type
+        'pp_type'=> $type,
+        'original_id'=>$oldppid
       );
 
       $this->db->insert('payment_plan', $data);
@@ -116,6 +126,40 @@ class Payment_model extends CI_Model {
       $this->db->where('id',$id);
 
       return $this->db->update('payment_plan', $id);
+    }
+
+    public function pp_approval($pplanId) {
+      $data = array(
+        'Approved'=> 1,
+      );
+      $this->db->where('id',$pplanId);
+      return $this->db->update('payment_plan', $data);
+    }
+
+    public function Payment_transfer($pplanId,$StudentId) {
+      //get old payment_Planid
+      $this->db->where('id',$pplanId);
+      $query = $this->db->get('payment_plan');
+      $data= $query->result_array();
+      $oldid;
+      foreach($data as $data){
+        $oldid=$data['original_id'];
+      }
+      //replace old Id to new Id
+      $this->db->where('pplanId',$oldid);
+      $this->db->where('studentId',$StudentId);
+        $updates_data = array(
+          'pplanId'=> $pplanId,
+        );
+      $updated_response= $this->db->update('payments', $updates_data);
+      return $updated_response;
+    }
+
+    public function pp_approval_status($pplanId) {
+      $this->db->where('id',$pplanId);
+      $this->db->from('payment_plan');
+      $query = $this->db->get();
+      return $query->result_array();
     }
 
     public function delete_payment_plan() {
@@ -182,6 +226,42 @@ class Payment_model extends CI_Model {
     public function view_installments_by_pplan($pplanId) {
       $this->db->where('pplanId',$pplanId);
       $query = $this->db->get('pp_installment');
+      return $query->result_array();
+    }
+
+    public function view_installments_by_paid($pplanId,$studentId,$installmentId) {
+      $this->db->select('student.studentId');
+      $this->db->from('pp_installment');
+      $this->db->join('payment_plan','payment_plan.id=pp_installment.pplanId');
+      $this->db->join('course_enroll','course_enroll.pplanId=payment_plan.id');
+      $this->db->join('student','course_enroll.studentId=student.studentId');
+      $this->db->where("(pp_installment.id, pp_installment.pplanId) IN (SELECT payments.installmentId, payments.pplanId FROM payments WHERE payments.studentId=student.studentId) AND course_enroll.studentId = student.studentId");
+      $this->db->where('course_enroll.studentId',$studentId);
+      $this->db->where('course_enroll.pplanId',$pplanId);
+      $this->db->where('pp_installment.id',$installmentId);
+      $query = $this->db->get();
+      
+      if($query->num_rows()>0) {
+        return true;
+      }else {
+        return false;
+      }
+    
+    }
+
+    public function get_pp_type_approved($pplanId) {
+      $this->db->where('id',$pplanId);
+      $query = $this->db->get('payment_plan');
+      return $query->result_array();
+    }
+
+    public function get_sumof_pplan($pplanId) {
+      $this->db->select_sum('amount');
+      $this->db->select('currency');
+      $this->db->where('pplanId',$pplanId);
+      $this->db->from('pp_installment');
+      $this->db->group_by('currency');
+      $query = $this->db->get();
 
       return $query->result_array();
     }

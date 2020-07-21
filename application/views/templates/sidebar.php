@@ -87,9 +87,9 @@
             <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/payments/">Student Payments</a>
             <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/payments/cashier_reports">Cashier Reports</a>
             <div class="dropdown-divider"></div>
-
             <h6 class="dropdown-header">Advance Options:</h6>
             <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/payments/payment_plans">Payment Plans</a>
+            <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/payments/payment_plan_approval">Payment Plans Approval</a>
         </div>
     </li>
 

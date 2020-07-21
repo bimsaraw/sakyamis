@@ -215,15 +215,23 @@ class Payments extends CI_Controller {
         $amount = $camount[$i];
         $currency = $ccurrency[$i];
         $date = $cdate[$i];
-
-        $this->payment_model->update_installment($id,$name,$amount,$currency,$date,$pplanId);
+        $this->payment_model->update_installment($id,$name,$amount,$currency,$date,$pplanId); // installments update (create new installments for the new privat plan)
+        
       }
+
       if ($response){
         $uce = $this->payment_model->update_course_enroll($studentId,$pplanId,$courseId);
-        $this->session->set_flashdata('success', 'Payment Plan Edited successfully..!');
+        $this->session->set_flashdata('success', 'Payment Plan Updated and Pending for the Accountant Approval..!');
+        if($this->user_model->validate_permission($username,42)) {
+          $pp_approval = $this->payment_model->pp_approval($pplanId);
+          $payment_transfer = $this->payment_model->Payment_transfer($pplanId,$studentId);
+          $this->session->set_flashdata('success', 'Payment Plan Updated and Approved successfully..!');
+        }else{
+          $this->session->set_flashdata('warning', 'Payment Plan Updated and Pending for the Accountant Approval..!');
+        }
         redirect(base_url() . "index.php/payments/view_installments_by_pplan?pplanId=".$pplanId."&studentId=".$studentId);
       }else{
-        $this->session->set_flashdata('success', 'Payment Plan Edited Unuccessfully..!');
+        $this->session->set_flashdata('danger', 'Payment Plan Update Unuccessfully..!');
       }
     } else {
       redirect('/?msg=noperm', 'refresh');
@@ -245,6 +253,27 @@ class Payments extends CI_Controller {
       echo json_encode( $data );
     }
   }
+  public function accesscheck_ppedit() {
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,41)) {
+        echo "1";
+      } else {
+        echo "0";
+      }
+    }
+    public function Pplan_approval(){
+      $pplanId = $this->input->post('PPlanId');
+      $studentId = $this->input->post('studentId');
+      $pp_approval = $this->payment_model->pp_approval($pplanId);
+      if($pp_approval) {
+        $payment_transfer = $this->payment_model->Payment_transfer($pplanId,$studentId);
+        echo true;
+      } else {
+        echo false;
+      }
+    }
+
 
   public function delete_payment_plan() {
     $username = $this->session->userdata('username');
@@ -295,11 +324,29 @@ class Payments extends CI_Controller {
       $pplanId = $this->input->get('pplanId');
 
       $data['installments'] = $this->payment_model->view_installments_by_pplan($pplanId);
-
+      $data['sum']= $this->payment_model->get_sumof_pplan($pplanId);
       $data['studentId'] = $studentId;
       $data['pplanId'] = $pplanId;
-
+      $ppapproval= $this->payment_model->get_pp_type_approved($pplanId);
       $data['title'] = 'Collect Payments - '.$studentId;
+      $data['Pplan_status'] ='done';
+      foreach ($ppapproval as $ppdetail)
+      {
+        if ($ppdetail['pp_type']==1){
+        $this->session->set_flashdata("warning", 'This is a Customized Payment Plan.');
+        
+        if($ppdetail['Approved']==1) {
+          $this->session->set_flashdata('info', 'This payment plan was Approved..!');
+        }
+        if($ppdetail['pp_type']==1  && $ppdetail['Approved']==0) {
+          $this->session->set_flashdata("warning", 'Cannot View this details, Pending for the Approval...!');
+          $data['Pplan_status'] ='Not-Approved';
+        }
+      } else{
+        $this->session->set_flashdata("info", 'This is a Public Payment Plan.');
+      }
+
+      }
 
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
@@ -307,6 +354,25 @@ class Payments extends CI_Controller {
       $this->load->view('templates/footer');
 
       $this->user_model->save_user_log($username,'Opened payment installments for student id'.$studentId);
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
+  public function payment_plan_approval() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,42)) {
+   
+      $data['payment_plan'] = $this->payment_model->get_payment_plans_by_approval();
+      $data['title'] = 'Payment Plan Approval ';
+
+      $this->load->view('templates/header', $data);
+      $this->load->view('templates/sidebar', $data);
+      $this->load->view('payments/plan_approval', $data);
+      $this->load->view('templates/footer');
+
+      $this->user_model->save_user_log($username,'Opened payment plan approval');
     } else {
       redirect('/?msg=noperm', 'refresh');
     }

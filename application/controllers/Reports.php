@@ -161,6 +161,36 @@ class Reports extends CI_Controller
       }
     }
 
+    public function final_report()
+    {
+        {
+          $username = $this->session->userdata('username');
+
+          if ($this->user_model->validate_permission($username, 32)) {
+              $data['title'] = 'Outstanding Report';
+
+              $data['intakes'] = $this->inquiry_model->get_intakes();
+              $data['batches'] = $this->batch_model->get_batches();
+              $data['courses'] = $this->course_model->get_courses();
+
+              if ($_POST) {
+                $data['students'] = $this->report_model->final_report($_POST);
+
+                $data['single_batch'] = $this->batch_model->get_single_batch($_POST['batchId']);
+                $data['single_course'] = $this->course_model->get_single_course($_POST['courseId']);
+                $data['single_intake'] = $this->inquiry_model->get_single_intake($_POST['intakeId']);
+              }
+
+              $this->load->view('templates/header', $data);
+              $this->load->view('templates/sidebar', $data);
+              $this->load->view('reports/final_report', $data);
+              $this->load->view('templates/footer');
+          } else {
+              redirect('/?msg=noperm', 'refresh');
+          }
+      }
+    }
+
     public function payment_report()
     {
         {

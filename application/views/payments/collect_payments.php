@@ -12,19 +12,19 @@
     if ($this->session->flashdata('success')) {
     echo '<div class="alert alert-success">'; echo $this->session->flashdata('success'); echo'</div> ';
     }else if ($this->session->flashdata('danger')) {
-      echo '<div class="alert alert-success">'; echo $this->session->flashdata('danger'); echo'</div> ';
+      echo '<div class="alert alert-danger">'; echo $this->session->flashdata('danger'); echo'</div> ';
     }else if ($this->session->flashdata('warning')) {
-      echo '<div class="alert alert-success">'; echo $this->session->flashdata('warning'); echo'</div> ';
+      echo '<div class="alert alert-warning">'; echo $this->session->flashdata('warning'); echo'</div> ';
     }else if ($this->session->flashdata('info')) {
-      echo '<div class="alert alert-success">'; echo $this->session->flashdata('info'); echo'</div> ';
+      echo '<div class="alert alert-info">'; echo $this->session->flashdata('info'); echo'</div> ';
     }
     ?>
-
+<div id="alertArea" class="alert" style="display:none;"> </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Payment Plan | <button type="button" class="btn btn-info btn-sm"  data-toggle="modal" data-target="#editplan" >Edit Plan</button></h5>
+  <h5 class="card-title">Payment Plan |<?php if($Pplan_status!='Not-Approved') { ?> <button type="button" class="btn btn-info btn-sm"  onclick="edit_plan_modal()" >Edit Plan</button><?php } ?> </h5>
                     <div class="table-responsive">
                       <table class="table table-stripped" id="dataTable">
                         <thead>
@@ -37,26 +37,28 @@
                           </tr>
                         </thead>
                         <tbody>
+                        <?php if($Pplan_status!='Not-Approved') { ?>  
                           <?php foreach($installments as $installment) { ?>
-                            <tr>
-                              <td><?= $installment['id']; ?></td>
-                              <td><?= $installment['name']; ?></td>
-                              <td><?= number_format($installment['amount'],2,".",",")." ".$installment['currency']; ?></td>
-                              <td><?= $installment['date']; ?></td>
-                              <td>
+                              <tr>
+                                <td><?= $installment['id']; ?></td>
+                                <td><?= $installment['name']; ?></td>
+                                <td><?= number_format($installment['amount'],2,".",",")." ".$installment['currency']; ?></td>
+                                <td><?= $installment['date']; ?></td>
+                                <td>
 
-                                <?php
-                                $response = $this->payment_model->get_payment_status($studentId,$pplanId,$installment['id']);
-                                if($response>0) { ?>
-                                  Completed.
-                                                                    <button type="button" onclick="printReceipt('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>')" class="btn btn-outline-secondary btn-sm">Receipt</button>
-                                                                    <button type="button" onclick="deleteReceipt('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>')" class="btn btn-outline-danger btn-sm">Delete</button>
-                                <?php } else { ?>
-                                  <button type="button" onclick="fillModal('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>','<?= $installment['amount']; ?>','<?= $installment['currency']; ?>','<?= $installment['name']; ?>')" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#paymentModal">Payment</button>
-                                <?php } ?>
+                                  <?php
+                                  $response = $this->payment_model->get_payment_status($studentId,$pplanId,$installment['id']);
+                                  if($response>0) { ?>
+                                    Completed.
+                                                                      <button type="button" onclick="printReceipt('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>')" class="btn btn-outline-secondary btn-sm">Receipt</button>
+                                                                      <button type="button" onclick="deleteReceipt('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>')" class="btn btn-outline-danger btn-sm">Delete</button>
+                                  <?php } else { ?>
+                                    <button type="button" onclick="fillModal('<?= $studentId; ?>','<?= $pplanId; ?>','<?= $installment['id']; ?>','<?= $installment['amount']; ?>','<?= $installment['currency']; ?>','<?= $installment['name']; ?>')" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#paymentModal">Payment</button>
+                                  <?php } ?>
 
-                              </td>
-                            </tr>
+                                </td>
+                              </tr>
+                            <?php } ?>
                           <?php } ?>
                         </tbody>
                       </table>
@@ -176,11 +178,12 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <?php $attributes = array('id' => 'plan_edittable', 'method' => 'post');
+      <?php $attributes = array('id' => 'editpp', 'method' => 'post');
                         echo form_open('payments/edit_payment_plan', $attributes); ?>
 
                         <input type="hidden" name="studentId" id="studentId" value="<?= $studentId; ?>">
                         <input type="hidden" name="oldppid" id="oldppid" value="<?= $pplanId; ?>">
+    
         <div class="modal-body">
           <div class="form-group">
             <label>Payment Plan Details | <button type="button" class="btn btn-info btn-sm" onclick=" new_row()">Insert Row</button></label>
@@ -195,27 +198,60 @@
                     <th>Amount</th>
                     <th>Currency</th>
                     <th>Due Date</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>   
                 
-                <?php foreach($installments as $installment) { ?>
-                            <tr>
-                              <td><input type="hidden" class="no-border" name="installmentId[]" value="<?= $installment['id']; ?>" required><?= $installment['id']; ?></td>
-                              <td><input type="text" class="no-border"  name="installmentName[]" value="<?= $installment['name']; ?>" required></td>
-                              <td><input type="text" class="no-border"  name="amount[]" value="<?= number_format($installment['amount'],2,".",","); ?>" required></td>
-                              <td><input type="text" class="no-border"  name="currency[]"value="<?= $installment['currency']; ?>" required> </td>
-                              <td><input type="text" class="date no-border"   name="date[]" id="date" Value="<?= $installment['date']; ?>" autocomplete="off" required></td> 
+                <?php $row=1;   foreach($installments as $installment) { ?>
+                            
+                            <?php  
+                            $installment_id=$installment['id'];
+                            $paid= $this->payment_model->view_installments_by_paid($pplanId,$studentId,$installment_id);
+                           
+                            ?>
+                            
+                            <tr <?php if($paid==true){ echo "class='tabletr'";} ?>>
+                              <td><input type="hidden" class="no-border edit" name="installmentId[]" value="<?= $installment['id']; ?>"   required  ><?= $installment['id']; ?></td>
+                              <td><input type="text" class="no-border edit"  name="installmentName[]" value="<?= $installment['name']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
+                              <td><input type="text" class="no-border edit"  name="amount[]" id="a_<?php echo $row;?>" value="<?= $installment['amount']; ?>" data-currency-type="<?= $installment['currency']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
+                              <?php if($paid==false) {?> 
+                              <td>  
+                                <select class="form-control form-control-sm edit" name="currency[]" id="<?php echo $row;?>" onchange="change_attribute(this)" value="<?= $installment['amount']; ?>" <?php if($paid==true){echo "readonly";}?>  required>
+                                <option value="lkr" <?php if ($installment['currency']=="lkr"){echo "selected";}  ?> >lkr</option>
+                                <option value="gbp"<?php if ($installment['currency']=="gbp"){echo "selected";}  ?>>gbp</option>
+                                <option value="usd"<?php if ($installment['currency']=="usd"){echo "selected";}  ?>>usd</option>
+                              </td>
+                              <?php } else { ?>
+                              <td><input type="text" class="no-border edit"  name="currency[]" readonly value= "<?php echo $installment['currency'];?>"> </td>
+                              <?php } ?>       
+                              <td><input type="text" class="no-border edit <?php if($paid==false){ echo "date";} ?> "   name="date[]" id="date" Value="<?= $installment['date']; ?>" autocomplete="off" required <?php if($paid==true){echo "readonly";}?>></td> 
+                                
+                              <td><?php if($paid==false){
+                                echo "<button type='button' class='btn btn-outline-danger btn-sm' onclick='deleterow(".$row.")'><i class='fas fa-times'></i></button>";
+                                }?> </td>
+                                <?php } ?> 
+                              <?php $row++; ?>
                             </tr>
-                          <?php } ?>               
+                               
                 </tbody>
               </table>
             </div>
           </div>
+          <h5>Payment Details By Currencies </h5>
+          <?php foreach($sum as $totalsum) { ?>
+              <label> Total Sum of <?= $totalsum['currency']; ?> - 
+              <input type="text" class="no-border" id="i_<?= $totalsum['currency']; ?>" value="<?=$totalsum['amount']; ?>" readonly >
+              </lable>
+              <input type="text" class="no-border" id="tbl_<?= $totalsum['currency']; ?>" value="<?=$totalsum['amount']; ?>" readonly>
+            <?php } ?>   
+           
         </div>
+       
         <div class="modal-footer">
-          <button type="Submit" class="btn btn-primary btn-sm" onclick=" edit_pplan(<?php echo $this->input->get('pplanId');?>)">Save Changes</button>
-          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+            <button type="button" id="btnverify" class="btn btn-primary btn-sm" onclick="verify()">Verify</button> 
+            <button type="Submit" class="btn btn-primary btn-sm" id="submit_button"  disabled>Save Plan</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
         </div>
       <?php echo form_close(); ?>
     </div>
@@ -237,7 +273,74 @@
     }
       );
     })
+    $('body').on('focus',".edit", function(){
+    verify();
+    })
   });
+ 
+  function change_attribute(c) {
+    var currval = c.options[c.selectedIndex].value;
+    var eoa = "a_"+c.id;
+    var b = document.getElementById(eoa); 
+    b.setAttribute("data-currency-type", currval);
+  }
+
+ function verify() {
+  var table = document.getElementById("tablepp"), sumVal = 0;        
+            var lkr =0;
+            var gbp=0;
+            var usd=0;
+            for(var i = 1; i < table.rows.length; i++)
+            {
+                var input = table.rows[i].cells[2].querySelector('input');
+                var currency = input.getAttribute("data-currency-type");
+                if (currency=="lkr"){
+                  var inputval = table.rows[i].cells[2].querySelector('input').value;
+                  nval= parseInt(inputval);
+                  lkr = lkr+nval;
+                }else if (currency=="gbp"){
+                  var inputval = table.rows[i].cells[2].querySelector('input').value;
+                  nval= parseInt(inputval);
+                  gbp = gbp+nval;
+                }else if (currency=="usd"){
+                  var inputval = table.rows[i].cells[2].querySelector('input').value;
+                  nval= parseInt(inputval);
+                  usd = usd+nval;
+                } 
+
+            }
+          
+            var i_lkr = document.getElementById("i_lkr");
+            var i_gbp = document.getElementById("i_gbp");
+            var i_usd = document.getElementById("i_usd");
+            var tbl_lkr = document.getElementById("tbl_lkr");
+            var tbl_gbp = document.getElementById("tbl_gbp");
+            var tbl_usd = document.getElementById("tbl_usd");
+           
+            var c_lkr=0;
+            var c_gbp=0;
+            var c_usd=0;
+            if (i_lkr !== null){
+              c_lkr =parseFloat(i_lkr.value);
+             tbl_lkr.value = lkr.toFixed(2);
+            }
+            if (i_gbp !== null){
+              c_gbp=parseFloat(i_gbp.value);
+              tbl_gbp.value =gbp.toFixed(2);
+            }
+            if (i_usd !== null){
+              c_usd =parseFloat(i_usd.value);
+              tbl_usd.value = usd.toFixed(2);
+            }
+             if (c_lkr==parseFloat(lkr) && c_gbp==parseFloat(gbp) && c_usd==parseFloat(usd)){
+               document.getElementById("submit_button").disabled =false;
+               document.getElementById("btnverify").innerHTML = "Verified";
+             }   else {
+              document.getElementById("submit_button").disabled =true;
+              document.getElementById("btnverify").innerHTML = "Verify";
+             }
+ }
+ 
 
 function fillModal(studentId,pplanId,installmentId,amount,currency,name) {
   $('#studentId').val(studentId);
@@ -301,6 +404,7 @@ $(document).ready(function() {
 
   });
 
+
   $('#rate').change(function() {
     var currency_amount = $('#currency_amount').val();
     var rate = $('#rate').val();
@@ -351,7 +455,23 @@ $(document).ready(function() {
   
 
 });
-
+function edit_plan_modal(){
+    $.ajax({
+     type: "POST",
+     url: '<?php echo base_url(); ?>index.php/payments/accesscheck_ppedit',
+     success: function(response) {
+          console.log(response);
+          if (response=="1") {
+          $("#editplan").modal("show"); 
+          }
+          else {
+            $('#alertArea').show();
+            $('#alertArea').addClass("alert-warning");
+            $('#alertArea').html("Permissions denied!");
+          }
+        } 
+   });
+  }
 function deleteReceipt(studentId,pplanId,installmentId) {
   document.getElementById("m_studentID").value = studentId;
   document.getElementById("m_pplanId").value = pplanId;
@@ -360,7 +480,7 @@ function deleteReceipt(studentId,pplanId,installmentId) {
 }
 
 function new_row() {
-    
+    verify();
     var table = document.getElementById("tablepp");
     var totalRowCount = table.rows.length;
     var row = table.insertRow(totalRowCount);
@@ -369,12 +489,19 @@ function new_row() {
     var cell3 = row.insertCell(2);
     var cell4 = row.insertCell(3);
     var cell5 = row.insertCell(4);
-    cell1.innerHTML = '<input type="hidden" class="bottom-border" required  name="installmentId[]" value="'+ totalRowCount +'">'+ totalRowCount;
-    cell2.innerHTML = '<input type="text" class="bottom-border" required name="installmentName[]" value="" >';
-    cell3.innerHTML = '<input type="text" class="bottom-border" required name="amount[]" value="">';
-    cell4.innerHTML = '<input type="text" class="bottom-border" required name="currency[]" value="">';
-    cell5.innerHTML = '<input type="text" class="date bottom-border" required name="date[]" value="">';
-    
+    var cell6 = row.insertCell(5);
+    cell1.innerHTML = '<input type="hidden" class="bottom-border edit" required  name="installmentId[]" value="'+ totalRowCount +'">'+ totalRowCount;
+    cell2.innerHTML = '<input type="text" class="bottom-border edit" required name="installmentName[]" value="" >';
+    cell3.innerHTML = '<input type="text" class="bottom-border edit" id="a_'+totalRowCount+'" required name="amount[] " data-currency-type="lkr" value="0">';
+    cell4.innerHTML = 
+    '<td> <select class="form-control form-control-sm edit" name="currency[]" id="'+totalRowCount+'" value="" required onchange="change_attribute(this)"><option value="lkr" >lkr</option><option value="gbp">gbp</option><option value="usd">usd</option></td>';
+    cell5.innerHTML = '<input type="text" class="date bottom-border edit" required name="date[]" value="">';
+    cell6.innerHTML ='<td><button type="button" class="btn btn-outline-danger btn-sm" onclick=deleterow('+totalRowCount+')><i class="fas fa-times"></button></td>'
+    document.getElementById("submit_button").disabled =true;
+     }
+
+     function deleterow(rowid) {
+      document.getElementById("tablepp").deleteRow(rowid);
      }
 
 </script>

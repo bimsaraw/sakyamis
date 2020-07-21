@@ -175,6 +175,36 @@ class Report_model extends CI_Model {
       return $query->result_array();
     }
 
+    public function final_report($data) {
+      $this->db->select('student.studentId,student.initials_name,student.mobile,student.email,course.name AS courseName,batch.name as batchName,COUNT(pp_installment.id) AS installments, SUM(pp_installment.amount) AS amount, pp_installment.currency');
+      $this->db->join('payment_plan','payment_plan.id=pp_installment.pplanId');
+      $this->db->join('course_enroll','course_enroll.pplanId=payment_plan.id');
+      $this->db->join('course','course_enroll.courseId=course.id');
+      $this->db->join('batch','course_enroll.batchId=batch.id');
+      $this->db->join('student','course_enroll.studentId=student.studentId');
+      $this->db->where("(pp_installment.id, pp_installment.pplanId) NOT IN (SELECT payments.installmentId, payments.pplanId FROM payments WHERE payments.studentId=student.studentId) AND course_enroll.studentId = student.studentId AND pp_installment.date <='".$data['date']."'");
+
+      if($data['courseId']!="") {
+        $this->db->where('course_enroll.courseId',$data['courseId']);
+      }
+
+      if($data['intakeId']!="") {
+        $this->db->where('course_enroll.intakeId',$data['intakeId']);
+      }
+
+      if($data['batchId']!="") {
+        $this->db->where('course_enroll.batchId',$data['batchId']);
+      }
+
+      $this->db->where('course_enroll.is_dropout',0);
+
+      $this->db->group_by('student.studentId, pp_installment.currency');
+
+      $query = $this->db->get('pp_installment');
+
+      return $query->result_array();
+    }
+
     public function payment_report($data) {
       $this->db->select('student.studentId,student.initials_name,student.mobile,student.email,course.name AS courseName,batch.name as batchName,COUNT(pp_installment.id) AS installments, SUM(pp_installment.amount) AS amount, pp_installment.currency');
       $this->db->join('payment_plan','payment_plan.id=pp_installment.pplanId');

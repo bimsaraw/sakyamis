@@ -111,7 +111,7 @@ public function get_single_detail() {
 
   public function delete_attendance() {
     $username = $this->session->userdata('username');
-    if($this->user_model->validate_permission($username,40)) {  
+    if($this->user_model->validate_permission($username,43)) {  
       $response = $this->attendance_model->delete_attendance();
      
       if($response) {
