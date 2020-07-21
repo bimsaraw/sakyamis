@@ -74,6 +74,7 @@
                 <th>Remarks</th>
                 <th>Visited Finance</th>
                 <th>Finance Remarks</th>
+                </tr>
             </thead>
             <tbody id="tblHistory">
             </tbody>

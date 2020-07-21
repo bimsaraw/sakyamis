@@ -170,7 +170,7 @@
 </div>
 
 <div class="modal fade" id="editplan" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Edit Payment Plan</h5>
@@ -203,7 +203,7 @@
                 </thead>
                 <tbody>   
                 
-                <?php $row=1;   foreach($installments as $installment) { ?>
+                <?php foreach($installments as $installment) { ?>
                             
                             <?php  
                             $installment_id=$installment['id'];
@@ -212,39 +212,49 @@
                             ?>
                             
                             <tr <?php if($paid==true){ echo "class='tabletr'";} ?>>
-                              <td><input type="hidden" class="no-border edit" name="installmentId[]" value="<?= $installment['id']; ?>"   required  ><?= $installment['id']; ?></td>
-                              <td><input type="text" class="no-border edit"  name="installmentName[]" value="<?= $installment['name']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
-                              <td><input type="text" class="no-border edit"  name="amount[]" id="a_<?php echo $row;?>" value="<?= $installment['amount']; ?>" data-currency-type="<?= $installment['currency']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
+                              <td><input type="hidden" class="form-control form-control-sm no-border edit" name="installmentId[]" value="<?= $installment['id']; ?>"   required  ><?= $installment['id']; ?></td>
+                              <td><input type="text" class="form-control form-control-sm no-border edit"  name="installmentName[]" value="<?= $installment['name']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
+                              <td><input type="text" class="form-control form-control-sm no-border form-control-currency edit"  name="amount[]" value="<?= $installment['amount']; ?>" data-currency-type="<?= $installment['currency']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
                               <?php if($paid==false) {?> 
                               <td>  
-                                <select class="form-control form-control-sm edit" name="currency[]" id="<?php echo $row;?>" onchange="change_attribute(this)" value="<?= $installment['amount']; ?>" <?php if($paid==true){echo "readonly";}?>  required>
+                                <select class="form-control form-control-sm no-border edit" name="currency[]" onchange="change_attribute(this)" value="<?= $installment['amount']; ?>" <?php if($paid==true){echo "readonly";}?>  required>
                                 <option value="lkr" <?php if ($installment['currency']=="lkr"){echo "selected";}  ?> >lkr</option>
                                 <option value="gbp"<?php if ($installment['currency']=="gbp"){echo "selected";}  ?>>gbp</option>
                                 <option value="usd"<?php if ($installment['currency']=="usd"){echo "selected";}  ?>>usd</option>
                               </td>
                               <?php } else { ?>
-                              <td><input type="text" class="no-border edit"  name="currency[]" readonly value= "<?php echo $installment['currency'];?>"> </td>
+                              <td><input type="text" class="form-control form-control-sm no-border edit"  name="currency[]" readonly value= "<?php echo $installment['currency'];?>"> </td>
                               <?php } ?>       
-                              <td><input type="text" class="no-border edit <?php if($paid==false){ echo "date";} ?> "   name="date[]" id="date" Value="<?= $installment['date']; ?>" autocomplete="off" required <?php if($paid==true){echo "readonly";}?>></td> 
+                              <td><input type="text" class="form-control form-control-sm no-border edit <?php if($paid==false){ echo "date";} ?> "   name="date[]" Value="<?= $installment['date']; ?>" autocomplete="off" required <?php if($paid==true){echo "readonly";}?>></td> 
                                 
                               <td><?php if($paid==false){
-                                echo "<button type='button' class='btn btn-outline-danger btn-sm' onclick='deleterow(".$row.")'><i class='fas fa-times'></i></button>";
+                                echo "<button type='button' class='btn btn-outline-danger btn-sm deleteRow'><i class='fas fa-times'></i></button>";
                                 }?> </td>
-                                <?php } ?> 
-                              <?php $row++; ?>
+                                <?php 
+
+                              } ?> 
                             </tr>
                                
                 </tbody>
               </table>
+              <div class="text-right">
+                <button type="button" class="btn btn-info btn-sm" onclick=" new_row()">Insert Row</button>
+              </div>
             </div>
           </div>
-          <h5>Payment Details By Currencies </h5>
+          <h5>Total for Verification </h5>
           <?php foreach($sum as $totalsum) { ?>
-              <label> Total Sum of <?= $totalsum['currency']; ?> - 
-              <input type="text" class="no-border" id="i_<?= $totalsum['currency']; ?>" value="<?=$totalsum['amount']; ?>" readonly >
-              </lable>
-              <input type="text" class="no-border" id="tbl_<?= $totalsum['currency']; ?>" value="<?=$totalsum['amount']; ?>" readonly>
-            <?php } ?>   
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <label>Required amount in <?= $totalsum['currency']; ?></label>
+                <input type="text" class="form-control form-control-sm form-control-currency" id="i_<?= $totalsum['currency']; ?>" value="<?=$totalsum['amount']; ?>" readonly >
+              </div>
+              <div class="form-group col-md-3">
+                <label>Current amount in <?= $totalsum['currency']; ?></label>
+                <input type="text" class="form-control form-control-sm form-control-currency" id="tbl_<?= $totalsum['currency']; ?>" value="<?=$totalsum['amount']; ?>" readonly>
+              </div>
+            </div>  
+          <?php } ?>   
            
         </div>
        
@@ -273,9 +283,15 @@
     }
       );
     })
-    $('.edit').on('keyup', function(){
-    verify();
-    })
+    $('body').on('keyup','.edit', function(){
+      document.getElementById("submit_button").disabled =true;
+      verify();
+    });
+
+    $('#editplan').on('click','.deleteRow',function() {
+      $(this).closest("tr").remove();
+      verify();
+    });
   });
  
   function change_attribute(c) {
@@ -491,17 +507,14 @@ function new_row() {
     var cell5 = row.insertCell(4);
     var cell6 = row.insertCell(5);
     cell1.innerHTML = '<input type="hidden" class="bottom-border edit" required  name="installmentId[]" value="'+ totalRowCount +'">'+ totalRowCount;
-    cell2.innerHTML = '<input type="text" class="bottom-border edit" required name="installmentName[]" value="" >';
-    cell3.innerHTML = '<input type="text" class="bottom-border edit" id="a_'+totalRowCount+'" required name="amount[] " data-currency-type="lkr" value="0">';
+    cell2.innerHTML = '<input type="text" class="form-control form-control-sm edit" required name="installmentName[]" value="" >';
+    cell3.innerHTML = '<input type="text" class="form-control form-control-sm edit form-control-currency" id="a_'+totalRowCount+'" required name="amount[] " data-currency-type="lkr" value="0">';
     cell4.innerHTML = 
     '<td> <select class="form-control form-control-sm edit" name="currency[]" id="'+totalRowCount+'" value="" required onchange="change_attribute(this)"><option value="lkr" >lkr</option><option value="gbp">gbp</option><option value="usd">usd</option></td>';
-    cell5.innerHTML = '<input type="text" class="date bottom-border edit" required name="date[]" value="">';
-    cell6.innerHTML ='<td><button type="button" class="btn btn-outline-danger btn-sm" onclick=deleterow('+totalRowCount+')><i class="fas fa-times"></button></td>'
+    cell5.innerHTML = '<input type="text" class="date form-control form-control-sm edit" required name="date[]" value="">';
+    cell6.innerHTML ='<td><button type="button" class="btn btn-outline-danger btn-sm deleteRow"><i class="fas fa-times"></button></td>'
     document.getElementById("submit_button").disabled =true;
-     }
-
-     function deleterow(rowid) {
-      document.getElementById("tablepp").deleteRow(rowid);
-     }
+    $("tr .form-control-currency:last-child").focus();
+  }
 
 </script>

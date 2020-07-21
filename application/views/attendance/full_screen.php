@@ -129,9 +129,12 @@ if($username=="") {
             <table class="table table-stripped">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Remarks</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Remarks</th>
+                <th>Visited Finance</th>
+                <th>Finance Remarks</th>
+                </tr>
               </thead>
               <tbody id="tblHistory">
               </tbody>
@@ -217,8 +220,10 @@ if($username=="") {
      success: function(response) {
        var markup;
        $.each(response,function(key, val) {
+        var vstatus = "";
+          if (val.visited_finance==1) {vstatus="Visited"; checked="checked"} else {vstatus="Not Visited";};
            markup += "<tr>";
-           markup += "<td>"+val.date+"</td><td>"+val.time+"</td><td>"+val.remarks+"</td>";
+           markup += "<td>"+val.date+"</td><td>"+val.time+"</td><td>"+val.remarks+"</td><td>"+vstatus+"</td><td>"+val.finance_remarks+"</td>";   
            markup += "</tr>"
        });
 
