@@ -273,7 +273,7 @@
     }
       );
     })
-    $('body').on('focus',".edit", function(){
+    $('.edit').on('keyup', function(){
     verify();
     })
   });
