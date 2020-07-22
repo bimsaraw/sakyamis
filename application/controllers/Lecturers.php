@@ -21,6 +21,8 @@ class Lecturers extends CI_Controller {
         $data['lecturers'] = $this->lecturer_model->get_lecturers();
         $data['modules'] = $this->module_model->get_all_modules();
 
+        $this->user_model->save_user_log($username,'Viewed lecturers.');
+
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('lecturers/index', $data);
@@ -44,6 +46,8 @@ class Lecturers extends CI_Controller {
         } else {
             $data['msg'] = 0;
         }
+
+        $this->user_model->save_user_log($username,'Lecturer added');
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);

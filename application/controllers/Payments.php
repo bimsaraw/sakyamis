@@ -220,14 +220,22 @@ class Payments extends CI_Controller {
       }
 
       if ($response){
+
         $uce = $this->payment_model->update_course_enroll($studentId,$pplanId,$courseId);
         $this->session->set_flashdata('success', 'Payment Plan Updated and Pending for the Accountant Approval..!');
+
         if($this->user_model->validate_permission($username,42)) {
           $pp_approval = $this->payment_model->pp_approval($pplanId);
+
           $payment_transfer = $this->payment_model->Payment_transfer($pplanId,$studentId);
+
+          $this->user_model->save_user_log($username,'Customized and approved payment plan: '.$pplanId);
+
           $this->session->set_flashdata('success', 'Payment Plan Updated and Approved successfully..!');
         }else{
-          $this->session->set_flashdata('warning', 'Payment Plan Updated and Pending for the Accountant Approval..!');
+          $this->session->set_flashdata('success', 'Payment Plan Updated and Pending for the Accountant Approval..!');
+
+          $this->user_model->save_user_log($username,'Customized payment plan: '.$pplanId);
         }
         redirect(base_url() . "index.php/payments/view_installments_by_pplan?pplanId=".$pplanId."&studentId=".$studentId);
       }else{
@@ -262,10 +270,16 @@ class Payments extends CI_Controller {
         echo "0";
       }
     }
+
     public function Pplan_approval(){
       $pplanId = $this->input->post('PPlanId');
       $studentId = $this->input->post('studentId');
       $pp_approval = $this->payment_model->pp_approval($pplanId);
+
+      $username = $this->session->userdata('username');
+
+      $this->user_model->save_user_log($username,'Approved payment plan:'.$pplanId.' for '.$studentId);
+
       if($pp_approval) {
         $payment_transfer = $this->payment_model->Payment_transfer($pplanId,$studentId);
         echo true;
@@ -353,7 +367,7 @@ class Payments extends CI_Controller {
       $this->load->view('payments/collect_payments', $data);
       $this->load->view('templates/footer');
 
-      $this->user_model->save_user_log($username,'Opened payment installments for student id'.$studentId);
+      $this->user_model->save_user_log($username,'Opened payment installments for student id '.$studentId);
     } else {
       redirect('/?msg=noperm', 'refresh');
     }

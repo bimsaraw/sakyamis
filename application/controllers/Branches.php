@@ -19,6 +19,8 @@ class Branches extends CI_Controller {
 
         $data['branches'] = $this->branches_model->get_branch();
 
+        $this->user_model->save_user_log($username,'Viewed branches.');
+
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('branches/index', $data);
@@ -39,6 +41,9 @@ class Branches extends CI_Controller {
         } else {
             $data['msg'] = 0;
         }
+
+        $this->user_model->save_user_log($username,'Branch edited.');
+
         $this->session->set_flashdata('info', 'Branch Edit Successfully..!');
         redirect(base_url() . 'index.php/branches');
       } else {
@@ -53,6 +58,8 @@ class Branches extends CI_Controller {
       if($this->user_model->validate_permission($username,35)) {
         $branchid = $this->input->get('branchid');
         $response = $this->branches_model->delete_branch($branchid);
+
+        $this->user_model->save_user_log($username,'Branch deleted '.$branchid);
        
         if($response) {
           $this->session->set_flashdata('info', 'Branch Delete Successfully..!');
@@ -76,6 +83,8 @@ class Branches extends CI_Controller {
         $response = $this->branches_model->add();
         $data['title'] = 'Branch Details';
         $data['branch'] = $this->branches_model->get_branch();
+
+        $this->user_model->save_user_log($username,'Branch added.');
 
         if($response) {
           $this->session->set_flashdata('info', 'Branch Insert Successfully..!');

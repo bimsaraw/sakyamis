@@ -19,6 +19,8 @@ class Classrooms extends CI_Controller {
 
         $data['classes'] = $this->classroom_model->get_classes();
 
+        $this->user_model->save_user_log($username,'Viewed classrooms.');
+
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('classrooms/index', $data);
@@ -37,6 +39,8 @@ class Classrooms extends CI_Controller {
         $response = $this->classroom_model->add();
 
         $data['classes'] = $this->classroom_model->get_classes();
+
+        $this->user_model->save_user_log($username,'Classroom added.');
 
         if($response) {
             $data['msg'] = 1;

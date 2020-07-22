@@ -73,6 +73,7 @@ class Attendance extends CI_Controller {
       if($this->user_model->validate_permission($username,39)) { 
           $studentID= $this->input->post('studentId');
           $data = $this->attendance_model->get_attendance_detail($studentID);
+          $this->user_model->save_user_log($username,'Viewed attendance report.');
           header('Content-Type: application/json');
           echo json_encode($data);
       } else {
@@ -87,6 +88,7 @@ public function get_single_detail() {
       $date= $this->input->post('date');
       $time= $this->input->post('time');
       $data = $this->attendance_model->get_single_detail($studentID,$date,$time);
+      $this->user_model->save_user_log($username,'Viewed remarks of '.$studentID.' for '.$date);
       header('Content-Type: application/json');
       echo json_encode($data);
   } else {
@@ -104,6 +106,8 @@ public function get_single_detail() {
       $this->load->view('templates/sidebar', $data);
       $this->load->view('attendance/report', $data);
       $this->load->view('templates/footer');
+
+      $this->user_model->save_user_log($username,'Viewed attendance report.');
     } else {
       redirect('/?msg=noperm', 'refresh');
     }
@@ -113,9 +117,13 @@ public function get_single_detail() {
     $username = $this->session->userdata('username');
     if($this->user_model->validate_permission($username,43)) {  
       $response = $this->attendance_model->delete_attendance();
+
+      $id= $this->input->post('studentId');
      
       if($response) {
         $this->session->set_flashdata('info', 'Attendance Delete Successfully..!');
+
+        $this->user_model->save_user_log($username,'Attendance deleted for '.$id);
         echo "success";
        
       } else {
@@ -132,9 +140,12 @@ public function get_single_detail() {
     $username = $this->session->userdata('username');
     if($this->user_model->validate_permission($username,40)) {  
       $response = $this->attendance_model->add_remark();
+
+      $id= $this->input->post('mr_studentID');
      
       if($response) {
         $this->session->set_flashdata('info', 'Attendance remark added Successfully..!');
+        $this->user_model->save_user_log($username,'Attendance remark added for '.$id);
         echo "success";
       } else {
         $this->session->set_flashdata('error', 'Attendance remark added Unsuccessfully..!');
@@ -150,10 +161,13 @@ public function get_single_detail() {
     $username = $this->session->userdata('username');
     if($this->user_model->validate_permission($username,40)) {  
       $response = $this->attendance_model->change_status();
+
+      $id= $this->input->post('studentId');
      
       if($response) {
         $this->session->set_flashdata('success', 'Attendance finance visit update Successfully..!');
         echo "success";
+        $this->user_model->save_user_log($username,'Attendance status changed for '.$id);
       } else {
         $this->session->set_flashdata('danger', 'Attendance finance visit update Unsuccessfully..!'); 
         echo "unsuccess";

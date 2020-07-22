@@ -50,6 +50,8 @@ class Batches extends CI_Controller
                 $data['msg'] = 0;
             }
 
+            $this->user_model->save_user_log($username,'Batch Added');
+
             $this->load->view('templates/header', $data);
             $this->load->view('templates/sidebar', $data);
             $this->load->view('batches/index', $data);
@@ -70,6 +72,8 @@ class Batches extends CI_Controller
           } else {
               $data['msg'] = 0;
           }
+          $this->user_model->save_user_log($username,'Batch edited.');
+
           $this->session->set_flashdata('info', 'Batch Edit Successfully..!');
           redirect(base_url() . 'index.php/Batches');
         } else {
@@ -85,6 +89,7 @@ class Batches extends CI_Controller
         
           $batchid = $this->input->get('batchid');
           $response = $this->batch_model->delete_batch($batchid);
+          $this->user_model->save_user_log($username,'Batch deleted. '.$batchId);
           if($response) {
             $this->session->set_flashdata('info', 'Batch Delete Successfully..!');
             redirect(base_url() . 'index.php/Batches');
@@ -131,6 +136,8 @@ class Batches extends CI_Controller
         $batchId = $this->input->post('batchId');
 
         $response = $this->batch_model->set_status($batchId,$status);
+
+        $this->user_model->save_user_log($username,'Set registration status of batch. '.$batchId.' to '.$status);
 
         if($response) {
           echo $response->status;

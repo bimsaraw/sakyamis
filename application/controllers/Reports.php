@@ -125,6 +125,8 @@ class Reports extends CI_Controller
               $this->load->view('templates/sidebar', $data);
               $this->load->view('reports/payment_plans_report', $data);
               $this->load->view('templates/footer');
+
+              $this->user_model->save_user_log($username, 'Viewed payment plan wise student report');
           } else {
               redirect('/?msg=noperm', 'refresh');
           }
@@ -155,6 +157,8 @@ class Reports extends CI_Controller
               $this->load->view('templates/sidebar', $data);
               $this->load->view('reports/outstanding_report', $data);
               $this->load->view('templates/footer');
+
+              $this->user_model->save_user_log($username, 'Viewed payment outstanding report');
           } else {
               redirect('/?msg=noperm', 'refresh');
           }
@@ -215,6 +219,8 @@ class Reports extends CI_Controller
               $this->load->view('templates/sidebar', $data);
               $this->load->view('reports/payment_report', $data);
               $this->load->view('templates/footer');
+
+              $this->user_model->save_user_log($username, 'Viewed total payments report');
           } else {
               redirect('/?msg=noperm', 'refresh');
           }
@@ -243,6 +249,8 @@ class Reports extends CI_Controller
               $this->load->view('templates/sidebar', $data);
               $this->load->view('reports/attendance_report', $data);
               $this->load->view('templates/footer');
+
+              $this->user_model->save_user_log($username, 'Viewed attendance report');
           } else {
               redirect('/?msg=noperm', 'refresh');
           }

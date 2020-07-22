@@ -19,6 +19,8 @@ class Courses extends CI_Controller {
 
         $data['courses'] = $this->course_model->get_courses();
 
+        $this->user_model->save_user_log($username,'Viewed courses.');
+
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('courses/index', $data);
@@ -39,6 +41,9 @@ class Courses extends CI_Controller {
         } else {
             $data['msg'] = 0;
         }
+
+        $this->user_model->save_user_log($username,'Course edited.');
+
         $this->session->set_flashdata('info', 'Course Edit Successfully..!');
         redirect(base_url() . 'index.php/courses');
       } else {
@@ -53,6 +58,8 @@ class Courses extends CI_Controller {
       if($this->user_model->validate_permission($username,35)) {
         $courseid = $this->input->get('courseid');
         $response = $this->course_model->delete_course($courseid);
+
+        $this->user_model->save_user_log($username,'Course deleted'.$courseid);
        
         if($response) {
           $this->session->set_flashdata('info', 'Course Delete Successfully..!');
@@ -76,6 +83,8 @@ class Courses extends CI_Controller {
         $response = $this->course_model->add();
         $data['title'] = 'Course Details';
         $data['courses'] = $this->course_model->get_courses();
+
+        $this->user_model->save_user_log($username,'Course added.');
 
         if($response) {
           $this->session->set_flashdata('info', 'Course Insert Successfully..!');

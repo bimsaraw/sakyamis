@@ -212,7 +212,7 @@
                             ?>
                             
                             <tr <?php if($paid==true){ echo "class='tabletr'";} ?>>
-                              <td><input type="hidden" class="form-control form-control-sm no-border edit" name="installmentId[]" value="<?= $installment['id']; ?>"   required  ><?= $installment['id']; ?></td>
+                              <td><input type="hidden" class="form-control form-control-sm no-border edit installmentId" name="installmentId[]" value="<?= $installment['id']; ?>"   required  ><?= $installment['id']; ?></td>
                               <td><input type="text" class="form-control form-control-sm no-border edit"  name="installmentName[]" value="<?= $installment['name']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
                               <td><input type="text" class="form-control form-control-sm no-border form-control-currency edit"  name="amount[]" value="<?= $installment['amount']; ?>" data-currency-type="<?= $installment['currency']; ?>" <?php if($paid==true){echo "readonly";}?> required></td>
                               <?php if($paid==false) {?> 
@@ -504,6 +504,7 @@ function new_row() {
     verify();
     var table = document.getElementById("tablepp");
     var totalRowCount = table.rows.length;
+    var newId = parseInt($('.installmentId:last').val())+1;
     var row = table.insertRow(totalRowCount);
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
@@ -511,11 +512,11 @@ function new_row() {
     var cell4 = row.insertCell(3);
     var cell5 = row.insertCell(4);
     var cell6 = row.insertCell(5);
-    cell1.innerHTML = '<input type="hidden" class="bottom-border edit" required  name="installmentId[]" value="'+ totalRowCount +'">'+ totalRowCount;
+    cell1.innerHTML = '<input type="hidden" class="bottom-border edit installmentId" required  name="installmentId[]" value="'+ newId +'">'+ newId;
     cell2.innerHTML = '<input type="text" class="form-control form-control-sm edit" required name="installmentName[]" value="" >';
-    cell3.innerHTML = '<input type="text" class="form-control form-control-sm edit form-control-currency" id="a_'+totalRowCount+'" required name="amount[] " data-currency-type="lkr" value="0">';
+    cell3.innerHTML = '<input type="text" class="form-control form-control-sm edit form-control-currency" id="a_'+newId+'" required name="amount[] " data-currency-type="lkr" value="0">';
     cell4.innerHTML = 
-    '<td> <select class="form-control form-control-sm edit" name="currency[]" id="'+totalRowCount+'" value="" required onchange="change_attribute(this)"><option value="lkr" >lkr</option><option value="gbp">gbp</option><option value="usd">usd</option></td>';
+    '<td> <select class="form-control form-control-sm edit" name="currency[]" id="'+newId+'" value="" required onchange="change_attribute(this)"><option value="lkr" >lkr</option><option value="gbp">gbp</option><option value="usd">usd</option></td>';
     cell5.innerHTML = '<input type="text" class="date form-control form-control-sm edit" required name="date[]" value="">';
     cell6.innerHTML ='<td><button type="button" class="btn btn-outline-danger btn-sm deleteRow"><i class="fas fa-times"></button></td>'
     document.getElementById("submit_button").disabled =true;
