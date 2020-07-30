@@ -15,7 +15,7 @@ if($username=="") {
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>SaegisMIS</title>
+<title>SIBT MIS</title>
 
 <!-- Bootstrap core CSS-->
 <link href="<?php echo base_url(); ?>vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">

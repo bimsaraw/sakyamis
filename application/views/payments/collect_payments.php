@@ -284,7 +284,7 @@
       );
     })
     $('body').on('keyup','.edit', function(){
-      document.getElementById("submit_button").disabled =true;
+     
       verify();
     });
 
@@ -294,7 +294,7 @@
     });
 
     $('.selectCurrency').on('change','.selectCurrency', function(){
-      document.getElementById("submit_button").disabled =true;
+     
       verify();
     });
   });
@@ -354,11 +354,11 @@
               tbl_usd.value = usd.toFixed(2);
             }
              if (c_lkr==parseFloat(lkr) && c_gbp==parseFloat(gbp) && c_usd==parseFloat(usd)){
-               document.getElementById("submit_button").disabled =false;
                document.getElementById("btnverify").innerHTML = "Verified";
+               document.getElementById("submit_button").disabled =false;
              }   else {
-              document.getElementById("submit_button").disabled =true;
               document.getElementById("btnverify").innerHTML = "Verify";
+              document.getElementById("submit_button").disabled =false;
              }
  }
  
