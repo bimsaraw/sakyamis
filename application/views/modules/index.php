@@ -98,42 +98,6 @@
 </div>
 <!--/ Add course modal -->
 
-<!-- Add Module Modal -->
-<div class="modal" tabindex="-1" role="dialog" id="modalAddModule">
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Add Course</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <?php echo form_open('modules/addModule', array('id'=>'frmAddModule')); ?>
-        <div class="modal-body">
-            <input type="hidden" id="moduleCourse" class="form-control form-control-sm" readonly>
-            <div class="form-group">
-                <label for="moduleName">Module Name</label>
-                <input type="text" class="form-control form-control-sm" id="moduleName" required>
-            </div>
-            <div class="form-group">
-                <label for="moduleSemester">Semester</label>
-                <select id="moduleSemester" class="form-control form-control-sm" required>
-                    <option value="">- Select Semester -</option>
-                    <?php foreach($semesters as $semester) { ?>
-                        <option value="<?php echo $semester['id']; ?>"><?php echo $semester['name']; ?></option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="submit" name="btnAddModule" class="btn btn-outline-danger btn-sm">Save changes</button>
-            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-        </div>
-        <?php echo form_close(); ?>
-    </div>
-</div>
-</div>
-<!--/ Add course modal -->
 
 <div class="modal" tabindex="-1" role="dialog" id="modalDeleteModule" role="dialog">
 <div class="modal-dialog" role="document">
@@ -229,6 +193,11 @@
                     if(response==1) {
                         get_modules(course);
                         $('#modalAddModule').modal('hide');
+                    }
+                    if(response==3) {
+                    $('#alertArea').show();
+                    $('#alertArea').addClass("alert-warning");
+                    $('#alertArea').html("Permissions denied!");
                     }
                 }
             });

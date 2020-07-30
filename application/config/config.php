@@ -25,7 +25,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 date_default_timezone_set('Asia/Colombo');
 
-$config['base_url'] = 'http://localhost/sakyamis';
+$config['base_url'] = 'http://192.168.2.204/sibtmis';
 
 /*
 |--------------------------------------------------------------------------

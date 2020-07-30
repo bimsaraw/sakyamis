@@ -17,10 +17,20 @@
               <form id="frmEnrollStudent" method="post" action="<?= base_url(); ?>index.php/enrollments/enroll_student">
 
                 <hr>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label>Branch</label><span class="required"> *</span>
+                    <select class="form-control form-control-sm" id="branchId" name="branchId" required>
+                      <option value="">- Please select -</option>
+                      <?php foreach($branches as $branch) { ?>
+                        <option value="<?=$branch['id']; ?>"><?=$branch['name']; ?></option>
+                      <?php } ?>
+                    </select>
+                  </div>
+                </div>
                 <div id="personalDetails">
                   <h6>Personal Details</h6>
                   <hr>
-
                   <div class="form-row">
                     <div class="form-group col-md-1">
                       <label>Title <span class="required">*</span></label>

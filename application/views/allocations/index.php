@@ -90,6 +90,7 @@
         <div class="modal-footer">
             <input type="hidden" id="inputAllocateId">
             <input type="hidden" id="inputDate">
+            <a href="" type="button" class="btn btn-info btn-sm"  id="btnmarkAttEvent">Mark Attendance</a>
             <button type="button" class="btn btn-danger btn-sm" id="btnDelete">Delete Allocation</button>
             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
         </div>
@@ -172,7 +173,7 @@
                 },
                 onClick: function(event, timetable, clickEvent) {
                     editEvent(<?= $a['id']; ?>);
-                }
+                }              
             };
 
             timetable.addEvent("<?= $a['name']; ?>","<?= $a['classroomName']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),optionsEvent);
@@ -221,6 +222,7 @@
                     $('#tblBatch').html(val.batchName);
                     $('#tblTime').html(val.startTime+" - "+val.endTime);
                     $('#tblLecturer').html(val.lecturerName);
+                    $("#btnmarkAttEvent").attr("href", "<?= base_url(); ?>index.php/attendance/classroom_attendance?allocate_id="+id);
                     if(val.purpose==1) {
                         $('#tblPurpose').html('Lecture');
                     } else if(val.purpose==2) {
@@ -248,7 +250,6 @@
                     $('#inputEventDate').val(val.date);
                     $('#tblTimeEvent').html(val.startTime+" - "+val.endTime);
                     $('#tblPurposeEvent').html(val.name);
-
                     $('#viewModalEvent').modal('show');
                     $.unblockUI();
                 });

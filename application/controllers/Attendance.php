@@ -32,6 +32,21 @@ class Attendance extends CI_Controller {
     }
   }
 
+  public function classroom_attendance() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,24)) {
+      $data['title'] = 'Student Attendance - Classroom';
+
+      $this->load->view('templates/header', $data);
+      $this->load->view('templates/sidebar', $data);
+      $this->load->view('attendance/classroom_attendance', $data);
+      $this->load->view('templates/footer');
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
   public function full_screen() {
     $username = $this->session->userdata('username');
 
@@ -44,6 +59,19 @@ class Attendance extends CI_Controller {
     }
   }
 
+  public function full_screen_class() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,24)) {
+      $data['title'] = 'Student Attendance - Classroom';
+
+      $this->load->view('attendance/full_screen_class', $data);
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
+  
   public function mark_attendance_entrance() {
     $studentId = $this->input->post('studentId');
     $date = date('Y-m-d');
@@ -60,6 +88,32 @@ class Attendance extends CI_Controller {
       }
     }
   }
+
+  public function mark_attendance_classroom() {
+    $date = date('Y-m-d');
+    $time = date('H:i:sa');
+    $studentId = $this->input->post('studentId');
+    $allocate_id =$this->input->post('allocate_id');
+
+     $response_class_student = $this->attendance_model->check_clss_attendance($studentId,$allocate_id);
+    if($response_class_student=='batch-pass'){
+      if($response = $this->payment_model->validate_payments($studentId,$date)) {
+        if($response == 1) {
+          echo 'batch-pass';
+          $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+        } else {
+          header('Content-Type: application/json');
+          $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+          echo json_encode( $response );
+        }
+      }
+    }else{
+      echo 'batch-fail';
+    }
+   
+  }
+
+
 
   public function get_attendance_history() {
     $studentId = $this->input->post('studentId');
@@ -81,6 +135,23 @@ class Attendance extends CI_Controller {
       }
 }
 
+
+
+public function get_classroom_attendance_detail() {
+  $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,39)) { 
+        $studentID= $this->input->post('studentId');
+        $data = $this->attendance_model->get_classroom_attendance_detail($studentID);
+        $this->user_model->save_user_log($username,'Viewed attendance report.');
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    } else {
+      echo "no-perm";
+    }
+}
+
+
+
 public function get_single_detail() {
   $username = $this->session->userdata('username');
   if($this->user_model->validate_permission($username,39)) { 
@@ -96,7 +167,7 @@ public function get_single_detail() {
   }
 }
 
-  public function report() {
+  public function entrance_report() {
     $username = $this->session->userdata('username');
 
     if($this->user_model->validate_permission($username,39)) {
@@ -104,7 +175,24 @@ public function get_single_detail() {
 
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
-      $this->load->view('attendance/report', $data);
+      $this->load->view('attendance/entrance_report', $data);
+      $this->load->view('templates/footer');
+
+      $this->user_model->save_user_log($username,'Viewed attendance report.');
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
+  public function classroom_report() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,39)) {
+      $data['title'] = 'Student Attendance - Report';
+
+      $this->load->view('templates/header', $data);
+      $this->load->view('templates/sidebar', $data);
+      $this->load->view('attendance/classroom_report', $data);
       $this->load->view('templates/footer');
 
       $this->user_model->save_user_log($username,'Viewed attendance report.');
@@ -136,12 +224,35 @@ public function get_single_detail() {
     }
   }
 
+  public function delete_clss_attendance() {
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,43)) {  
+      $response = $this->attendance_model->delete_clss_attendance();
+
+      $id= $this->input->post('studentId');
+     
+      if($response) {
+        $this->session->set_flashdata('info', 'Attendance Delete Successfully..!');
+
+        $this->user_model->save_user_log($username,'Attendance deleted for '.$id);
+        echo "success";
+       
+      } else {
+        $this->session->set_flashdata('info', 'Attendance Delete Unsuccessfully..!');
+        echo "unsuccess";
+      }
+
+    } else {
+      echo "no-perm";
+    }
+  }
+
   public function add_remark() {
     $username = $this->session->userdata('username');
-    if($this->user_model->validate_permission($username,40)) {  
+    if($this->user_model->validate_permission($username,43)) {  
       $response = $this->attendance_model->add_remark();
 
-      $id= $this->input->post('mr_studentID');
+      $id= $this->input->post('studentID');
      
       if($response) {
         $this->session->set_flashdata('info', 'Attendance remark added Successfully..!');

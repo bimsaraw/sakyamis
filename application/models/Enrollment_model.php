@@ -18,6 +18,11 @@ class Enrollment_model extends CI_Model {
 
     return $query->row();
   }
+  public function get_branch() {
+    $this->db->order_by('name','asc');
+    $query = $this->db->get('branch');
+    return $query->result_array();
+}
 
   public function get_students_enrolled($courseId) {
     $this->db->select('course_enroll.*,student.*,course.name AS courseName, payment_plan.name AS pplan_name, intakes.name AS intakeName, batch.name AS batchName, inquiry.username AS counselor');
@@ -117,6 +122,7 @@ class Enrollment_model extends CI_Model {
   }
 
   public function save_student_data($studentId) {
+    $BranchId = $this->input->post('BranchId');
     $inquiryId = $this->input->post('inquiryId');
     $title = $this->input->post('title');
     $full_name = $this->input->post('full_name');
@@ -182,7 +188,7 @@ class Enrollment_model extends CI_Model {
       'nic_copy' => $nic_copy,
       'other_certificates' => $other_certificates,
       'remarks' => $remarks,
-      'datetime' => $date_time
+      'datetime' => $date_time,
     );
 
     $this->db->where('nic',$nic);
@@ -205,7 +211,7 @@ class Enrollment_model extends CI_Model {
     }
   }
 
-  public function course_enroll($studentId,$username) {
+  public function course_enroll($studentId,$username,$branchId) {
     $courseId = $this->input->post('courseId');
     $inquiryId = $this->input->post('inquiryId');
     $pplanId = $this->input->post('pplanId');
@@ -221,7 +227,8 @@ class Enrollment_model extends CI_Model {
       'batchId' => $batchId,
       'intakeId' => $intakeId,
       'datetime' => $datetime,
-      'username' => $username
+      'username' => $username,
+      'branchId' => $branchId,
     );
 
     $this->db->where('studentId',$studentId);
@@ -270,7 +277,7 @@ class Enrollment_model extends CI_Model {
       'nic_copy' => $row['nic_copy'],
       'other_certificates' => $row['other_certificates'],
       'remarks' => $row['remarks'],
-      'datetime' => $row['date_registered']
+      'datetime' => $row['date_registered'],
     );
 
     $this->db->where('nic',$row['nic']);

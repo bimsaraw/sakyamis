@@ -308,6 +308,11 @@ class Inquiry_model extends CI_Model {
       return $query->result_array();
     }
   }
+  public function get_branch() {
+    $this->db->order_by('name','asc');
+    $query = $this->db->get('branch');
+    return $query->result_array();
+}
 
   public function view_inquiries($courseId,$username,$type,$followUps,$range,$name) {
     if($username=="") {

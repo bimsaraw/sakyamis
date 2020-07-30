@@ -25,6 +25,7 @@ class Enrollments extends CI_Controller {
       $data['courses'] = $this->course_model->get_courses();
       $data['intakes'] = $this->inquiry_model->get_intakes();
       $data['batches'] = $this->batch_model->get_batches();
+      $data['branches'] = $this->enrollment_model->get_branch();
 
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
@@ -54,6 +55,7 @@ class Enrollments extends CI_Controller {
 
       $data['courses'] = $this->course_model->get_courses();
       $data['intakes'] = $this->inquiry_model->get_intakes();
+      $data['branches'] = $this->enrollment_model->get_branch();
 
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
@@ -86,7 +88,7 @@ class Enrollments extends CI_Controller {
       $data['courses'] = $this->course_model->get_courses();
       $data['intakes'] = $this->inquiry_model->get_intakes();
       $data['studentId'] = $studentId;
-
+      $data['branches'] = $this->enrollment_model->get_branch();
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
       $this->load->view('enrollments/course_enroll', $data);
@@ -116,6 +118,7 @@ class Enrollments extends CI_Controller {
 
       $data['courses'] = $this->course_model->get_courses();
       $data['intakes'] = $this->inquiry_model->get_intakes();
+      $data['branches'] = $this->enrollment_model->get_branch();
 
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
@@ -142,6 +145,7 @@ class Enrollments extends CI_Controller {
 
       $data['courses'] = $this->course_model->get_courses();
       $data['intakes'] = $this->inquiry_model->get_intakes();
+      $data['branches'] = $this->enrollment_model->get_branch();
 
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
@@ -169,6 +173,7 @@ class Enrollments extends CI_Controller {
     $username = $this->session->userdata('username');
 
     if($this->user_model->validate_permission($username,13)) {
+      $branchId = $this->input->post('branchId');
       $courseId = $this->input->post('courseId');
       $intakeId = $this->input->post('intakeId');
       $nic = $this->input->post('nic');
@@ -186,7 +191,7 @@ class Enrollments extends CI_Controller {
 
       if($this->enrollment_model->save_student_data($studentId)) {
 
-        if($this->enrollment_model->course_enroll($studentId,$username)) {
+        if($this->enrollment_model->course_enroll($studentId,$username,$branchId)) {
           $this->inquiry_model->update_registered($this->input->post('inquiryId'));
 
           $data['title'] = 'Enrollment Status';
@@ -210,6 +215,7 @@ class Enrollments extends CI_Controller {
           $data['studentId'] = $studentId;
           $data['courseId'] = $courseId;
           $data['status'] = "error";
+          $data['branchId'] = $branchId;
 
           $this->load->view('templates/header', $data);
           $this->load->view('templates/sidebar', $data);

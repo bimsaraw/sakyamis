@@ -14,7 +14,7 @@ class Branches extends CI_Controller {
     public function index() {
       $username = $this->session->userdata('username');
 
-      if($this->user_model->validate_permission($username,35)) {
+      if($this->user_model->validate_permission($username,38)) {
         $data['title'] = 'Branch Details';
 
         $data['branches'] = $this->branches_model->get_branch();
@@ -33,7 +33,7 @@ class Branches extends CI_Controller {
     public function edit_branch() {
       $username = $this->session->userdata('username');
 
-      if($this->user_model->validate_permission($username,35)) {
+      if($this->user_model->validate_permission($username,38)) {
         $response = $this->branches_model->edit();
      
         if($response) {
@@ -55,7 +55,7 @@ class Branches extends CI_Controller {
     public function delete() {
       $username = $this->session->userdata('username');
 
-      if($this->user_model->validate_permission($username,35)) {
+      if($this->user_model->validate_permission($username,38)) {
         $branchid = $this->input->get('branchid');
         $response = $this->branches_model->delete_branch($branchid);
 

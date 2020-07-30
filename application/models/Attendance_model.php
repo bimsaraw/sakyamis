@@ -18,6 +18,17 @@ class Attendance_model extends CI_Model {
     return $this->db->insert('attendance',$data);
   }
 
+  public function save_attendance_classroom($studentId,$date,$time,$allocateId) {
+    $data = array(
+      'studentId'=>$studentId,
+      'date'=>$date,
+      'time'=>$time,
+      'allocateId'=>$allocateId
+    );
+
+    return $this->db->insert('classroom_attendance',$data);
+  }
+
   public function get_attendance_history($studentId) {
     $this->db->where('studentId',$studentId);
     $this->db->limit(14);
@@ -32,6 +43,51 @@ class Attendance_model extends CI_Model {
     $this->db->from('attendance');
     $this->db->join('student', 'attendance.studentId = student.studentId');
     $this->db->where('attendance.studentId',$studentId);
+    $this->db->order_by('date desc,time desc');
+    $query = $this->db->get();
+    
+    return $query->result_array();
+  }
+
+  public function check_clss_attendance($studentId,$allocate_id) {
+    $this->db->select('allocate.batchId,allocate.courseId');
+    $this->db->from('allocate');
+    $this->db->where('id',$allocate_id);
+    $query = $this->db->get();
+    $allocate = $query->result_array();
+    $allocate_batch; 
+    $allocate_courseId;
+    foreach ($allocate as $allc){
+      $allocate_batch= $allc['batchId'];
+      $allocate_courseId = $allc['courseId'];
+    }
+
+    $this->db->select('course_enroll.batchId');
+    $this->db->from('course_enroll');
+    $this->db->where('studentId',$studentId);
+    $this->db->where('courseId',$allocate_courseId);
+    $query2 = $this->db->get();
+    $course_e = $query2->result_array();
+    $course_enroll_batch;
+    foreach ($course_e as $ce){
+      $course_enroll_batch= $ce['batchId'];
+    }
+    
+    if ($allocate_batch==$course_enroll_batch){
+      return "batch-pass";
+    }else {
+      return "batch-fail";
+    }
+    
+  }
+
+  public function get_classroom_attendance_detail($studentId) {
+    $this->db->select('classroom_attendance.*,student.full_name,allocate.batchId as batch,batch.name as batchname');
+    $this->db->from('classroom_attendance');
+    $this->db->join('student', 'classroom_attendance.studentId = student.studentId');
+    $this->db->join('allocate', 'classroom_attendance.allocateId = allocate.id');
+    $this->db->join('batch', 'allocate.batchId = batch.id');
+    $this->db->where('classroom_attendance.studentId',$studentId);
     $this->db->order_by('date desc,time desc');
     $query = $this->db->get();
     
@@ -60,6 +116,20 @@ class Attendance_model extends CI_Model {
     $this->db-> where('time', $time);
     
     return $this->db->delete('attendance');
+  }
+
+  public function delete_clss_attendance(){
+    $id= $this->input->post('studentId');
+    $date= $this->input->post('date');
+    $time = $this->input->post('time');
+    $allocateId = $this->input->post('allocateId');
+    
+    $this->db-> where('studentId', $id);
+    $this->db-> where('date', $date);
+    $this->db-> where('time', $time);
+    $this->db-> where('allocateId',$allocateId);
+    
+    return $this->db->delete('classroom_attendance');
   }
 
   public function add_remark(){

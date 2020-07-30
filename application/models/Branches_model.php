@@ -49,7 +49,6 @@ class Branches_model extends CI_Model {
         $this->db->select('*');
         $this->db->from('branch');
         $this->db->where('id',$branchid);
-  
         $query = $this->db->get();
         foreach ($query->result() as $data) {
             $response[] = $data;

@@ -298,7 +298,7 @@
          data: form.serialize(),
          success: function(response) {
            t.clear().draw();
-
+           console.log(response);
            var remarks;
 
            $.each(response,function(key, val) {
@@ -367,7 +367,7 @@
           t.clear().draw();
 
           var remarks;
-
+         
           $.each(response,function(key, val) {
 
             var register;

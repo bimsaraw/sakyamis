@@ -315,7 +315,6 @@ class Inquiries extends CI_Controller {
       $data['courses'] = $this->course_model->get_courses();
       $data['mediums'] = $this->inquiry_model->get_inquiry_medium();
       $data['references'] = $this->inquiry_model->get_inquiry_reference();
-
       $data['type'] = '2';
 
       $this->load->view('templates/header', $data);
@@ -340,7 +339,6 @@ class Inquiries extends CI_Controller {
       $data['mediums'] = $this->inquiry_model->get_inquiry_medium();
       $data['references'] = $this->inquiry_model->get_inquiry_reference();
       $data['users'] =  $this->user_model->get_users_marketing();
-
       $data['results'] = $this->inquiry_model->get_inquiry_by_id($inquiry_id);
 
       $data['type'] = '2';
@@ -363,7 +361,6 @@ class Inquiries extends CI_Controller {
       $data['courses'] = $this->course_model->get_courses();
       $data['mediums'] = $this->inquiry_model->get_inquiry_medium();
       $data['references'] = $this->inquiry_model->get_inquiry_reference();
-
       $data['type'] = '1';
 
       $this->load->view('templates/header', $data);

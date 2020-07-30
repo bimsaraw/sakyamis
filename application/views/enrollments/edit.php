@@ -16,6 +16,17 @@
 
                 <hr>
                 <form id="frmpersonalDetails">
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label>Branch</label><span class="required"> *</span>
+                    <select class="form-control form-control-sm" id="BranchId" name="BranchId" required>
+                      <option value="">- Please select -</option>
+                      <?php foreach($branches as $branch) { ?>
+                        <option value="<?=$branch['id']; ?>"><?=$branch['name']; ?></option>
+                      <?php } ?>
+                    </select>
+                  </div>
+                </div>
                   <div id="personalDetails">
                     <h6>Personal Details</h6>
                     <hr>

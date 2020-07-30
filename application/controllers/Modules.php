@@ -73,7 +73,7 @@ class Modules extends CI_Controller {
                     $this->session->set_flashdata('info', 'Course Module Added Unsuccessfully..!');  
                 }
         } else {
-            redirect('/?msg=noperm', 'refresh');
+            echo "3";
         }  
     }
 

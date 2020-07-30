@@ -17,7 +17,7 @@ class Batches extends CI_Controller
     {
         $username = $this->session->userdata('username');
 
-        if ($this->user_model->validate_permission($username, 34)) {
+        if ($this->user_model->validate_permission($username,34)) {
             $data['title'] = 'Batch Details';
 
             $data['batches'] = $this->batch_model->get_batches();
@@ -38,7 +38,7 @@ class Batches extends CI_Controller
     {
         $username = $this->session->userdata('username');
 
-        if ($this->user_model->validate_permission($username, 34)) {
+        if ($this->user_model->validate_permission($username,34)) {
             $response = $this->batch_model->add_batch();
             $data['title'] = 'Course Details';
             $data['batches'] = $this->batch_model->get_batches();

@@ -18,7 +18,8 @@
           <div class="dropdown-divider"></div>
 
           <h6 class="dropdown-header">Advance Options:</h6>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/attendance/report">Report</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/attendance/entrance_report">Entrance Report</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/attendance/classroom_report">Classroom Report</a>
       </div>
   </li>
   <li class="nav-item dropdown">
