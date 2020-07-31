@@ -8,7 +8,7 @@
         </li>
         <li class="breadcrumb-item active"><?php echo $title; ?></li>
     </ol>
-
+    <div id="alertArea" class="alert" style="display:none;"> </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -36,7 +36,7 @@
                             <th>Batch Enrolled</th>
                             <th>Payment Plan</th>
                             <th>Enrolled Date</th>
-                            <th></th>
+                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -52,31 +52,37 @@
 <script>
   $(document).ready(function() {
       var t = $('#dataTable').DataTable();
-
+     
       $('#frmPaymentStudent').submit(function(e) {
           e.preventDefault();
           var form = $('#frmPaymentStudent');
           $.blockUI();
+         
           $.ajax({
            type: "GET",
            url: '<?php echo base_url(); ?>index.php/enrollments/search_student_by_id',
            data: form.serialize(),
            success: function(response) {
-             t.clear().draw();
-
+            
              $.each(response,function(key, val) {
                $('#studentName').html(val.initials_name);
              });
            }
          });
-
-          $.ajax({
+         $.ajax({
            type: "GET",
            url: '<?php echo base_url(); ?>index.php/enrollments/get_course_enrollments_by_id',
            data: form.serialize(),
            success: function(response) {
-             t.clear().draw();
-
+            console.log(response.length);
+            if (response.length==0){
+              $('#alertArea').show();
+               $('#alertArea').addClass("alert-warning");
+               $('#alertArea').html("No Student Data..!");
+            }else{
+              $('#alertArea').hide();
+            }
+            t.clear().draw();
              $.each(response,function(key, val) {
 
                t.row.add([

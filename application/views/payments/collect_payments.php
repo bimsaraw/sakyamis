@@ -24,7 +24,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-  <h5 class="card-title">Payment Plan |<?php if($Pplan_status!='Not-Approved') { ?> <button type="button" class="btn btn-info btn-sm"  onclick="edit_plan_modal()" >Edit Plan</button><?php } ?> </h5>
+  <h5 class="card-title">Payment Plan |<?php if($Pplan_status!='Not-Approved') { ?> <button type="button" class="btn btn-info btn-sm"  onclick="edit_plan_modal()" >Edit Plan</button><?php } ?>  <a href="../payments" type="button" class="btn btn-dark btn-sm float-right"> Go Back</a></h5>
+ 
+ 
+
                     <div class="table-responsive">
                       <table class="table table-stripped" id="dataTable">
                         <thead>
