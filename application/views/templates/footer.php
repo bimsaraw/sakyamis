@@ -2,7 +2,7 @@
     <footer class="sticky-footer">
         <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright © Saegis Campus <?= date('Y'); ?>. Solution by <a href="https://lk.linkedin.com/in/bimsara-walallawita">Bimsara</a>.</span>
+            <span>Copyright © Sibt Institute <?= date('Y'); ?>. Solution by <a href="https://lk.linkedin.com/in/bimsara-walallawita">Bimsara</a>.</span>
         </div>
         </div>
     </footer>

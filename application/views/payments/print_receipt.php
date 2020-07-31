@@ -50,9 +50,9 @@
   </head>
   <body>
     <div class="center header">
-      <h1>Saegis Campus (Pvt.) Ltd.</h1>
-      <p>135, S De S Jayasinghe Mw, Kohuwala, Nugegoda</p>
-      <p>011 743 0000 | www.saegis.edu.lk</p>
+      <h1>SIBT - Siksil Institute of Business & Technology </h1>
+      <p>No. 08, Pietersz Place,Kohuwala, Nugegoda. 10250 Sri Lanka</p>
+      <p>011 743 0000 | www.sibt.edu.lk</p>
     </div>
     <hr>
     <div class="content">
