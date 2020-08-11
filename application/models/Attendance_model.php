@@ -69,12 +69,13 @@ class Attendance_model extends CI_Model {
     $query2 = $this->db->get();
     $course_e = $query2->result_array();
     $rows = $query2->num_rows();
-
+    //check rows 
     if ($rows>=1){
       $course_enroll_batch=0;
       foreach ($course_e as $ce){
         $course_enroll_batch= $ce['batchId'];
       }
+      //check batch ids
         if ($allocate_batch==$course_enroll_batch){
           return 1;
         } else{
