@@ -98,7 +98,7 @@
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="scheduleType" id="scheduleExam" value="12">
+                        <input class="form-check-input" type="radio" name="scheduleType" id="scheduleExam" value="2">
                         <label class="form-check-label" for="scheduleExam">
                             Examination
                         </label>

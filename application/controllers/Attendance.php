@@ -95,23 +95,59 @@ class Attendance extends CI_Controller {
     $studentId = $this->input->post('studentId');
     $allocate_id =$this->input->post('allocate_id');
 
-     $response_class_student = $this->attendance_model->check_clss_attendance($studentId,$allocate_id);
-    if($response_class_student=='batch-pass'){
+     $response_cs = $this->attendance_model->check_clss_attendance($studentId,$allocate_id);
+   
+     if($response_cs==1){
       if($response = $this->payment_model->validate_payments($studentId,$date)) {
         if($response == 1) {
-          echo 'batch-pass';
           $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+          echo 'Batch Pass..';
         } else {
           header('Content-Type: application/json');
           $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
           echo json_encode( $response );
         }
       }
-    }else{
-      echo 'batch-fail';
+    }else if ($response_cs==0){
+      echo 'batch fail..!';
+    }else if($response_cs==2){
+      echo 'invalide..!';
     }
    
   }
+
+
+  public function get_schedule_name(){
+    $allocate_id =$this->input->post('allocateId');
+    $schedule_name = $this->attendance_model->get_schedule_name($allocate_id);
+    echo $schedule_name ;
+  }
+
+  // public function mark_attendance_classroom_auto() {
+  //   $date = date('Y-m-d');
+  //   $time = date('H:i:sa');
+  //   $studentId = $this->input->post('studentId');
+  //   $allocate_id;
+
+    
+  //   $response_cs = $this->attendance_model->check_clss_attendance($studentId,$allocate_id);
+ 
+  //    if($response_cs==true){
+  //     if($response = $this->payment_model->validate_payments($studentId,$date)) {
+  //       if($response == 1) {
+  //         $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+  //         echo 'bp';
+  //       } else {
+  //         header('Content-Type: application/json');
+  //         $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+  //         echo json_encode( $response );
+  //       }
+  //     }
+  //   }else{
+  //     echo 'bf';
+  //   }
+   
+  // }
 
 
 

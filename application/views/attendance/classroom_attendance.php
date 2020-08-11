@@ -14,6 +14,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Mark Student Attendance - Classroom</h5>
+                    <span id="lblcoursename" class="progress-info progress-pending"></span>
                     <hr>
                     <form id="frmAttendance">
                         <div class="form-row">
@@ -87,6 +88,19 @@
 <script>
   $(document).ready(function() {
       var t = $('#dataTable').DataTable();
+      var allocateId = $("#allocate_id").val();
+      console.log(allocateId);
+
+ $.ajax({
+           type: "POST",
+           url: '<?php echo base_url(); ?>index.php/attendance/get_schedule_name',
+           data: {allocateId:allocateId},
+           success: function(response) {
+              console.log(response);
+              $('#lblcoursename').html(response);
+           }
+ });
+
 
       $('#frmAttendance').submit(function(e) {
           e.preventDefault();
@@ -111,30 +125,44 @@
 
                $('#responseText').html(markup);
                $('#alertArea').show();
+               $('#alertArea').removeClass("alert-danger");
+               $('#alertArea').removeClass("alert-warning");
                $('#alertArea').removeClass("alert-success");
-               $('#alertArea').addClass("alert-danger");
+               $('#alertArea').addClass("alert-success");
 
                $('#alertArea').html("There are some issues with payments! <button class='btn btn-sm btn-danger' onclick=viewHistory('"+studentId+"')>History</button>");
              } else {
-                if (response=='batch-pass') {
+                if (response=='Batch Pass..') {
                       $('#responseTable').hide();
                       $('#alertArea').show();
-                      $('#alertArea').addClass("alert-success");
                       $('#alertArea').removeClass("alert-danger");
+                      $('#alertArea').removeClass("alert-warning");
+                      $('#alertArea').addClass("alert-success");
                       $('#alertArea').html("Successfully marked attendance. <button class='btn btn-sm btn-success' onclick=viewHistory('"+studentId+"')>History</button>");
-                }else if (response=='batch-fail'){
+                }else if (response=='batch fail..!'){
                   $('#responseTable').hide();
                   $('#alertArea').show();
+                  $('#alertArea').removeClass("alert-warning");
                   $('#alertArea').removeClass("alert-success");
                   $('#alertArea').addClass("alert-danger");
                   $('#alertArea').html("This Student ID cannot accept to this class schedule...!");
+                }else if (response=='invalide..!'){
+                  $('#responseTable').hide();
+                  $('#alertArea').show();
+                  $('#alertArea').removeClass("alert-danger");
+                  $('#alertArea').removeClass("alert-warning");
+                  $('#alertArea').removeClass("alert-success");
+                  $('#alertArea').addClass("alert-warning");
+                  $('#alertArea').html("Sorry..! Invalide student ID..");
                 }
+                
              }
              $.unblockUI();
              $('#studentId').focus();
              $('#studentId').val('');
            },
            error: function() {
+            $('#responseTable').hide();
              $('#alertArea').show();
              $('#alertArea').removeClass("alert-success");
              $('#alertArea').addClass("alert-danger");

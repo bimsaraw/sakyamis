@@ -68,17 +68,21 @@ class Attendance_model extends CI_Model {
     $this->db->where('courseId',$allocate_courseId);
     $query2 = $this->db->get();
     $course_e = $query2->result_array();
-    $course_enroll_batch;
-    foreach ($course_e as $ce){
-      $course_enroll_batch= $ce['batchId'];
+    $rows = $query2->num_rows();
+
+    if ($rows>=1){
+      $course_enroll_batch=0;
+      foreach ($course_e as $ce){
+        $course_enroll_batch= $ce['batchId'];
+      }
+        if ($allocate_batch==$course_enroll_batch){
+          return 1;
+        } else{
+          return 0;
+        }
+    } else {
+      return 2;
     }
-    
-    if ($allocate_batch==$course_enroll_batch){
-      return "batch-pass";
-    }else {
-      return "batch-fail";
-    }
-    
   }
 
   public function get_classroom_attendance_detail($studentId) {
@@ -161,5 +165,32 @@ class Attendance_model extends CI_Model {
     );
     return $this->db->update('attendance',$data);
   }
+
+  public function get_schedule_name($allocate_id){
+    $this->db->select('course.name,allocate.batchId');
+    $this->db->from('allocate');
+    $this->db->join('course', 'course.id = allocate.courseId');
+    $this->db->where('allocate.id',$allocate_id);
+    
+    $query = $this->db->get();
+    $ret = $query->row();
+    return $ret->name;
+  }
+
+  // public function get_stu_courses($studentId){
+  //   $this->db->select('courseId');
+  //   $this->db->where('studentId',$studentId);
+  //   $query = $this->db->get('course_enroll');
+  //   return $query->result_array();
+  // }
+
+  // public function select_allocate(){
+
+  //   $date =date('Y-m-d');
+  //   $newTime=  date("H:i:s", strtotime("-30 minutes"));
+  //   $sql ="select * from allocate where startTime >=? AND date=?";
+  //   $query = $this->db->query($sql, array($newTime,$date));
+  //   return $query->result_array();
+  // }
 
 }
