@@ -90,7 +90,7 @@
       var t = $('#dataTable').DataTable();
       var allocateId = $("#allocate_id").val();
       console.log(allocateId);
-
+//get scheduled course
  $.ajax({
            type: "POST",
            url: '<?php echo base_url(); ?>index.php/attendance/get_schedule_name',
@@ -100,7 +100,6 @@
               $('#lblcoursename').html(response);
            }
  });
-
 
       $('#frmAttendance').submit(function(e) {
           e.preventDefault();
