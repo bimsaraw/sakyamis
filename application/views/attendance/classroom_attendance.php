@@ -129,30 +129,41 @@
                $('#alertArea').removeClass("alert-success");
                $('#alertArea').addClass("alert-success");
 
-               $('#alertArea').html("There are some issues with payments! <button class='btn btn-sm btn-danger' onclick=viewHistory('"+studentId+"')>History</button>");
+               $('#alertArea').html("<h5>Thank You..! </h5>There are some issues with payments! <button class='btn btn-sm btn-danger' onclick=viewHistory('"+studentId+"')>History</button>");
              } else {
                 if (response=='Batch Pass..') {
                       $('#responseTable').hide();
                       $('#alertArea').show();
                       $('#alertArea').removeClass("alert-danger");
                       $('#alertArea').removeClass("alert-warning");
+                      $('#alertArea').removeClass("alert-info");
                       $('#alertArea').addClass("alert-success");
-                      $('#alertArea').html("Successfully marked attendance. <button class='btn btn-sm btn-success' onclick=viewHistory('"+studentId+"')>History</button>");
+                      $('#alertArea').html("<h5>Thank You..! </h5> <button class='btn btn-sm btn-success' onclick=viewHistory('"+studentId+"')>History</button>");
                 }else if (response=='batch fail..!'){
                   $('#responseTable').hide();
                   $('#alertArea').show();
                   $('#alertArea').removeClass("alert-warning");
                   $('#alertArea').removeClass("alert-success");
+                  $('#alertArea').removeClass("alert-info");
                   $('#alertArea').addClass("alert-danger");
-                  $('#alertArea').html("This Student ID cannot accept to this class schedule...!");
+                  $('#alertArea').html("<h5>Sorry..! </h5>This Student ID cannot accept to this Course schedule...!");
                 }else if (response=='invalide..!'){
                   $('#responseTable').hide();
                   $('#alertArea').show();
                   $('#alertArea').removeClass("alert-danger");
                   $('#alertArea').removeClass("alert-warning");
                   $('#alertArea').removeClass("alert-success");
+                  $('#alertArea').removeClass("alert-info");
                   $('#alertArea').addClass("alert-warning");
-                  $('#alertArea').html("Sorry..! Invalide student ID..");
+                  $('#alertArea').html("<h5>Sorry..! </h5> Invalid student ID..");
+                }else if (response=='Already Marked..!'){
+                  $('#responseTable').hide();
+                  $('#alertArea').show();
+                  $('#alertArea').removeClass("alert-danger");
+                  $('#alertArea').removeClass("alert-warning");
+                  $('#alertArea').removeClass("alert-success");
+                  $('#alertArea').addClass("alert-info");
+                  $('#alertArea').html("<h5>Sorry..! </h5> Already Marked..");
                 }
                
                 

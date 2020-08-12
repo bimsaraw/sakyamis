@@ -67,39 +67,34 @@ class Attendance_model extends CI_Model {
     return $query->result_array();
   }
 
-  public function check_clss_attendance($studentId,$allocate_id) {
+// Classroom Attendacnce Section
+  //classroom attendance
+  public function check_attendance($studentId,$date,$allocate_id){
+    $this->db->select('*');
+    $this->db->where('studentId',$studentId);
+    $this->db->where('date',$date);
+    $this->db->where('allocateId',$allocate_id);
+    $attquery = $this->db->get('classroom_attendance');
+    $attRows= $attquery->num_rows();
+    return $attRows;
+  }
+
+  //get classroom attendance - allocate_id allocate data
+  public function student_allocate($allocate_id){
     $this->db->select('allocate.batchId,allocate.courseId');
     $this->db->from('allocate');
     $this->db->where('id',$allocate_id);
     $query = $this->db->get();
-    $allocate = $query->result_array();
-    $allocate_courseId;
-    
-    foreach ($allocate as $allc){
-      $allocate_courseId = $allc['courseId'];
-    }
+    return  $query->result_array();
+  }
 
+  //get classroom attendance - studentId course enroll data
+  public function student_course($studentId){
     $this->db->select('course_enroll.courseId');
     $this->db->from('course_enroll');
     $this->db->where('studentId',$studentId);
-    $query2 = $this->db->get();
-    $course_e = $query2->result_array();
-
-      $course_enroll_course=0;
-      foreach ($course_e as $ce){
-        $course_enroll_course= $ce['courseId'];
-      
-      //check batch ids
-        if ($allocate_courseId==$course_enroll_course){
-          return 1;
-        } else{
-          return 0;
-        }
-      } 
-
-      if ($course_enroll_course==0) {
-        return 2;
-      }
+    $query = $this->db->get();
+    return $query->result_array();
   }
 
   public function get_classroom_attendance_detail($studentId) {

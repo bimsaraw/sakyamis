@@ -89,31 +89,66 @@ class Attendance extends CI_Controller {
     }
   }
 
+  //classroom attendance section
   public function mark_attendance_classroom() {
     $date = date('Y-m-d');
     $time = date('H:i:sa');
     $studentId = $this->input->post('studentId');
     $allocate_id =$this->input->post('allocate_id');
 
-     $response_cs = $this->attendance_model->check_clss_attendance($studentId,$allocate_id);
- 
-     if($response_cs==1){
-      if($response = $this->payment_model->validate_payments($studentId,$date)) {
-        if($response == 1) {
-          $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
-          echo 'Batch Pass..';
-        } else {
-          header('Content-Type: application/json');
-          $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
-          echo json_encode( $response );
+    $checkatt = $this->attendance_model->check_attendance($studentId,$date,$allocate_id);
+    if ($checkatt) {
+      echo 'Already Marked..!';
+    } else {
+        $response_cs = $this->check_clss_attendance($studentId,$allocate_id);
+      //  echo Json_encode ($response_cs);
+        if($response_cs==1){
+          if($response = $this->payment_model->validate_payments($studentId,$date)) {
+            if($response == 1) {
+              $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+              echo 'Batch Pass..';
+            } else {
+              header('Content-Type: application/json');
+              $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+              echo json_encode( $response );
+            }
+          }
+        }else if ($response_cs==0){
+          echo 'batch fail..!';
+        }else if($response_cs==2){
+          echo 'invalide..!';
         }
-      }
-    }else if ($response_cs==0){
-      echo 'batch fail..!';
-    }else if($response_cs==2){
-      echo 'invalide..!';
     }
-   
+  }
+//classroom attendance section
+  public function check_clss_attendance($studentId,$allocate_id) {
+    $ac= array();
+    $cec= array();
+    //student_allocate()
+    $allocate =$this->attendance_model->student_allocate($allocate_id);
+    foreach ($allocate as $allc){
+      $acVal = $allc['courseId'];
+      array_push($ac, $acVal);
+    }
+   // student_course
+   $course_e = $this->attendance_model->student_course($studentId);
+   $courseERows= COUNT($course_e);
+      foreach ($course_e as $ce){
+        $cecVal= $ce['courseId'];
+        array_push($cec,$cecVal);
+      }
+      if ($courseERows>=1) {
+        $result=array_intersect($ac,$cec);
+        $ArrayPass = COUNT($result);
+             
+        if ($ArrayPass==1){
+          return 1;
+        } else{
+          return 0;
+        }
+      }else {
+        return 2;
+      }       
   }
 
 
