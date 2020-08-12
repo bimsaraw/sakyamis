@@ -96,7 +96,7 @@ class Attendance extends CI_Controller {
     $allocate_id =$this->input->post('allocate_id');
 
      $response_cs = $this->attendance_model->check_clss_attendance($studentId,$allocate_id);
-   
+ 
      if($response_cs==1){
       if($response = $this->payment_model->validate_payments($studentId,$date)) {
         if($response == 1) {

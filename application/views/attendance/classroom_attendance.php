@@ -154,6 +154,7 @@
                   $('#alertArea').addClass("alert-warning");
                   $('#alertArea').html("Sorry..! Invalide student ID..");
                 }
+               
                 
              }
              $.unblockUI();

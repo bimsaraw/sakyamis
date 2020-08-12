@@ -19,15 +19,33 @@ class Attendance_model extends CI_Model {
   }
 
   public function save_attendance_classroom($studentId,$date,$time,$allocateId) {
+    
+    $this->db->select('*');
+    $this->db->from('classroom_attendance');
+    $this->db->where('studentId',$studentId);
+    $this->db->where('date',$date);
+    $this->db->where('allocateId',$allocateId);
+    $query2 = $this->db->get();
+    $rows = $query2->num_rows();
+    
+    if ($rows>=1) {
+      return 5;
+    }else {
+    
     $data = array(
       'studentId'=>$studentId,
       'date'=>$date,
       'time'=>$time,
       'allocateId'=>$allocateId
     );
-
-    return $this->db->insert('classroom_attendance',$data);
+    $response =$this->db->insert('classroom_attendance',$data);
+    if ($response){
+      return 4;
+    }
   }
+  }
+
+ 
 
   public function get_attendance_history($studentId) {
     $this->db->where('studentId',$studentId);
@@ -55,35 +73,33 @@ class Attendance_model extends CI_Model {
     $this->db->where('id',$allocate_id);
     $query = $this->db->get();
     $allocate = $query->result_array();
-    $allocate_batch; 
     $allocate_courseId;
+    
     foreach ($allocate as $allc){
-      $allocate_batch= $allc['batchId'];
       $allocate_courseId = $allc['courseId'];
     }
 
-    $this->db->select('course_enroll.batchId');
+    $this->db->select('course_enroll.courseId');
     $this->db->from('course_enroll');
     $this->db->where('studentId',$studentId);
-    $this->db->where('courseId',$allocate_courseId);
     $query2 = $this->db->get();
     $course_e = $query2->result_array();
-    $rows = $query2->num_rows();
-    //check rows 
-    if ($rows>=1){
-      $course_enroll_batch=0;
+
+      $course_enroll_course=0;
       foreach ($course_e as $ce){
-        $course_enroll_batch= $ce['batchId'];
-      }
+        $course_enroll_course= $ce['courseId'];
+      
       //check batch ids
-        if ($allocate_batch==$course_enroll_batch){
+        if ($allocate_courseId==$course_enroll_course){
           return 1;
         } else{
           return 0;
         }
-    } else {
-      return 2;
-    }
+      } 
+
+      if ($course_enroll_course==0) {
+        return 2;
+      }
   }
 
   public function get_classroom_attendance_detail($studentId) {
