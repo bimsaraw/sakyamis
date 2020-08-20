@@ -90,5 +90,11 @@ class Module_model extends CI_Model {
             return false;
           }
     }
+//attendance summary
+    public function schedule_date_course($courseId,$branch,$startdate,$enddate){
+        $sql = "SELECT b.name,a.moduleId,a.date,a.batchId,a.id,a.branchId,a.courseId from allocate as a inner join module as b on a.moduleId=b.id where a.courseId=? AND a.branchId=? AND a.date BETWEEN ? AND ?";
+        $query = $this->db->query($sql,array($courseId,$branch,$startdate,$enddate));
+        return $query->result_array();
+      }
 
 }

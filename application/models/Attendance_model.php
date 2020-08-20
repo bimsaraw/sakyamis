@@ -189,6 +189,8 @@ class Attendance_model extends CI_Model {
     return $ret->name;
   }
 
+
+
   // public function get_stu_courses($studentId){
   //   $this->db->select('courseId');
   //   $this->db->where('studentId',$studentId);

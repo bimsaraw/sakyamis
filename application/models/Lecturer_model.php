@@ -54,19 +54,36 @@ class Lecturer_model extends CI_Model {
         }
     }
 
-    public function availability($startDate,$endDate,$startTime,$endTime,$scheduleDay,$moduleId) {
-        $this->db->select('lecturer.*,lecturer_module.*');
+    public function moduleLecturer($moduleId) {
+        $this->db->select('lecturer.*');
         $this->db->from('lecturer');
         $this->db->join('lecturer_module','lecturer.id=lecturer_module.lecturerId','inner');
         $this->db->where('moduleId',$moduleId);
-        $this->db->where('lecturer.id NOT IN (SELECT lecturerId FROM allocate WHERE (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND day="'.$scheduleDay.'" AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime)))');
+        //$this->db->where('lecturer.id NOT IN (SELECT lecturerId FROM allocate WHERE (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND day="'.$scheduleDay.'" AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime)))');
 
         $query = $this->db->get();
-        foreach ($query->result() as $data) {
-            $response[] = $data;
-        }
+        return $query->result_array();
+        // foreach ($query->result() as $data) {
+        //     $response[] = $data;
+        // }
 
-        return $response;
+        // return $response;
+    }
+
+    public function availability($startDate,$endDate,$startTime,$endTime,$scheduleDay,$lecturerId,$branchId) {
+        $this->db->select('course.name as course,batch.name as batch,module.name as module');
+        $this->db->from('allocate');
+        $this->db->join('batch', 'batch.id=allocate.batchId', 'inner');
+        $this->db->join('course', 'course.id=allocate.courseId', 'inner');
+        $this->db->join('module', 'module.id=allocate.moduleId', 'inner');
+        $this->db->where('branchId',$branchId); 
+        $this->db->where('date',$startDate); 
+        $this->db->where('startTime >=',$startTime); 
+        $this->db->where('endTime <=',$endTime);
+        $this->db->where('lecturerId',$lecturerId);  
+
+        $query = $this->db->get();
+        return $query->result_array();
     }
     public function delete_lecturer() {
         $lecturer_id = $this->input->post('lecturer_id');   

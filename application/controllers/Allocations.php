@@ -11,6 +11,7 @@ class Allocations extends CI_Controller {
         $this->load->model('classroom_model');
         $this->load->model('batch_model');
         $this->load->model('user_model');
+        $this->load->model('branches_model');
         $this->load->helper('url_helper');
         $this->load->helper('form');
     }
@@ -21,11 +22,14 @@ class Allocations extends CI_Controller {
         if($this->user_model->validate_permission($username,1)) {
           $data['title'] = 'View Schedule';
 
-          $data['dates'] = $this->allocation_model->get_dates();
+          $data['dates'] = $this->allocation_model->get_dates(1);
           $data['classes'] = $this->classroom_model->get_classes();
-
+          $data['branches'] = $this->branches_model->get_branch_byuser($username);
+          $data['selectBranch'] = $this->branches_model->get_branch_name(0);
+          $data['Alecturer'] =array();
           $this->user_model->save_user_log($username,'Viewed schedule');
-
+          $data['allocations'] =array();
+          $data['events'] = array();
           $this->load->view('templates/header', $data);
           $this->load->view('templates/sidebar', $data);
           $this->load->view('allocations/index', $data);
@@ -55,7 +59,9 @@ class Allocations extends CI_Controller {
 
         $data['courses'] = $this->course_model->get_courses();
         $data['semesters'] = $this->semester_model->get_semesters();
-
+        $data['branches'] = $this->branches_model->get_branch_byuser($username);
+        $data['classes'] = $this->classroom_model->get_classes();
+        
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('allocations/add', $data);
@@ -159,19 +165,30 @@ class Allocations extends CI_Controller {
 
     public function get_allocations_date() {
       $username = $this->session->userdata('username');
-
+      
       if($this->user_model->validate_permission($username,1)) {
         $date = $this->input->post('allocatedDates');
-
-        $data['selectedDate'] = $date;
-
-        $data['allocations'] = $this->allocation_model->get_allocations_date(date('Y-m-d',strtotime($date)));
-
-        $data['events'] = $this->allocation_model->get_events_date(date('Y-m-d',strtotime($date)));
+        $branch = $this->input->post('allocateBranch');
+        //$today = date('Y-m-d');
+        
+        $data['branches'] = $this->branches_model->get_branch_byuser($username);
+        $data['selectBranch'] = $this->branches_model->get_branch_name($branch);
+        $data['allocations'] = $this->allocation_model->get_allocations_date(date('Y-m-d',strtotime($date)),$branch);
+        $data['Alecturer'] =$this->allocation_model->get_allocation_lecture_by_dateBranch($date,$branch);
+        if ($date){
+          $data['selectedDate'] = $date;
+          $data['selectedBranch'] =  $branch;
+         
+        }else {
+          $data['selectedDate'] = "";
+          $data['selectedBranch'] ="";
+        }
+      
+        $data['events'] = $this->allocation_model->get_events_date(date('Y-m-d',strtotime($date)),$branch);
 
         $data['title'] = 'View Schedule';
 
-        $data['dates'] = $this->allocation_model->get_dates();
+        $data['dates'] = $this->allocation_model->get_dates($branch);
         $data['classes'] = $this->classroom_model->get_classes();
         $data['batches'] = $this->batch_model->get_batches();
 
@@ -191,14 +208,15 @@ class Allocations extends CI_Controller {
 
       if($this->user_model->validate_permission($username,1)) {
         $date = $this->input->get('date');
-
+        $branch = $this->input->get('branch');
         $data['selectedDate'] = $date;
-
-        $data['allocations'] = $this->allocation_model->get_allocations_date(date('Y-m-d',strtotime($date)));
-
+        $data['selectBranch'] = $this->branches_model->get_branch_name($branch);
+        $data['allocations'] = $this->allocation_model->get_allocations_date(date('Y-m-d',strtotime($date)),$branch);
+        $data['Alecturer'] =$this->allocation_model->get_allocation_lecture_by_dateBranch($date,$branch);
+      
         $data['title'] = 'PrintSchedule';
 
-        $data['dates'] = $this->allocation_model->get_dates();
+        $data['dates'] = $this->allocation_model->get_dates($branch);
         $data['classes'] = $this->classroom_model->get_classes();
         $data['batches'] = $this->batch_model->get_batches();
 
@@ -235,6 +253,13 @@ class Allocations extends CI_Controller {
       } else {
         redirect('/?msg=noperm', 'refresh');
       }
+    }
+
+    public function get_allocate_date_by_branch(){
+      $branch= $this->input->post('branchId');
+      $data = $this->allocation_model->get_dates($branch);
+      header('Content-Type: application/json');
+      echo json_encode($data);
     }
 
     public function get_allocation_by_id() {

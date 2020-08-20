@@ -11,7 +11,10 @@ class Reports extends CI_Controller
         $this->load->model('batch_model');
         $this->load->model('inquiry_model');
         $this->load->model('course_model');
+        $this->load->model('module_model');
+        $this->load->model('branches_model');
         $this->load->model('report_model');
+        $this->load->model('allocation_model');
         $this->load->helper('url_helper');
         $this->load->helper('url');
         $this->load->helper('form');
@@ -132,6 +135,7 @@ class Reports extends CI_Controller
           }
       }
     }
+
 
     public function outstanding_report()
     {
@@ -262,5 +266,95 @@ class Reports extends CI_Controller
         $table_name = $this->input->post('table_name');
         header('Content-Type: application/json');
         echo json_encode($this->report_model->table_structure($table_name));
+    }
+
+    //attendance summary
+    public function attendance_summary()
+    {
+        {
+          $username = $this->session->userdata('username');
+
+          if ($this->user_model->validate_permission($username, 31)) {
+              $data['title'] = 'Attendance Summary Report';
+              $data['intakes'] = $this->report_model->clsatt_summary();
+              $data['batches'] = $this->batch_model->get_batches();
+              $data['branches'] = $this->branches_model->get_branch_byuser($username);
+
+              if ($_POST) {
+                $data['students'] = $this->report_model->payment_plan_wise_students($_POST);
+
+                $data['single_alocation'] = $this->allocation_model->get_allocation_by_id($_POST['schedule']);
+                $data['single_course'] = $this->course_model->get_single_course($_POST['courseId']);
+              }
+
+
+              $this->load->view('templates/header', $data);
+              $this->load->view('templates/sidebar', $data);
+              $this->load->view('reports/clsattend_summary', $data);
+              $this->load->view('templates/footer');
+
+              $this->user_model->save_user_log($username, 'Viewed Attendance Summary report');
+          } else {
+              redirect('/?msg=noperm', 'refresh');
+          }
+      }
+    }
+
+    public function get_courses_by_schedule_dates(){
+        $username = $this->session->userdata('username');
+
+        if ($this->user_model->validate_permission($username, 31)) {
+
+        $startDate = $this->input->get('startDate');
+        $endDate = $this->input->get('endDate');
+        $branch = $this->input->get('branchId');
+
+        $data= $this->course_model->schedule_date_course($startDate,$endDate,$branch);
+        
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        }
+    }
+
+    public function get_module_by_schedule_course(){
+        $username = $this->session->userdata('username');
+
+        if ($this->user_model->validate_permission($username, 31)) {
+
+        $courseId = $this->input->get('courseId');
+        $startdate = $this->input->get('startdate');
+        $enddate = $this->input->get('enddate');
+        $branch = $this->input->get('branchId');
+
+        $data= $this->module_model->schedule_date_course($courseId,$branch,$startdate,$enddate);
+        
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        }
+    }
+    public function get_batchs_by_branch(){
+        $username = $this->session->userdata('username');
+
+        if ($this->user_model->validate_permission($username, 31)) {
+
+        $branchId = $this->input->get('branchId');
+
+        $data= $this->branches_model->schedule_branches($branchId);
+        
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        }
+    }
+//attendance symmary report
+    public function generate_attsummary_table(){
+        $username = $this->session->userdata('username');
+
+        if ($this->user_model->validate_permission($username, 31)) {
+
+        $data= $this->report_model->clsatt_summary();
+        
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        }
     }
 }

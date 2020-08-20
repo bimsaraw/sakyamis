@@ -114,4 +114,10 @@ class Branches extends CI_Controller {
       header('Content-Type: application/json');
       echo json_encode($data);
   }
+
+  public function get_branch_user(){
+    $username = $this->session->userdata('username');
+    $data = $this->branches_model->get_branch_byuser($username);
+    echo json_encode($data);
+  }
 }

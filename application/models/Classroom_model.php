@@ -21,18 +21,31 @@ class Classroom_model extends CI_Model {
         return $this->db->insert('classroom', $data);
     }
 
-    public function availability($startDate,$endDate,$startTime,$endTime,$scheduleDay,$heads) {
-        $this->db->select('classroom.*');
-        $this->db->from('classroom');
-        $this->db->where('classroom.capacity >=',$heads);
-        $this->db->where('classroom.id NOT IN (SELECT classroomId FROM allocate WHERE (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND day="'.$scheduleDay.'" AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime)))');
-        $this->db->where('classroom.id NOT IN (SELECT classroomId FROM event WHERE (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND day="'.$scheduleDay.'" AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime)))');
+    public function availability($startDate,$startTime,$endTime,$scheduleDay,$heads,$branchId,$selectedclsRId) {
 
-        $query = $this->db->get();
-        foreach ($query->result() as $data) {
-            $response[] = $data;
+        $this->db->select('course.name as course,batch.name as batch,module.name as module');
+        $this->db->from('allocate');
+        $this->db->join('batch', 'batch.id=allocate.batchId', 'inner');
+        $this->db->join('course', 'course.id=allocate.courseId', 'inner');
+        $this->db->join('module', 'module.id=allocate.moduleId', 'inner');
+        $this->db->where('branchId',$branchId); 
+        $this->db->where('date',$startDate); 
+        $this->db->where('startTime >=',$startTime); 
+        $this->db->where('endTime <=',$endTime);
+        $this->db->where('classroomId',$selectedclsRId);  
+
+        if($heads) {
+        $this->db->where('classroom.capacity >=',$heads); 
         }
+        $query = $this->db->get();
 
-        return $response;
+        //$this->db->where('classroom.id NOT IN (SELECT classroomId FROM allocate WHERE branchId="'.$branchId.'" AND (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND day="'.$scheduleDay.'" AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime)))');
+        //$this->db->where('classroom.id NOT IN (SELECT classroomId FROM event WHERE branchId="'.$branchId.'" AND (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND day="'.$scheduleDay.'" AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime)))');
+
+        // foreach ($query->result() as $data) {
+        //     $response[] = $data;
+        // }
+
+       return $query->result_array();
     }
 }

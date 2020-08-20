@@ -147,7 +147,7 @@ class Lecturers extends CI_Controller {
         }
     }
 
-    public function availability() {
+    public function moduleLecturer() {
         $startDate = $this->input->get('startDate');
         $endDate = $this->input->get('endDate');
         $startTime = $this->input->get('startTime');
@@ -158,9 +158,28 @@ class Lecturers extends CI_Controller {
         //$startTime = date('H:i:sa',strtotime($startTime));
         //$endTime = date('H:i:sa',strtotime($endTime));
 
-        $data = $this->lecturer_model->availability($startDate,$endDate,$startTime,$endTime,$scheduleDay,$moduleId);
+        $data = $this->lecturer_model->moduleLecturer($moduleId);
 
         header('Content-Type: application/json');
         echo json_encode( $data );
     }
+
+    public function availability() {
+      $startDate = $this->input->get('startDate');
+      $endDate = $this->input->get('endDate');
+      $startTime = $this->input->get('startTime');
+      $endTime = $this->input->get('endTime');
+      $scheduleDay = $this->input->get('scheduleDay');
+      $moduleId = $this->input->get('moduleId');
+      $lecturerId = $this->input->get('lecturerId');
+      $branchId = $this->input->get('branchId');
+      
+      //$startTime = date('H:i:sa',strtotime($startTime));
+      //$endTime = date('H:i:sa',strtotime($endTime));
+
+      $data = $this->lecturer_model->availability($startDate,$endDate,$startTime,$endTime,$scheduleDay,$lecturerId,$branchId);
+
+      header('Content-Type: application/json');
+      echo json_encode( $data );
+  }
 }

@@ -6,7 +6,7 @@
 
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
-      <h4><?=$selectedDate;?></h4>
+      <h4><?php foreach($selectBranch as $b) { echo $b["name"] ." Branch ". $selectedDate;}?></h4>
     </ol>
 
     <style>
@@ -71,13 +71,12 @@
 
 <script>
     $(document).ready(function() {
-
         var timetable = new Timetable();
-        timetable.setScope(8, 19);
+        timetable.setScope(8, 21);
 
         timetable.addLocations([
-            <?php foreach($classes as $class) {
-                echo "'".$class['name']."',";
+            <?php foreach($allocations as $al) {
+                echo "'".$al['id']."',";
             } ?>
         ]);
 
@@ -95,10 +94,25 @@
                 }
             };
 
-            timetable.addEvent("<?= $a['batchId']; ?> - <?= $a['moduleName']; ?>", "<?= $a['classroomName']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
+            timetable.addEvent("<?= $a['lecturerName']; ?> -<?= $a['courseName']; ?> - <?= $a['moduleName']; ?> | <?= $a['classroomName']; ?>", "<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
         <?php } ?>
 
+        <?php foreach($events as $a) { ?>
 
+            var eventId = <?= $a['id']; ?>;
+
+            var optionsEvent = {
+                class: 'event<?= $a["id"]; ?>',
+                title: '<?= $a["name"]; ?>',
+                data: { // each property will be added to the data-* attributes of the DOM node for this event
+                },
+                onClick: function(event, timetable, clickEvent) {
+                    editEvent(<?= $a['id']; ?>);
+                }              
+            };
+
+            timetable.addEvent("<?= $a['name']; ?>","<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),optionsEvent);
+        <?php } ?>
 
         var renderer = new Timetable.Renderer(timetable);
         renderer.draw('.timetable'); // any css selector

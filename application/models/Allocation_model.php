@@ -35,7 +35,7 @@ class Allocation_model extends CI_Model {
 
         $classroomId = $this->input->post('classroomId');
         $lecturerId= $this->input->post('lecturerId');
-
+        $branchId= $this->input->post('L_allocateBranch');
         $i = 0;
 
         while($startDate<=$endDate) {
@@ -53,6 +53,7 @@ class Allocation_model extends CI_Model {
                 $data[$i]['purpose'] = $scheduleType;
                 $data[$i]['classroomId'] = $classroomId;
                 $data[$i]['lecturerId'] = $lecturerId;
+                $data[$i]['branchId'] = $branchId;
             }
 
             $startDate = date('Y-m-d',strtotime($startDate.'+1 Day'));
@@ -72,6 +73,7 @@ class Allocation_model extends CI_Model {
         $endTime = $this->input->post('endTime');
         $name = $this->input->post('name');
         $color = $this->input->post('color');
+        $branchId= $this->input->post('E_allocateBranch');
 
         $classroomId = $this->input->post('classroomId');
 
@@ -88,6 +90,7 @@ class Allocation_model extends CI_Model {
                 $data[$i]['name'] = $name;
                 $data[$i]['classroomId'] = $classroomId;
                 $data[$i]['color'] = $color;
+                $data[$i]['branchId'] = $branchId;
             }
 
             $startDate = date('Y-m-d',strtotime($startDate.'+1 Day'));
@@ -98,20 +101,22 @@ class Allocation_model extends CI_Model {
         return $this->db->insert_batch('event', $data);
     }
 
-    public function get_dates() {
+    public function get_dates($branchId) {
         $date = date('Y-m-d');
         $this->db->distinct();
-        $this->db->select('date');
+        $this->db->select('date,id');
         $this->db->from('allocate');
         $this->db->order_by('date','asc');
+        $this->db->group_by('date','asc');
         $this->db->where('date>="'.$date.'"');
+        $this->db->where('branchId',$branchId);
 
         $query = $this->db->get();
         return $query->result_array();
 
     }
 
-    public function get_allocations_date($date) {
+    public function get_allocations_date($date,$branchId) {
         $this->db->select('a.*,batch.name AS batchName, classroom.name AS classroomName, lecturer.name AS lecturerName,module.name AS moduleName,course.name AS courseName');
         $this->db->from('allocate a');
         $this->db->join('batch','batch.id=a.batchId','inner');
@@ -120,17 +125,36 @@ class Allocation_model extends CI_Model {
         $this->db->join('module','module.id=a.moduleId','inner');
         $this->db->join('course','course.id=a.courseId','inner');
         $this->db->where('date',$date);
+        if($branchId!=""){
+        $this->db->where('a.branchId',$branchId);
+        }
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function get_allocation_lecture_by_dateBranch($date,$branchId){
+        $this->db->select('b.name as lecturerName,a.lecturerId');
+        $this->db->from('allocate a');
+        $this->db->join('lecturer b','a.batchId=b.id','inner');
+        $this->db->where('date',$date);
+        if($branchId!=""){
+            $this->db->where('branchId',$branchId);
+            }
+       
+        $this->db->group_by('lecturerId');
 
         $query = $this->db->get();
         return $query->result_array();
     }
 
-    public function get_events_date($date) {
+    public function get_events_date($date,$branchId) {
         $this->db->select('a.*,classroom.name AS classroomName');
         $this->db->from('event a');
         $this->db->join('classroom','classroom.id=a.classroomId','inner');
         $this->db->where('date',$date);
-
+        if($branchId!=""){
+        $this->db->where('a.branchId',$branchId);
+        }
         $query = $this->db->get();
         return $query->result_array();
     }

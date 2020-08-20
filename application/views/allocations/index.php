@@ -7,24 +7,31 @@
         </li>
         <li class="breadcrumb-item active"><?php echo $title; ?></li>
     </ol>
-
+   
     <?php echo form_open('allocations/get_allocations_date'); ?>
         <div class="form-row">
+            <div class="form-group">
+                        
+                        <select id="allocateBranch" name="allocateBranch" class="form-control form-control-sm" required>
+                        <option value="">--- Select Branch ---</option>
+                        <?php foreach ($branches as $branch) { ?>
+                            <option value="<?= $branch['id']; ?>"><?= $branch['name']; ?></option>
+                        <?php } ?>
+                        </select>
+            </div>
+            
             <div class="col-md-3">
+          
                 <select id="allocatedDates" name="allocatedDates" class="form-control form-control-sm">
-                    <?php if(isset($selectedDate)) { ?>
-                        <option value="<?=$selectedDate; ?>"><?=$selectedDate; ?></option>
-                    <?php } ?>
-                    <?php foreach($dates as $date) { ?>
-                        <option value="<?=$date['date']; ?>"><?=$date['date']; ?></option>
-                    <?php } ?>
+                      
                 </select>
             </div>
+          
             <div class="col-md-6">
                 <button type="submit" id="btnDate" class="btn btn-primary btn-sm">Show Schedule</button>
-                <a class="btn btn-secondary btn-sm" href="<?php echo base_url(); ?>index.php/allocations/add">Schedule</a>
+                <a class="btn btn-secondary btn-sm" href="<?php echo base_url(); ?>index.php/allocations/add">Add Schedule</a>
                 <?php if(isset($selectedDate)) { ?>
-                  <a class="btn btn-dark btn-sm" target="_blank" href="<?php echo base_url(); ?>index.php/allocations/print_allocations_date?date=<?=$selectedDate;?>">Print</a>
+                  <a class="btn btn-dark btn-sm" target="_blank" href="<?php echo base_url(); ?>index.php/allocations/print_allocations_date?date=<?=$selectedDate;?>&branch=<?=$selectedBranch;?>">Print</a>
                 <?php } ?>
                 <a href="<?php echo base_url(); ?>index.php/allocations/bulk_action" class="btn btn-info btn-sm">Bulk Actions</a>
             </div>
@@ -44,7 +51,7 @@
         echo '}';
       } ?>
     </style>
-
+<h5>  <?php foreach($selectBranch as $b) { echo $b["name"] ." Branch ". $selectedDate;}?>   </h5>
     <div class="row">
         <div class="col-md-12">
             <div class="timetable" id="timetable">
@@ -135,13 +142,34 @@
 
 <script>
     $(document).ready(function() {
-
+var selected =0;
+        //get allocate dates by branch
+    $('#allocateBranch').bind('change',function() {
+      var branchId = $("#allocateBranch").val();
+          $.ajax({
+                type: "POST",
+                //set the data type
+                url: '<?php echo base_url(); ?>index.php/allocations/get_allocate_date_by_branch', // target element(s) to be updated with server response
+                data: {branchId:branchId},
+                //check this in Firefox browser
+                success : function(response){
+                  console.log(response);
+                  $('#allocatedDates').children().remove().end()
+                  $(' <option value="">-- Please Select --</option>').appendTo('#allocatedDates');
+                    $.each(response,function(key, val) {
+                        selected=1;
+                        $('<option value='+val.date+'>'+val.date+'</option>').appendTo('#allocatedDates');
+                    });
+                }
+            });
+    });
+    if (selected=1){
         var timetable = new Timetable();
         timetable.setScope(8, 21);
 
         timetable.addLocations([
-            <?php foreach($classes as $class) {
-                echo "'".$class['name']."',";
+            <?php foreach($allocations as $al) {
+                echo "'".$al['id']."',";
             } ?>
         ]);
 
@@ -159,7 +187,7 @@
                 }
             };
 
-            timetable.addEvent("<?= $a['batchId']; ?> - <?= $a['moduleName']; ?>", "<?= $a['classroomName']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
+            timetable.addEvent("<?= $a['lecturerName']; ?> -<?= $a['courseName']; ?> - <?= $a['moduleName']; ?> | <?= $a['classroomName']; ?>", "<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
         <?php } ?>
 
         <?php foreach($events as $a) { ?>
@@ -176,14 +204,13 @@
                 }              
             };
 
-            timetable.addEvent("<?= $a['name']; ?>","<?= $a['classroomName']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),optionsEvent);
+            timetable.addEvent("<?= $a['name']; ?>","<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),optionsEvent);
         <?php } ?>
-
-
 
         var renderer = new Timetable.Renderer(timetable);
         renderer.draw('.timetable'); // any css selector
-
+    }
+   
     });
 
     $('#btnDelete').click(function() {
@@ -205,6 +232,8 @@
     $('#btnPrint').click(function() {
         $("#timetable").print();
     });
+
+
 
     function editAllocation(id) {
         console.log(id);

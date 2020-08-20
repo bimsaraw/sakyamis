@@ -255,4 +255,48 @@ class Report_model extends CI_Model {
 
       return $query->result_array();
     }
+
+    //class attendance summary
+  public function clsatt_summary() {
+    
+    $branch =$this->input->post('branchId');
+    $startDate=$this->input->post('startDate');
+    $endDate=$this->input->post('endDate');
+    $courseId=$this->input->post('courseId');
+    $module=$this->input->post('moduleId');
+    $batch=$this->input->post('batch');
+    
+    $this->db->select('a.studentId,full_name,a.date,a.time,a.allocateId,d.id as batch ,e.moduleId,f.name as module,e.branchId');
+    $this->db->from('classroom_attendance as a','inner');
+    $this->db->join('student as b', 'a.studentId=b.studentId','inner');
+    $this->db->join('allocate as e', 'e.id= a.allocateId','inner');
+    $this->db->join('course_enroll as c', 'c.studentId=a.studentId','inner');
+    $this->db->join('batch as d', 'd.id=c.batchId','inner');
+    $this->db->join('module as f', 'f.id=e.moduleId','inner');
+  
+    if($branch!="") {
+      $this->db->where('e.branchId',$branch);
+    }
+    
+    if ($startDate!=""){
+      $this->db->where("a.date >=", $startDate);
+      $this->db->where("a.date <=", $endDate);
+    }
+    
+    if($courseId!="") {
+      $this->db->where('e.courseId',$courseId);
+    }
+
+    if($module!="") {
+       $this->db->where('e.moduleId',$module);
+    }
+    if($batch!="") {
+        $this->db->where('e.batchId',$batch);
+    }
+
+    $this->db->order_by('a.date desc,a.time desc');
+    
+    $query = $this->db->get();
+    return $query->result_array();
+  }
 }

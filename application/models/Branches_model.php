@@ -8,10 +8,26 @@ class Branches_model extends CI_Model {
     }
 
     public function get_branch() {
-        $this->db->order_by('name','asc');
+        $this->db->order_by('id','asc');
         $query = $this->db->get('branch');
         return $query->result_array();
     }
+
+    public function get_branch_name($branchId) {
+      $this->db->where('id',$branchId);
+      $this->db->order_by('id','asc');
+      $query = $this->db->get('branch');
+      return $query->result_array();
+  }
+
+    public function get_branch_byuser($username) {
+      $this->db->select('branch.*');
+      $this->db->from('user_branch');
+      $this->db->join('branch','user_branch.branchId=branch.id','inner');
+      $this->db->where('user_branch.username',$username);
+      $query = $this->db->get();
+      return $query->result_array();
+  }
 
     public function get_single_branch($id) {
       $this->db->where('id',$id);
@@ -55,5 +71,11 @@ class Branches_model extends CI_Model {
         }
   
         return $response;
+      }
+
+      public function schedule_branches($branchId){
+        $sql = "SELECT batchId from allocate  where branchId=? Group by batchId";
+        $query = $this->db->query($sql,$branchId);
+        return $query->result_array();
       }
 }

@@ -39,7 +39,7 @@ class Classrooms extends CI_Controller {
         $response = $this->classroom_model->add();
 
         $data['classes'] = $this->classroom_model->get_classes();
-
+        
         $this->user_model->save_user_log($username,'Classroom added.');
 
         if($response) {
@@ -57,20 +57,25 @@ class Classrooms extends CI_Controller {
       }
     }
 
+    
     public function availability() {
+        $heads =0;
         $startDate = $this->input->get('startDate');
-        $endDate = $this->input->get('endDate');
+        //$endDate = $this->input->get('endDate');
         $startTime = $this->input->get('startTime');
         $endTime = $this->input->get('endTime');
         $scheduleDay = $this->input->get('scheduleDay');
         $batchId = $this->input->get('batchId');
+        $branchId = $this->input->get('branchId');
+        $selectedclsRId = $this->input->get('classroomId');
 
+        if($batchId!="") {
         $heads = $this->batch_model->get_batch_heads($batchId);
-
+        }
         //$startTime = date('H:i:sa',strtotime($startTime));
         //$endTime = date('H:i:sa',strtotime($endTime));
 
-        $data = $this->classroom_model->availability($startDate,$endDate,$startTime,$endTime,$scheduleDay,$heads);
+        $data = $this->classroom_model->availability($startDate,$startTime,$endTime,$scheduleDay,$heads,$branchId,$selectedclsRId);
 
         header('Content-Type: application/json');
         echo json_encode( $data );

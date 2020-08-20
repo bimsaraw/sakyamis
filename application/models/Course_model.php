@@ -50,4 +50,9 @@ class Course_model extends CI_Model {
   
         return $response;
       }
+      public function schedule_date_course($startdate,$enddate,$branch){
+        $sql = "SELECT b.name,a.courseId as id FROM allocate as a  inner join course as b on a.courseId=b.id where a.branchId=? AND a.date between ? AND ?   group by courseId";
+        $query = $this->db->query($sql,array($branch,$startdate,$enddate));
+        return $query->result_array();
+      }
 }
