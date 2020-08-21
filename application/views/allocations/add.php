@@ -539,7 +539,7 @@
             $('#startTime').val('');
             $('#endTime').val('');
             //$('#classroomId').empty();
-            $('#lecturerId').empty();
+            //$('#lecturerId').empty();
 
             $('#startTimeEvent').val('');
             $('#endTimeEvent').val('');
