@@ -8,16 +8,26 @@
         </li>
         <li class="breadcrumb-item active"><?php echo $title; ?></li>
     </ol>
-
+    <?php 
+    if ($this->session->flashdata('success')) {
+    echo '<div class="alert alert-success">'; echo $this->session->flashdata('success'); echo'</div> ';
+    }else if ($this->session->flashdata('danger')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('danger'); echo'</div> ';
+    }else if ($this->session->flashdata('warning')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('warning'); echo'</div> ';
+    }else if ($this->session->flashdata('info')) {
+      echo '<div class="alert alert-success">'; echo $this->session->flashdata('info'); echo'</div> ';
+    }
+    ?>
     <ul class="nav nav-tabs">
       <li class="nav-item">
         <a class="nav-link active" data-toggle="tab" href="#lecture">Lectures</a>
       </li>
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#event">Events</a>
-      </li>
+      </li> -->
     </ul>
-
+    
     <div class="tab-content">
       <div class="tab-pane container active" id="lecture">
         <?php echo form_open('allocations/save_lecture'); ?>
@@ -124,9 +134,6 @@
                         <label for="classroomId">Select Classroom</label>
                         <select name="classroomId" id="classroomId" class="form-control form-control-sm" required>
                         <option value="">- Select a classroom from available -</option>
-                        <?php foreach ($classes as $classroom) { ?>
-                            <option value="<?=$classroom['id']; ?>"><?=$classroom['name']; ?></option>
-                        <?php }?>
                         </select>
                     </div>
                 </div>
@@ -135,7 +142,6 @@
                         <label for="lecturerId">Select Lecturer</label>
                         <select name="lecturerId" id="lecturerId" class="form-control form-control-sm" required>
                             <option value="">- Select a Lecturer from available -</option>
-                            <option value="0">Examination</option>
                         </select>
                     </div>
                 </div>
@@ -152,90 +158,7 @@
         <?php echo form_close(); ?>
       </div>
 
-      <div class="tab-pane container" id="event">
-        <?php echo form_open('allocations/save_event'); ?>
-
-        <div class="form-row">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="lecturerId">Select Branch</label>
-                    <select id="EventeBranch" name="EventeBranch" class="form-control form-control-sm">
-                    <option value="">--- Select Branch ---</option>
-                        <?php foreach ($branches as $branch) { ?>
-                        <option value="<?= $branch['id']; ?>"><?= $branch['name']; ?></option>
-                    <?php } ?>
-                    </select>
-                </div>
-            </div>
-        </div>
-          <div class="form-row">
-            <div class="col-md-3">
-              <div class="form-group">
-                <label>Name of the Event</label>
-                <input type="text" class="form-control form-control-sm" name="name" required>
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="form-group">
-                <label>Date Range</label>
-                <input type="text" name="daterange" class="form-control form-control-sm" autocomplete="off" required>
-                <input type="hidden" id="startDateEvent"  value="<?php echo date("yy-m-d"); ?>" name="startDate">
-                <input type="hidden" id="endDateEvent"  value="<?php echo date("yy-m-d"); ?>" name="endDate">
-              </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="scheduleDay">Day of the Week</label>
-                    <input type="text" id="scheduleDayEvent" class="form-control form-control-sm" name="scheduleDay" readonly="true" value="<?php echo date("1"); ?>" required>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>Time Duration (08:00 - 14:00)</label>
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <input type="text" name="startTime" id="startTimeEvent" autocomplete="off" class="timepicker form-control form-control-sm" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="endTime" id="endTimeEvent" autocomplete="off" class="timepicker form-control form-control-sm" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="classroomId">Select Classroom</label>
-                    <select name="classroomId" id="classroomIdEvent" class="form-control form-control-sm" required>
-                        <option value="">- Select a classroom from available -</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-              <div class="form-group">
-                <label>Select a Color</label>
-                <input id="color" name="color" type="text" class="form-control form-control-sm" style="color:#fff;" value="" autocomplete="off" required/>
-              </div>
-            </div>
-          
-          </div>
-                     
-          <div class="row">
-              <div class="col-md-12">
-                  <p>Once you select everything, verify the selection and save. System will automatically reserve classroom throughout the given range.</p>
-                  <button type="submit" class="btn btn-primary btn-sm">Save Allocation</button>
-                  <a class="btn btn-secondary btn-sm" href="<?php echo base_url(); ?>index.php/allocations/">Go Back</a>
-              </div>
-          </div>
-
-        <?php echo form_close(); ?>
-      </div>
-    </div>
-
+    
 </div>
 
 
@@ -290,6 +213,47 @@
       $('#endTime').val('');
       //$('#classroomId').empty();
       $('#lecturerId').empty();
+    });
+
+    $('#L_allocateBranch').bind('change',function () {
+
+        var branchId = $('#L_allocateBranch').val();
+        $.ajax({
+                type : "GET",
+                //set the data type
+                url: '<?php echo base_url(); ?>index.php/classrooms/get_classroom_by_branch', // target element(s) to be updated with server response
+                data: {branchId:branchId},
+                cache : false,
+                //check this in Firefox browser
+                success : function(response){
+                    $('#classroomId').empty();
+                    $('<option>-Please Select-</option>').appendTo('#classroomId');
+                    $.each(response,function(key, val) {
+                        console.log(val.name);
+                        $('<option value='+val.id+'>'+val.name+'</option>').appendTo('#classroomId');
+                    });
+                }
+            });
+    });
+    $('#EventeBranch').bind('change',function () {
+
+    var branchId = $('#EventeBranch').val();
+    $.ajax({
+            type : "GET",
+            //set the data type
+            url: '<?php echo base_url(); ?>index.php/classrooms/get_classroom_by_branch', // target element(s) to be updated with server response
+            data: {branchId:branchId},
+            cache : false,
+            //check this in Firefox browser
+            success : function(response){
+                $('#classroomIdEvent').empty();
+                $('<option>-Please Select-</option>').appendTo('#classroomIdEvent');
+                $.each(response,function(key, val) {
+                    console.log(val.name);
+                    $('<option value='+val.id+'>'+val.name+'</option>').appendTo('#classroomIdEvent');
+                });
+            }
+        });
     });
 
     $('#semesterId').bind('change',function() {

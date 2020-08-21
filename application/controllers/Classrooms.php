@@ -7,6 +7,7 @@ class Classrooms extends CI_Controller {
         $this->load->model('classroom_model');
         $this->load->model('batch_model');
         $this->load->model('user_model');
+        $this->load->model('branches_model');
         $this->load->helper('url_helper');
         $this->load->helper('form');
     }
@@ -18,6 +19,7 @@ class Classrooms extends CI_Controller {
         $data['title'] = 'Classroom Details';
 
         $data['classes'] = $this->classroom_model->get_classes();
+        $data['branch'] = $this->branches_model->get_branch();
 
         $this->user_model->save_user_log($username,'Viewed classrooms.');
 
@@ -57,6 +59,14 @@ class Classrooms extends CI_Controller {
       }
     }
 
+    public function get_classroom_by_branch(){
+      $branchId = $this->input->get('branchId');
+      $data = $this->classroom_model->classroom_by_branch($branchId);
+      
+      header('Content-Type: application/json');
+      echo json_encode( $data );
+    }
+
     
     public function availability() {
         $heads =0;
@@ -74,8 +84,8 @@ class Classrooms extends CI_Controller {
         }
         //$startTime = date('H:i:sa',strtotime($startTime));
         //$endTime = date('H:i:sa',strtotime($endTime));
-
-        $data = $this->classroom_model->availability($startDate,$startTime,$endTime,$scheduleDay,$heads,$branchId,$selectedclsRId);
+        //check allocate table
+        $data = $this->classroom_model->availability_allocate($startDate,$startTime,$endTime,$scheduleDay,$heads,$branchId,$selectedclsRId);
 
         header('Content-Type: application/json');
         echo json_encode( $data );

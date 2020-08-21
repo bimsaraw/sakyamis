@@ -168,6 +168,7 @@ var selected =0;
         timetable.setScope(8, 21);
 
         timetable.addLocations([
+            "",
             <?php foreach($allocations as $al) {
                 echo "'".$al['id']."',";
             } ?>

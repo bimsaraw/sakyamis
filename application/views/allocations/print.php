@@ -6,7 +6,7 @@
 
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
-      <h4><?php foreach($selectBranch as $b) { echo $b["name"] ." Branch ". $selectedDate;}?></h4>
+      <h4><?=$selectedDate;?> ~ <?php foreach($selectBranch as $branch){ echo $branch['name']; } ;?></h4>
     </ol>
 
     <style>
@@ -62,6 +62,7 @@
         <div class="modal-footer">
             <input type="hidden" id="inputAllocateId">
             <input type="hidden" id="inputDate">
+            <a href="" type="button" class="btn btn-info btn-sm"  id="btnmarkAttEvent">Mark Attendance</a>
             <button type="button" class="btn btn-danger btn-sm" id="btnDelete">Delete Allocation</button>
             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
         </div>
@@ -71,10 +72,12 @@
 
 <script>
     $(document).ready(function() {
+
         var timetable = new Timetable();
-        timetable.setScope(8, 21);
+        timetable.setScope(8, 19);
 
         timetable.addLocations([
+            "",
             <?php foreach($allocations as $al) {
                 echo "'".$al['id']."',";
             } ?>
@@ -97,22 +100,7 @@
             timetable.addEvent("<?= $a['lecturerName']; ?> -<?= $a['courseName']; ?> - <?= $a['moduleName']; ?> | <?= $a['classroomName']; ?>", "<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
         <?php } ?>
 
-        <?php foreach($events as $a) { ?>
 
-            var eventId = <?= $a['id']; ?>;
-
-            var optionsEvent = {
-                class: 'event<?= $a["id"]; ?>',
-                title: '<?= $a["name"]; ?>',
-                data: { // each property will be added to the data-* attributes of the DOM node for this event
-                },
-                onClick: function(event, timetable, clickEvent) {
-                    editEvent(<?= $a['id']; ?>);
-                }              
-            };
-
-            timetable.addEvent("<?= $a['name']; ?>","<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),optionsEvent);
-        <?php } ?>
 
         var renderer = new Timetable.Renderer(timetable);
         renderer.draw('.timetable'); // any css selector
@@ -146,6 +134,7 @@
                     $('#tblBatch').html(val.batchName);
                     $('#tblTime').html(val.startTime+" - "+val.endTime);
                     $('#tblLecturer').html(val.lecturerName);
+                    $("#btnmarkAttEvent").attr("href", "<?= base_url(); ?>index.php/attendance/classroom_attendance?allocate_id="+id);
                     if(val.purpose==1) {
                         $('#tblPurpose').html('Lecture');
                     } else if(val.purpose==2) {

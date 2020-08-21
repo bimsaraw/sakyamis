@@ -275,7 +275,7 @@ class Reports extends CI_Controller
           $username = $this->session->userdata('username');
 
           if ($this->user_model->validate_permission($username, 31)) {
-              $data['title'] = 'Attendance Summary Report';
+              $data['title'] = 'Sibt mis';
               $data['intakes'] = $this->report_model->clsatt_summary();
               $data['batches'] = $this->batch_model->get_batches();
               $data['branches'] = $this->branches_model->get_branch_byuser($username);

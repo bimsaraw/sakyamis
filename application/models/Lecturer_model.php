@@ -78,8 +78,8 @@ class Lecturer_model extends CI_Model {
         $this->db->join('module', 'module.id=allocate.moduleId', 'inner');
         $this->db->where('branchId',$branchId); 
         $this->db->where('date',$startDate); 
-        $this->db->where('startTime >=',$startTime); 
-        $this->db->where('endTime <=',$endTime);
+        $where = '((startTime  BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN"'.$startTime.'" AND "'.$endTime.'"))';
+        $this->db->where($where); 
         $this->db->where('lecturerId',$lecturerId);  
 
         $query = $this->db->get();

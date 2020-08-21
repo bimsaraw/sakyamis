@@ -31,8 +31,8 @@
                         <div class="form-group col-md-3" id="divschdate" style="display:none" >
                           <label>Schedule Date <span class="required"> *</span></label>
                           <input type="text" class="form-control form-control-sm" name="date" id="date" autocomplete="off" required>
-                          <input type="hidden" id="startDate" name="startDate">
-                          <input type="hidden" id="endDate" name="endDate">
+                          <input type="hidden" id="startDate" value="<?php echo date("yy-m-d"); ?>" name="startDate">
+                          <input type="hidden" id="endDate" value="<?php echo date("yy-m-d"); ?>" name="endDate">
                         </div>
               
                         </div>
@@ -40,7 +40,7 @@
                                 <div class="form-group col-md-3">
                                   <label>Course</label>
                                   <select class="form-control form-control-sm" name="courseId" id="courseId">
-                                      <option value="">-- Please Select --</option>
+                                      <option value="0">-- Please Select --</option>
                                   </select>
                                 </div>
                                 <div class="form-group col-md-3">
@@ -150,7 +150,7 @@
         e.preventDefault();
         $.blockUI();
         var form = $('#frmattendance');
-
+        var course = "";
               $.ajax({
               type: "POST",
               url: '<?php echo base_url(); ?>index.php/reports/generate_attsummary_table',
@@ -163,6 +163,7 @@
                     .clear()
                     .draw();
                 $.each(response,function(key, val) {
+                  
                   table.row.add( [
                           count,
                           val.studentId,
@@ -173,12 +174,16 @@
                           val.module
                    ] ).draw();
                    count++;
+                  
                 });  
                 $.unblockUI();             
               }
               });
             });
-
+            // var selectedCourse;
+            // if ($('#courseId').find(':selected').text() >0) {
+            //     var selectedCourse = "<h5>" +$('#courseId').find(':selected').text() + "</h5>";
+            // }
       var table = $('#dataTable').DataTable( {
           lengthChange: false,
           buttons: [
@@ -193,7 +198,9 @@
                     $(win.document.body)
                         .css( 'font-size', '10pt' )
                         .prepend(
-                            '<h3>Attendance Summary</h3>'
+                            '<h3>Attendance Summary</h3>',
+                            '<h5> Date -'+ $('#startDate').val() +' to '+ $('#endDate').val() +'</h5>'
+                           // selectedCourse
                         );
               }
             }

@@ -33,7 +33,7 @@ class Welcome extends CI_Controller {
 	{
 		$username = $this->session->userdata('username');
 
-		$data['title'] = "Timetable Management";
+		$data['title'] = "Sibt MIS";
 
 		$data['intakes'] = $this->inquiry_model->get_intakes();
 		$data['courses'] = $this->course_model->get_courses();

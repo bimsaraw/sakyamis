@@ -22,6 +22,7 @@
                                 <th>Classroom</th>
                                 <th>Capacity</th>
                                 <th>Type</th>
+                                <th>Branch</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -31,6 +32,7 @@
                                     <td><?php echo $class['name']; ?></td>
                                     <td><?php echo $class['capacity']; ?></td>
                                     <td><?php echo $class['type']; ?></td>
+                                    <td><?php echo $class['branch']; ?></td>
                                     <td></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -50,6 +52,15 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <?php echo form_open('classrooms/add'); ?>
+            <div class="form-group">
+                <label for="branchtype">Branch</label>
+                <select name="branchId" class="form-control form-control-sm" required>
+                    <option></option>
+                    <?php foreach ($branch as $branches): ?>
+                        <option value="<?php echo $branches['id']; ?>"><?php echo $branches['name']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="form-group">
                 <label for="className">Identifier</label>
                 <input type="text" class="form-control form-control-sm" name="className" required>

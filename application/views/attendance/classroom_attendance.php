@@ -102,8 +102,8 @@
                             console.log(response);
                             $('#lblcoursename').html(response);
                         }
-          }
- });
+          });
+        }
 
       $('#frmAttendance').submit(function(e) {
           e.preventDefault();

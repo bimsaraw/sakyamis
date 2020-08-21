@@ -7,21 +7,35 @@ class Classroom_model extends CI_Model {
     }
 
     public function get_classes() {
-        $query = $this->db->get('classroom');
+        $this->db->select('classroom.*,branch.name as branch');
+        $this->db->from ('classroom');
+         $this->db->join('branch', 'classroom.branchId=branch.id', 'inner');
+        $query = $this->db->get();
         return $query->result_array();
     }
 
     public function add() {
         $this->load->helper('url');
         $data = array(
+
             'name'=>$this->input->post('className'),
             'type'=>$this->input->post('classType'),
-            'capacity'=>$this->input->post('capacity')
+            'capacity'=>$this->input->post('capacity'),
+            'branchId'=>$this->input->post('branchId')
         );
         return $this->db->insert('classroom', $data);
     }
 
-    public function availability($startDate,$startTime,$endTime,$scheduleDay,$heads,$branchId,$selectedclsRId) {
+    public function classroom_by_branch($branchId){
+        $this->db->select('*');
+        $this->db->from ('classroom');
+        $this->db->Where('branchId',$branchId);
+        $query = $this->db->get();
+        return $query->result_array();
+
+    }
+
+    public function availability_allocate($startDate,$startTime,$endTime,$scheduleDay,$heads,$branchId,$selectedclsRId) {
 
         $this->db->select('course.name as course,batch.name as batch,module.name as module');
         $this->db->from('allocate');
@@ -30,8 +44,8 @@ class Classroom_model extends CI_Model {
         $this->db->join('module', 'module.id=allocate.moduleId', 'inner');
         $this->db->where('branchId',$branchId); 
         $this->db->where('date',$startDate); 
-        $this->db->where('startTime >=',$startTime); 
-        $this->db->where('endTime <=',$endTime);
+        $where = '((startTime  BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN"'.$startTime.'" AND "'.$endTime.'"))';
+        $this->db->where($where); 
         $this->db->where('classroomId',$selectedclsRId);  
 
         if($heads) {
@@ -48,4 +62,5 @@ class Classroom_model extends CI_Model {
 
        return $query->result_array();
     }
+   
 }

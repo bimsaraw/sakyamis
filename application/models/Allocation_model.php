@@ -73,7 +73,7 @@ class Allocation_model extends CI_Model {
         $endTime = $this->input->post('endTime');
         $name = $this->input->post('name');
         $color = $this->input->post('color');
-        $branchId= $this->input->post('E_allocateBranch');
+        $branchId= $this->input->post('EventeBranch');
 
         $classroomId = $this->input->post('classroomId');
 

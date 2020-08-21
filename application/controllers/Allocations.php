@@ -102,19 +102,21 @@ class Allocations extends CI_Controller {
 
         if($response) {
             $data['allocate'] = 1;
+            $this->session->set_flashdata('info', 'Allocated successfully saved..!');
         } else {
             $data['allocate'] = 0;
+            $this->session->set_flashdata('danger', 'Allocated unsuccessfully..!');
         }
 
         $data['courses'] = $this->course_model->get_courses();
         $data['semesters'] = $this->semester_model->get_semesters();
 
         $this->user_model->save_user_log($username,'Saved a lecture');
-
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar', $data);
-        $this->load->view('allocations/add', $data);
-        $this->load->view('templates/footer');
+        redirect('/allocations/add', 'refresh');
+        // $this->load->view('templates/header', $data);
+        // $this->load->view('templates/sidebar', $data);
+        // $this->load->view('allocations/add', $data);
+        // $this->load->view('templates/footer');
       } else {
         redirect('/?msg=noperm', 'refresh');
       }
