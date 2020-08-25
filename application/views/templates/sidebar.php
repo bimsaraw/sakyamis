@@ -14,7 +14,10 @@
       <div class="dropdown-menu" aria-labelledby="pagesDropdown">
 
           <h6 class="dropdown-header">Standard:</h6>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/allocations">Mark Attendance</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/allocations">Mark Attendance - M</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/attendance/automated">Mark Attendance - A</a>
+          
+          
           <div class="dropdown-divider"></div>
 
           <h6 class="dropdown-header">Advance Options:</h6>

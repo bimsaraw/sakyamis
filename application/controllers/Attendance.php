@@ -11,6 +11,8 @@ class Attendance extends CI_Controller {
     $this->load->model('user_model');
     $this->load->model('inquiry_model');
     $this->load->model('attendance_model');
+    $this->load->model('allocation_model');
+    $this->load->model('branches_model');
     $this->load->model('course_model');
     $this->load->helper('url_helper');
     $this->load->helper('url');
@@ -42,6 +44,33 @@ class Attendance extends CI_Controller {
       $this->load->view('templates/sidebar', $data);
       $this->load->view('attendance/classroom_attendance', $data);
       $this->load->view('templates/footer');
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
+  public function automated() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,24)) {
+      $data['title'] = 'Student-Attendance-Automated';
+      $data['branches'] = $this->branches_model->get_branch_byuser($username);
+      $this->load->view('templates/header', $data);
+      $this->load->view('templates/sidebar', $data);
+      $this->load->view('attendance/automated', $data);
+      $this->load->view('templates/footer');
+    } else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+  }
+
+  public function full_screen_automated() {
+    $username = $this->session->userdata('username');
+
+    if($this->user_model->validate_permission($username,24)) {
+      $data['title'] = 'Student Attendance - Entrance';
+      $data['branches'] = $this->branches_model->get_branch_byuser($username);
+      $this->load->view('attendance/full_screen_automated', $data);
     } else {
       redirect('/?msg=noperm', 'refresh');
     }
@@ -95,6 +124,7 @@ class Attendance extends CI_Controller {
     $time = date('H:i:sa');
     $studentId = $this->input->post('studentId');
     $allocate_id =$this->input->post('allocate_id');
+    $branch =$this->input->post('branchId');
 
     $checkatt = $this->attendance_model->check_attendance($studentId,$date,$allocate_id);
     if ($checkatt) {
@@ -120,12 +150,58 @@ class Attendance extends CI_Controller {
         }
     }
   }
+
+  //classroom attendance section
+  public function mark_attendance_classroom_automated() {
+    $date = date('Y-m-d');
+    $time = date('H:i:sa');
+    $studentId = $this->input->post('studentId');
+    //$allocate_id =$this->input->post('allocate_id');
+    $branch =$this->input->post('branchId');
+
+    $Nallocates = $this->get_automated_allocatedDetails($studentId,$branch);
+    
+    if(is_array($Nallocates)) {
+      foreach($Nallocates as $Nallocate){
+        $allocate_id= $Nallocate['id'];  //set to automated allocate Id
+      }
+          $checkatt = $this->attendance_model->check_attendance($studentId,$date,$allocate_id);
+          if ($checkatt) {
+            echo 'AlreadyMarked!';
+          } else {
+              $response_cs = $this->check_clss_attendance($studentId,$allocate_id);
+            //  echo Json_encode ($response_cs);
+              if($response_cs==1){
+                if($response = $this->payment_model->validate_payments($studentId,$date)) {
+                  if($response == 1) {
+                    $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+                    echo 'BatchPass!';
+                  } else {
+                    header('Content-Type: application/json');
+                    $this->attendance_model->save_attendance_classroom($studentId,$date,$time,$allocate_id);
+                    $data=array(
+                      'payments'=> $response,
+                       'allocate' => $Nallocates);
+                    echo json_encode($data);
+                  }
+                }
+              }else if ($response_cs==0){
+                echo 'batchfail!';
+              }else if($response_cs==2){
+                echo 'invalid!';
+              }
+          }
+      } else {
+        echo $Nallocates;
+      }
+  }
+
 //classroom attendance section
   public function check_clss_attendance($studentId,$allocate_id) {
-    $ac= array();
-    $cec= array();
+    $ac= array(); // allocate schedulu cours ID get to array
+    $sec= array();  // Student enroll course ID'S get to array
     //student_allocate()
-    $allocate =$this->attendance_model->student_allocate($allocate_id);
+    $allocate =$this->attendance_model->allocate_course($allocate_id); // schedule course Id
     foreach ($allocate as $allc){
       $acVal = $allc['courseId'];
       array_push($ac, $acVal);
@@ -135,10 +211,10 @@ class Attendance extends CI_Controller {
    $courseERows= COUNT($course_e);
       foreach ($course_e as $ce){
         $cecVal= $ce['courseId'];
-        array_push($cec,$cecVal);
+        array_push($sec,$cecVal);
       }
       if ($courseERows>=1) {
-        $result=array_intersect($ac,$cec);
+        $result=array_intersect($ac,$sec);
         $ArrayPass = COUNT($result);
              
         if ($ArrayPass==1){
@@ -149,6 +225,54 @@ class Attendance extends CI_Controller {
       }else {
         return 2;
       }       
+  }
+
+  public function get_automated_allocatedDetails($studentId,$branch) {
+    
+    $sec= array(); // student enroll courses
+    $tnac = array();
+
+    $date = date('Y-m-d');
+    $beforeTime=  date("H:i:s", strtotime("-29 minutes"));
+    $afterTime=  date("H:i:s", strtotime("+29 minutes"));
+ 
+    $course_e = $this->attendance_model->student_course($studentId);
+    $courseERows= COUNT($course_e);
+       foreach ($course_e as $ce){
+         $studentEnroll_CIds= $ce['courseId'];
+         array_push($sec,$studentEnroll_CIds);
+       }
+
+       $secCount= COUNT($sec);
+
+    if ($secCount>=1) {
+    
+      $nerest_course = $this->allocation_model->timeNerest_allocate($branch,$date,$beforeTime,$afterTime);   
+      
+    $ncCount= COUNT($nerest_course);
+    if($ncCount>=1) {
+          foreach ($nerest_course as $nc){
+              $Find_courseId= $nc['courseId'];
+              array_push($tnac,$Find_courseId);
+            }
+          }
+        
+          $result=array_intersect($sec,$tnac);
+
+          $final_courseId;
+          $Rcount= COUNT($result);
+          if($Rcount>=1) {
+              foreach ($result as $fc){
+                  $final_courseId=$fc;
+                }
+                $FinalAllocateId = $this->allocation_model->get_allocateDetails_bycourseId($branch,$date,$beforeTime,$afterTime,$final_courseId);   
+                return $FinalAllocateId;
+              }else {
+            return 'Error!';
+          }
+      }else {
+        return 'invalid!';
+      }
   }
 
 

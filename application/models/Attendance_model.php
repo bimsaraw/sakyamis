@@ -80,7 +80,7 @@ class Attendance_model extends CI_Model {
   }
 
   //get classroom attendance - allocate_id allocate data
-  public function student_allocate($allocate_id){
+  public function allocate_course($allocate_id){
     $this->db->select('allocate.batchId,allocate.courseId');
     $this->db->from('allocate');
     $this->db->where('id',$allocate_id);

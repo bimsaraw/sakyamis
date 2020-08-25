@@ -6,10 +6,10 @@ class Allocation_model extends CI_Model {
         $this->load->database();
     }
 
-    public function batch_conflict($startDate,$endDate,$startTime,$endTime,$scheduleDay,$batchId) {
+    public function batch_conflict($startDate,$endDate,$startTime,$endTime,$scheduleDay,$batchId,$branchId) {
         $this->db->select('batchId');
         $this->db->from('allocate');
-        $this->db->where('batchId = "'.$batchId.'" AND (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND (day="'.$scheduleDay.'") AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime))');
+        $this->db->where('batchId = "'.$batchId.'" AND branchId= "'.$branchId.'" AND (date BETWEEN "'.$startDate.'" AND "'.$endDate.'") AND (day="'.$scheduleDay.'") AND ((startTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR (endTime BETWEEN "'.$startTime.'" AND "'.$endTime.'") OR ("'.$startTime.'" BETWEEN startTime AND endTime) OR ("'.$endTime.'" BETWEEN startTime AND endTime))');
 
         $query = $this->db->get();
         foreach ($query->result() as $data) {
@@ -116,6 +116,32 @@ class Allocation_model extends CI_Model {
 
     }
 
+    //attendance automated
+    public function timeNerest_allocate($branch,$date,$beforeTime,$afterTime){
+        $this->db->select('allocate.courseId');
+        $this->db->from('allocate');
+        $this->db->where('date',$date);
+        $this->db->where('branchId',$branch);
+        $this->db->where('startTime>=',$beforeTime);
+        $this->db->where('startTime<=',$afterTime);
+        $this->db->order_by('startTime','asc');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+    //attendance automated
+    public function get_allocateDetails_bycourseId($branch,$date,$beforeTime,$afterTime,$courseId){
+        $this->db->select('allocate.*,course.name as courseName');
+        $this->db->from('allocate');
+        $this->db->join('course','course.id=allocate.courseId','inner');
+        $this->db->where('date',$date);
+        $this->db->where('branchId',$branch);
+        $this->db->where('startTime>=',$beforeTime);
+        $this->db->where('startTime<=',$afterTime);
+        $this->db->where('courseId',$courseId);
+        $this->db->order_by('startTime','asc');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
     public function get_allocations_date($date,$branchId) {
         $this->db->select('a.*,batch.name AS batchName, classroom.name AS classroomName, lecturer.name AS lecturerName,module.name AS moduleName,course.name AS courseName');
         $this->db->from('allocate a');

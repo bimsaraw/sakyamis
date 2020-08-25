@@ -150,7 +150,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <p>Once you select everything, verify the selection and save. System will automatically reserve classroom throughout the given range.</p>
-                    <button type="submit" class="btn btn-primary btn-sm">Save Allocation</button>
+                    <button type="submit" id="frmsubmit" class="btn btn-primary btn-sm">Save Allocation</button>
                     <a class="btn btn-secondary btn-sm" href="<?php echo base_url(); ?>index.php/allocations/">Go Back</a>
                 </div>
             </div>
@@ -473,7 +473,19 @@
             });
     });
 
-//event
+//lecture
+
+    $('#endTime').focusout(function() {
+        var startTime = $('#startTime').val();
+        var endTime = $('#endTime').val();
+        if (startTime>endTime) {
+            alert("Sorry..Time does not accept...!");
+            $('#endTime').val('');
+            $('#frmsubmit').prop('disabled',true);
+        }else {
+            $('#frmsubmit').prop('disabled',false);
+        }
+    });
     $('#endTime').bind('keyup',function() {
         var startDate = $('#startDate').val();
         var endDate = $('#endDate').val();
@@ -481,14 +493,16 @@
         var endTime = $('#endTime').val();
         var scheduleDay = $('#scheduleDay').val();
         var batchId = $('#batchId').val();
+        var branchId = $('#L_allocateBranch').val();
 
         startTime = $.trim(startTime.replace(/\s\s+/g, ''));
         endTime = $.trim(endTime.replace(/\s\s+/g, ''));
+      
         $.ajax({
                 type : "GET",
                 //set the data type
                 url: '<?php echo base_url(); ?>index.php/allocations/batch_conflict', // target element(s) to be updated with server response
-                data: {startDate:startDate,endDate:endDate,startTime:startTime,endTime:endTime,scheduleDay:scheduleDay,batchId:batchId},
+                data: {startDate:startDate,endDate:endDate,startTime:startTime,endTime:endTime,scheduleDay:scheduleDay,batchId:batchId,branchId:branchId},
                 cache : false,
                 //check this in Firefox browser
                 success : function(response){

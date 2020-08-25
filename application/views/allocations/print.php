@@ -78,8 +78,8 @@
 
         timetable.addLocations([
             "",
-            <?php foreach($allocations as $al) {
-                echo "'".$al['id']."',";
+            <?php foreach($batches as $batch) {
+                echo "'".$batch['batchId']."',";
             } ?>
         ]);
 
@@ -97,7 +97,7 @@
                 }
             };
 
-            timetable.addEvent("<?= $a['lecturerName']; ?> -<?= $a['courseName']; ?> - <?= $a['moduleName']; ?> | <?= $a['classroomName']; ?>", "<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
+            timetable.addEvent("<?= $a['lecturerName']; ?> -<?= $a['courseName']; ?> - <?= $a['moduleName']; ?> | <?= $a['classroomName']; ?>", "<?= $a['batchId']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
         <?php } ?>
 
 

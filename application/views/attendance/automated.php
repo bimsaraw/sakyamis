@@ -12,14 +12,24 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
+        
+            <form id="frmAttendance">
                 <div class="card-body">
-                <a class="btn btn-dark btn-sm float-right" href="<?= base_url(); ?>index.php/attendance/full_screen_class?allocate_id=<?php echo $_GET['allocate_id']; ?>">Full Screen View</a>
-                    <h5 class="card-title">Student Attendance - Classroom <?= date('Y-M-d');?></h5>
-                    <form id="frmAttendance">
+                <a class="btn btn-dark btn-sm float-right" href="<?= base_url(); ?>index.php/attendance/full_screen_automated">Full Screen View</a>
+                    <h5 class="card-title">Student Attendance - Automated  <?= date('Y-M-d');?></h5>                 
+                    <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <select id="branchId" name="branchId" class="form-control form-control-sm" required>
+                                <?php foreach ($branches as $branch) { ?>
+                                    <option value="<?= $branch['id']; ?>"><?= $branch['name']; ?></option>
+                                <?php } ?>
+                                </select>
+                               
+                            </div>
+                        </div>
                         <div class="form-row">
                           <div class="form-group col-md-4">
-                          <input type="hidden" id="allocate_id" name="allocate_id" class="form-control" value="<?php echo $_GET['allocate_id']; ?>"  autocomplete="off" required>
-                            <input type="text" id="studentId" name="studentId" class="form-control" placeholder="19S08002" autocomplete="off" required>
+                            <input type="text" id="studentId" name="studentId" class="form-control" placeholder="Input Student ID" autocomplete="off" required>
                           </div>
                           <div class="form-group col-md-7">
                             <button class="btn btn-primary"><i class="fa fa-barcode"></i> Mark Attendance</button>
@@ -27,8 +37,9 @@
                         </div>
                     </form>
                     <hr>
-                    <span id="lblcoursename" class="progress-info progress-pending"></span>
+                    <span id="lblcoursename" class="progress-info progress-pending">No courses.!</span>
                     <div id="alertArea" class="alert" style="display:none;">
+
                     </div>
                     <div class="table table-responsive">
                       <table id="responseTable" style="display:none;" class="table table-stripped">
@@ -90,18 +101,6 @@
       console.log(allocateId);
 //get scheduled course
 
-        if(allocateId!=""){
-              $.ajax({
-                        type: "POST",
-                        url: '<?php echo base_url(); ?>index.php/attendance/get_schedule_name',
-                        data: {allocateId:allocateId},
-                        success: function(response) {
-                            console.log(response);
-                            $('#lblcoursename').html(response);
-                        }
-          });
-        }
-
       $('#frmAttendance').submit(function(e) {
           e.preventDefault();
           var form = $('#frmAttendance');
@@ -109,19 +108,25 @@
           $.blockUI();
           $.ajax({
            type: "POST",
-           url: '<?php echo base_url(); ?>index.php/attendance/mark_attendance_classroom',
+           url: '<?php echo base_url(); ?>index.php/attendance/mark_attendance_classroom_automated',
            data: form.serialize(),
            success: function(response) {
              console.log(response);
-             if($.isArray(response)) {
+             if($.isArray(response['payments'])) {
                $('#responseTable').show();
                var markup;
-               $.each(response,function(key, val) {
-                 var amount = val.amount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-                 markup += "<tr>"
-                 markup += "<td>"+val.studentId+"</td><td>"+val.initials_name+"</td><td>"+val.name+"</td><td style='text-align:right; color:red;'>"+amount+"</td><td style='text-transform:uppercase;'>"+val.currency+"</td><td>"+val.date+"</td>";
-                 markup +="</tr>";
-               });
+             
+                $.each(response['payments'],function(key, val) {
+                  var amount = val.amount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+                  markup += "<tr>"
+                  markup += "<td>"+val.studentId+"</td><td>"+val.initials_name+"</td><td>"+val.name+"</td><td style='text-align:right; color:red;'>"+amount+"</td><td style='text-transform:uppercase;'>"+val.currency+"</td><td>"+val.date+"</td>";
+                  markup +="</tr>";
+                });
+                if(response['allocate']!=0) {
+                  $.each(response['allocate'],function(key, val) {
+                  $('#lblcoursename').html(val.courseName + " - Batch: " + val.batchId + " Start Time: "+val.startTime );
+                  });
+                }
 
                $('#responseText').html(markup);
                $('#alertArea').show();
@@ -129,10 +134,9 @@
                $('#alertArea').removeClass("alert-warning");
                $('#alertArea').removeClass("alert-success");
                $('#alertArea').addClass("alert-success");
-
                $('#alertArea').html("<h5>Thank You..! </h5>There are some issues with payments! <button class='btn btn-sm btn-danger' onclick=viewHistory('"+studentId+"')>History</button>");
              } else {
-                if (response=='Batch Pass..') {
+                if (response=='BatchPass!') {
                       $('#responseTable').hide();
                       $('#alertArea').show();
                       $('#alertArea').removeClass("alert-danger");
@@ -140,7 +144,7 @@
                       $('#alertArea').removeClass("alert-info");
                       $('#alertArea').addClass("alert-success");
                       $('#alertArea').html("<h5>Thank You..! </h5> <button class='btn btn-sm btn-success' onclick=viewHistory('"+studentId+"')>History</button>");
-                }else if (response=='batch fail..!'){
+                }else if (response=='batchfail!'){
                   $('#responseTable').hide();
                   $('#alertArea').show();
                   $('#alertArea').removeClass("alert-warning");
@@ -148,7 +152,8 @@
                   $('#alertArea').removeClass("alert-info");
                   $('#alertArea').addClass("alert-danger");
                   $('#alertArea').html("<h5>Sorry..! </h5>This Student ID cannot accept to this Course schedule...!");
-                }else if (response=='invalide..!'){
+                  $('#lblcoursename').html("No Courses..!");
+                }else if (response=='invalid!'){
                   $('#responseTable').hide();
                   $('#alertArea').show();
                   $('#alertArea').removeClass("alert-danger");
@@ -157,7 +162,8 @@
                   $('#alertArea').removeClass("alert-info");
                   $('#alertArea').addClass("alert-warning");
                   $('#alertArea').html("<h5>Sorry..! </h5> Invalid student ID..");
-                }else if (response=='Already Marked..!'){
+                  $('#lblcoursename').html("No Courses..!");
+                }else if (response=='AlreadyMarked!'){
                   $('#responseTable').hide();
                   $('#alertArea').show();
                   $('#alertArea').removeClass("alert-danger");
@@ -165,9 +171,18 @@
                   $('#alertArea').removeClass("alert-success");
                   $('#alertArea').addClass("alert-info");
                   $('#alertArea').html("<h5>Sorry..! </h5> Already Marked..");
+                } else if (response=='Error!'){
+                  $('#responseTable').hide();
+                  $('#alertArea').show();
+                  $('#alertArea').removeClass("alert-danger");
+                  $('#alertArea').removeClass("alert-warning");
+                  $('#alertArea').removeClass("alert-success");
+                  $('#alertArea').addClass("alert-info");
+                  $('#alertArea').html("<h5>Sorry..! </h5>System Cannot find to Enrolled schedule (out of schedule range), If you need navigate to the manual attendance marking registry Click <a class='btn btn-primary btn-sm' href='<?= base_url(); ?>index.php/allocations'>Go</a>");
+                  $('#lblcoursename').html("No Courses..!");
                 }
                
-                
+          
              }
              $.unblockUI();
              $('#studentId').focus();

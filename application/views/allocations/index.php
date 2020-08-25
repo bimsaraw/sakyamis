@@ -22,7 +22,7 @@
             
             <div class="col-md-3">
           
-                <select id="allocatedDates" name="allocatedDates" class="form-control form-control-sm">
+                <select id="allocatedDates" name="allocatedDates" class="form-control form-control-sm" required>
                       
                 </select>
             </div>
@@ -169,9 +169,14 @@ var selected =0;
 
         timetable.addLocations([
             "",
-            <?php foreach($allocations as $al) {
-                echo "'".$al['id']."',";
-            } ?>
+            <?php 
+            if($batches) { 
+                foreach($batches as $batch) {
+                    echo "'".$batch['batchId']."',";
+                } 
+            }
+            ?>
+
         ]);
 
         <?php foreach($allocations as $a) { ?>
@@ -188,24 +193,7 @@ var selected =0;
                 }
             };
 
-            timetable.addEvent("<?= $a['lecturerName']; ?> -<?= $a['courseName']; ?> - <?= $a['moduleName']; ?> | <?= $a['classroomName']; ?>", "<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
-        <?php } ?>
-
-        <?php foreach($events as $a) { ?>
-
-            var eventId = <?= $a['id']; ?>;
-
-            var optionsEvent = {
-                class: 'event<?= $a["id"]; ?>',
-                title: '<?= $a["name"]; ?>',
-                data: { // each property will be added to the data-* attributes of the DOM node for this event
-                },
-                onClick: function(event, timetable, clickEvent) {
-                    editEvent(<?= $a['id']; ?>);
-                }              
-            };
-
-            timetable.addEvent("<?= $a['name']; ?>","<?= $a['id']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),optionsEvent);
+            timetable.addEvent("<?= $a['lecturerName']; ?> - <?= $a['moduleName']; ?> | <?= $a['classroomName']; ?>", "<?= $a['batchId']; ?>", new Date("<?= $a['date']; ?> <?= $a['startTime']; ?>"), new Date("<?= $a['date']; ?> <?= $a['endTime']; ?>"),options);
         <?php } ?>
 
         var renderer = new Timetable.Renderer(timetable);

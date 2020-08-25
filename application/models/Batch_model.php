@@ -16,6 +16,18 @@ class Batch_model extends CI_Model
         return $query->result_array();
     }
 
+    public function get_active_batches_by_Branch($branchId,$date) //by allocate date
+    {
+        $this->db->select('batchId,batch.*');
+        $this->db->from('allocate');
+        $this->db->join('batch', 'batch.id=allocate.batchId', 'inner');
+        $this->db->where('date',$date);
+        $this->db->where('branchId',$branchId);
+        $this->db->group_by('batchId','asc');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     public function add_batch()
     {
         $this->load->helper('url');

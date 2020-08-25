@@ -21,7 +21,8 @@ class Allocations extends CI_Controller {
 
         if($this->user_model->validate_permission($username,1)) {
           $data['title'] = 'View Schedule';
-
+          $today = date('Y-m-d');
+          $data['batches'] = $this->batch_model->get_active_batches_by_Branch(0,$today);
           $data['dates'] = $this->allocation_model->get_dates(1);
           $data['classes'] = $this->classroom_model->get_classes();
           $data['branches'] = $this->branches_model->get_branch_byuser($username);
@@ -156,11 +157,12 @@ class Allocations extends CI_Controller {
         $endTime = $this->input->get('endTime');
         $scheduleDay = $this->input->get('scheduleDay');
         $batchId = $this->input->get('batchId');
+        $branchId = $this->input->get('branchId');
 
         //$startTime = date('H:i:sa',strtotime($startTime));
         //$endTime = date('H:i:sa',strtotime($endTime));
 
-        $data = $this->allocation_model->batch_conflict($startDate,$endDate,$startTime,$endTime,$scheduleDay,$batchId);
+        $data = $this->allocation_model->batch_conflict($startDate,$endDate,$startTime,$endTime,$scheduleDay,$batchId,$branchId);
 
         echo $data;
     }
@@ -192,7 +194,7 @@ class Allocations extends CI_Controller {
 
         $data['dates'] = $this->allocation_model->get_dates($branch);
         $data['classes'] = $this->classroom_model->get_classes();
-        $data['batches'] = $this->batch_model->get_batches();
+        $data['batches'] = $this->batch_model->get_active_batches_by_Branch($branch,$date);
 
         $this->user_model->save_user_log($username,'Viewed schedule for date'.$date);
 
@@ -220,7 +222,7 @@ class Allocations extends CI_Controller {
 
         $data['dates'] = $this->allocation_model->get_dates($branch);
         $data['classes'] = $this->classroom_model->get_classes();
-        $data['batches'] = $this->batch_model->get_batches();
+        $data['batches'] = $this->batch_model->get_active_batches_by_Branch($branch,$date);
 
         $this->user_model->save_user_log($username,'Printed allocation for date'.$date);
 
