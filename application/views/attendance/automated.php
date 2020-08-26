@@ -206,7 +206,7 @@
     $.blockUI();
     $.ajax({
      type: "POST",
-     url: '<?php echo base_url(); ?>index.php/attendance/get_attendance_history',
+     url: '<?php echo base_url(); ?>index.php/attendance/get_classroom_attendance_history',
      data: { studentId: studentId },
      success: function(response) {
        var markup;

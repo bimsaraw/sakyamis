@@ -90,7 +90,7 @@ class Attendance_model extends CI_Model {
 
   //get classroom attendance - studentId course enroll data
   public function student_course($studentId){
-    $this->db->select('course_enroll.courseId');
+    $this->db->select('course_enroll.courseId,course_enroll.batchId');
     $this->db->from('course_enroll');
     $this->db->where('studentId',$studentId);
     $query = $this->db->get();

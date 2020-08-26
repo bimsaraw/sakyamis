@@ -118,7 +118,7 @@ class Allocation_model extends CI_Model {
 
     //attendance automated
     public function timeNerest_allocate($branch,$date,$beforeTime,$afterTime){
-        $this->db->select('allocate.courseId');
+        $this->db->select('allocate.courseId,allocate.batchId');
         $this->db->from('allocate');
         $this->db->where('date',$date);
         $this->db->where('branchId',$branch);
@@ -129,15 +129,19 @@ class Allocation_model extends CI_Model {
         return $query->result_array();
     }
     //attendance automated
-    public function get_allocateDetails_bycourseId($branch,$date,$beforeTime,$afterTime,$courseId){
+    public function get_allocateDetails_bycourseId($branch,$date,$beforeTime,$afterTime,$courseId,$batchId){
         $this->db->select('allocate.*,course.name as courseName');
         $this->db->from('allocate');
         $this->db->join('course','course.id=allocate.courseId','inner');
         $this->db->where('date',$date);
         $this->db->where('branchId',$branch);
+        if ($batchId){
+            $this->db->where('batchId',$batchId);
+        }
         $this->db->where('startTime>=',$beforeTime);
         $this->db->where('startTime<=',$afterTime);
         $this->db->where('courseId',$courseId);
+        
         $this->db->order_by('startTime','asc');
         $query = $this->db->get();
         return $query->result_array();

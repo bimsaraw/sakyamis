@@ -159,8 +159,9 @@ class Attendance extends CI_Controller {
     //$allocate_id =$this->input->post('allocate_id');
     $branch =$this->input->post('branchId');
 
-    $Nallocates = $this->get_automated_allocatedDetails($studentId,$branch);
-    
+    $Nallocates = $this->get_automated_allocatedDetails($studentId,$branch); 
+      // echo json_encode($Nallocates);
+
     if(is_array($Nallocates)) {
       foreach($Nallocates as $Nallocate){
         $allocate_id= $Nallocate['id'];  //set to automated allocate Id
@@ -230,20 +231,23 @@ class Attendance extends CI_Controller {
   public function get_automated_allocatedDetails($studentId,$branch) {
     
     $sec= array(); // student enroll courses
-    $tnac = array();
+    $seb= array(); //student enroll batch
+    $tnac = array(); // Time nerest schedule courses
+    $tnab = array();  // Time nerest schedule batchs
 
     $date = date('Y-m-d');
     $beforeTime=  date("H:i:s", strtotime("-29 minutes"));
     $afterTime=  date("H:i:s", strtotime("+29 minutes"));
  
     $course_e = $this->attendance_model->student_course($studentId);
-    $courseERows= COUNT($course_e);
        foreach ($course_e as $ce){
          $studentEnroll_CIds= $ce['courseId'];
+         $studentEnroll_BIds= $ce['batchId'];
          array_push($sec,$studentEnroll_CIds);
+         array_push($seb,$studentEnroll_BIds);
        }
 
-       $secCount= COUNT($sec);
+    $secCount= COUNT($sec);
 
     if ($secCount>=1) {
     
@@ -253,19 +257,30 @@ class Attendance extends CI_Controller {
     if($ncCount>=1) {
           foreach ($nerest_course as $nc){
               $Find_courseId= $nc['courseId'];
+              $Find_batchId= $nc['batchId'];
               array_push($tnac,$Find_courseId);
+              array_push($tnab,$Find_batchId);
             }
           }
         
-          $result=array_intersect($sec,$tnac);
+          $result=array_intersect($sec,$tnac);  // check course id by the student course and schedule course
+          $result2=array_intersect($seb,$tnab); // check batch id by the student and schedule 
 
           $final_courseId;
-          $Rcount= COUNT($result);
-          if($Rcount>=1) {
+          $final_batchId="";
+
+          if(COUNT($result2)>=1) {
+            foreach ($result2 as $fb){
+              $final_batchId=$fb;
+            }
+          }
+
+          // get tally allocate id
+          if(COUNT($result)>=1) {
               foreach ($result as $fc){
                   $final_courseId=$fc;
                 }
-                $FinalAllocateId = $this->allocation_model->get_allocateDetails_bycourseId($branch,$date,$beforeTime,$afterTime,$final_courseId);   
+                $FinalAllocateId = $this->allocation_model->get_allocateDetails_bycourseId($branch,$date,$beforeTime,$afterTime,$final_courseId,$final_batchId);   
                 return $FinalAllocateId;
               }else {
             return 'Error!';
@@ -285,6 +300,12 @@ class Attendance extends CI_Controller {
   public function get_attendance_history() {
     $studentId = $this->input->post('studentId');
     $data = $this->attendance_model->get_attendance_history($studentId);
+    header('Content-Type: application/json');
+    echo json_encode( $data );
+  }
+  public function get_classroom_attendance_history() {
+    $studentId = $this->input->post('studentId');
+    $data = $this->attendance_model->get_classroom_attendance_detail($studentId);
     header('Content-Type: application/json');
     echo json_encode( $data );
   }
