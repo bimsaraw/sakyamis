@@ -315,5 +315,24 @@ class Allocation_model extends CI_Model {
       return $query->result_array();
     }
 
+    public function get_exam_schedules($allocateId){
+      
+        $date = date('Y-m-d');
+        $this->db->select('a.*,branch.name as branchName,course.name AS courseName, module.name AS moduleName');
+        $this->db->from('allocate a');
+        $this->db->join('branch','branch.id=a.branchId','inner');
+        $this->db->join('course','course.id=a.courseId','inner');
+        $this->db->join('module','module.id=a.moduleId','inner');
+        $this->db->where('a.date >=',$date);
+        $this->db->where('a.purpose',2);
+
+        if($allocateId) {
+            $this->db->where('a.id',$allocateId);
+        }
+        $query = $this->db->get();
+        return $query->result_array();
+
+    }
+
 
 }

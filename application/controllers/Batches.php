@@ -9,6 +9,7 @@ class Batches extends CI_Controller
         $this->load->model('batch_model');
         $this->load->model('course_model');
         $this->load->model('user_model');
+        $this->load->model('branches_model');
         $this->load->helper('url_helper');
         $this->load->helper('form');
     }
@@ -22,6 +23,7 @@ class Batches extends CI_Controller
 
             $data['batches'] = $this->batch_model->get_batches();
             $data['courses'] = $this->course_model->get_courses();
+            $data['branch'] = $this->branches_model->get_branch();
 
             $this->user_model->save_user_log($username, 'Open Batches');
 
@@ -52,10 +54,7 @@ class Batches extends CI_Controller
 
             $this->user_model->save_user_log($username,'Batch Added');
 
-            $this->load->view('templates/header', $data);
-            $this->load->view('templates/sidebar', $data);
-            $this->load->view('batches/index', $data);
-            $this->load->view('templates/footer');
+            redirect('Batches');
         } else {
             redirect('/?msg=noperm', 'refresh');
         }

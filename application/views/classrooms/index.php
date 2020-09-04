@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Classrooms</h5>
-                <p class="card-text">Classrooms available at Saegis Campus</p>
+                <p class="card-text">Classrooms available at Siksil Institute</p>
                 <div class="table-responsive">
                     <table class="table table-stripped" id="dataTable">
                         <thead class="thead-light">

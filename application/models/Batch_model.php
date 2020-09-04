@@ -9,9 +9,10 @@ class Batch_model extends CI_Model
 
     public function get_batches()
     {
-        $this->db->select('batch.*,course.name AS courseName');
+        $this->db->select('batch.*,course.name AS courseName,branch.name as branchName');
         $this->db->from('batch');
         $this->db->join('course', 'course.id=batch.courseId', 'inner');
+        $this->db->join('branch', 'branch.id=batch.branch', 'inner');
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -27,6 +28,15 @@ class Batch_model extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+    public function batches_by_branch($branchId) //by allocate date
+    {
+        $this->db->select('*');
+        $this->db->from('batch');
+        $this->db->where('branch',$branchId);
+        $this->db->where('status',1);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 
     public function add_batch()
     {
@@ -37,7 +47,9 @@ class Batch_model extends CI_Model
             'heads'=>$this->input->post('batchHeads'),
             'courseId'=>$this->input->post('batchCourseId'),
             'batch_color'=>$this->input->post('batch_color'),
+            'branch'=>$this->input->post('branchId'),
             'status'=>1
+
         );
         return $this->db->insert('batch', $data);
     }
@@ -106,6 +118,12 @@ class Batch_model extends CI_Model
 
       return $query->heads;
     }
+    public function get_batch_course($batchId) {
+      $this->db->where('id',$batchId);
+      $query = $this->db->get('batch')->row();
+
+      return $query->courseId;
+    }
 
     public function get_single_batch($id) {
       $this->db->where('id',$id);
@@ -121,6 +139,7 @@ class Batch_model extends CI_Model
         'heads'=>$this->input->post('batchHeads'),
         'batch_color'=>$this->input->post('batch_color'),
         'batch_color'=>$this->input->post('batch_color'),
+        'branch'=>$this->input->post('branchId')
       );
       $this->db->where('id',$batchId);
       return $this->db->update('batch',$data);

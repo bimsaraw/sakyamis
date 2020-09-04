@@ -24,6 +24,14 @@ class Enrollment_model extends CI_Model {
     return $query->result_array();
 }
 
+  public function get_students_enrolled_by_batch($batchId) {
+    $this->db->select('*');
+    $this->db->from('course_enroll');
+    $this->db->where('batchId',$batchId);
+    $query = $this->db->get();
+    return $query->result_array();
+  }
+
   public function get_students_enrolled($courseId) {
     $this->db->select('course_enroll.*,student.*,course.name AS courseName, payment_plan.name AS pplan_name, intakes.name AS intakeName, batch.name AS batchName, inquiry.username AS counselor');
     $this->db->join('student','student.studentId = course_enroll.studentId','inner');
@@ -738,5 +746,6 @@ class Enrollment_model extends CI_Model {
       return $this->db->update('course_enroll', $data);
     }
   }
+
 
 }

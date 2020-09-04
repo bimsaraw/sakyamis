@@ -50,6 +50,29 @@
       </div>
   </li>
 
+  <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-pencil-ruler"></i>
+      <span>Examination Department</span>
+      </a>
+      <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+
+          <h6 class="dropdown-header">Standard:</h6>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam">Available Exam</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/add">Add New Exam</a>
+          <div class="dropdown-divider"></div>
+
+          <h6 class="dropdown-header">Advance Options:</h6>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/marks">Exam Marks</a>
+         
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">Reports:</h6>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Available exam List</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Available exam List</a>
+
+      </div>
+  </li>
+
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-user-plus"></i>

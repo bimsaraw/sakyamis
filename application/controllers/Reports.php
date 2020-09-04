@@ -349,7 +349,7 @@ class Reports extends CI_Controller
     public function generate_attsummary_table(){
         $username = $this->session->userdata('username');
 
-        if ($this->user_model->validate_permission($username, 31)) {
+        if ($this->user_model->validate_permission($username, 39)) {
 
         $data= $this->report_model->clsatt_summary();
         

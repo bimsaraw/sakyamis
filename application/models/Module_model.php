@@ -21,6 +21,14 @@ class Module_model extends CI_Model {
         return $response;
     }
 
+    public function get_module_by_courseId($courseId){
+        $this->db->select('*');
+        $this->db->from('module');
+        $this->db->where('course',$courseId);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     public function get_all_modules() {
         $this->db->select('course.name As courseName, semester.name AS semesterName, module.*');
         $this->db->from('module');

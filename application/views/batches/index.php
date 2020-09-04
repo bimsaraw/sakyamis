@@ -19,6 +19,10 @@
       echo '<div class="alert alert-success">'; echo $this->session->flashdata('info'); echo'</div> ';
     }
     ?>
+     <?php if(isset($msg)) {
+        if($msg==1) { ?>
+        <div class="alert alert-success">Batch added successfully!</div>
+        <?php }} ?>
 <div class="row">
     <div class="col-xl-6 col-sm-6 mb-6">
         <div class="card">
@@ -30,6 +34,7 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>Batch</th>
+                                <th>Branch</th>
                                 <th>Head Count</th>
                                 <th>Course Enrolled</th>
                                 <th>Enrollmnent Status</th>
@@ -40,6 +45,7 @@
                             <?php foreach ($batches as $batch): ?>
                                 <tr>
                                     <td><?php echo $batch['name']; ?></td>
+                                    <td><?php echo $batch['branchName']; ?></td>
                                     <td><?php echo $batch['heads']; ?></td>
                                     <td><?php echo $batch['courseName']; ?></td>
                                     <td><input type="checkbox" <?php if($batch['status']==1) { echo "checked"; } ?> id="status_<?= $batch['id']; ?>" onchange="set_status('<?= $batch['id']; ?>')" data-toggle="toggle" data-size="sm" value="1"></td>
@@ -54,17 +60,21 @@
                 </div>
             </div>
             <div class="card-body">
-                <?php if(isset($msg)) {
-                        if($msg==1) { ?>
-                            <div class="alert alert-success">Batch added successfully!</div>
-                <?php
-                        }
-                } ?>
+               
             </div>
         </div>
     </div>
     <div class="col-md-6 col-sm-12">
         <?php echo form_open('batches/add'); ?>
+        <div class="form-group">
+                <label for="branchtype">Branch</label>
+                <select name="branchId" class="form-control form-control-sm" required>
+                    <option></option>
+                    <?php foreach ($branch as $branches): ?>
+                        <option value="<?php echo $branches['id']; ?>"><?php echo $branches['name']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="form-group">
                 <label for="batchId">Batch Code</label>
                 <input type="text" class="form-control form-control-sm" name="batchId" required>
@@ -130,6 +140,15 @@
                         <?php echo $course['name']; ?>
                         </option>
                     <?php } ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="branchtype">Branch</label>
+                <select name="branchId" id="m_branchId" class="form-control form-control-sm" required>
+                    <option></option>
+                    <?php foreach ($branch as $branches): ?>
+                        <option value="<?php echo $branches['id']; ?>"><?php echo $branches['name']; ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="form-group">
@@ -239,6 +258,7 @@
                 document.getElementById("m_batchheads").value = val.heads;
                 document.getElementById("m_batchcourse").value = val.courseId;  
                 document.getElementById("m_batchcolor").value = val.batch_color; 
+                document.getElementById("m_branchId").value = val.branch; 
                 m_batchcolor.style.backgroundColor = val.batch_color;   
               });
           }
