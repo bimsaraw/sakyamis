@@ -42,7 +42,7 @@
                     <div class="table-responsive">
                     <h6  id='student_name' class="text-info">Student Name:</h6>
                         <table class="table" id="dataTable">
-                            <thead class="thead-light">
+                            <thead class="thead-dark">
                                 <tr>
                                     <th>No</th>
                                     <th>Branch</th>
@@ -65,9 +65,33 @@
         </div>
     </div>
 </div>
-
+<link href="<?php echo base_url(); ?>css/rowGroup.bootstrap.min" rel="stylesheet">
 <script>
   $(document).ready(function() {
+      
+    var table = $('#dataTable').DataTable({
+        "columnDefs": [
+            { "visible": false, "targets": 2 }
+        ],
+        "order": [[ 1, 'asc' ]],
+        "displayLength": 25,
+        "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+ 
+            api.column(5, {page:'current'} ).data().each( function ( group, i ) {
+                if ( last !== group ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="group"><td colspan="9"><div class="p-1 mb-1 bg-light"><p class="text-primary">'+group+'</p></div></td></tr>'
+                    );
+ 
+                    last = group;
+                }
+            } );
+        }
+    } );
+      
       var t = $('#dataTable').DataTable();
 
       $('#studentExams').submit(function(e) {
