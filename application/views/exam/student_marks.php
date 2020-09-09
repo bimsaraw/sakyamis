@@ -83,7 +83,7 @@
             api.column(5, {page:'current'} ).data().each( function ( group, i ) {
                 if ( last !== group ) {
                     $(rows).eq( i ).before(
-                        '<tr class="group"><td colspan="9"><div class="p-1 mb-1 bg-light"><p class="text-primary">'+group+'</p></div></td></tr>'
+                        '<tr class="group"><td colspan="9"><p class="text-primary">'+group+'</p></td></tr>'
                     );
  
                     last = group;
