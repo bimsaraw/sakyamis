@@ -17,6 +17,30 @@ class Exam_model extends CI_Model {
         return $query->result_array();
     }
 
+    public function get_exams_by_studentId($studentId) {
+      $this->db->select('exam.*,branch.name as branchName,module.name as moduleName, student.full_name as studentName,course.name as courseName,exam_marks.mark,marks_gradescal.grade');
+      $this->db->from('exam_marks');
+      $this->db->join('exam','exam.id=exam_marks.examId');
+      $this->db->join('student','student.studentId=exam_marks.studentId');
+      $this->db->join('branch','branch.id=exam.branchId');
+      $this->db->join('batch','batch.id=exam.batchId');
+      $this->db->join('course','course.id=batch.courseId');
+      $this->db->join('module','module.id=exam.moduleId');
+      $this->db->join('marks_gradescal','(marks_gradescal.id=exam.grade_scal) AND (exam_marks.mark BETWEEN marks_gradescal.value1 AND marks_gradescal.value2)','inner');
+      $this->db->where('exam_marks.studentId',$studentId);
+      $this->db->where('batch.status',1);
+      $this->db->order_by('date','DESC');
+      $query = $this->db->get();
+      return $query->result_array();
+  }
+
+  public function get_grade_scal(){
+    $this->db->select('id');
+    $this->db->group_by('id');
+    $query =$this->db->get('marks_gradescal');
+    return $query->result_array();
+  }
+
     public function get_modules_byBatch($batchId) {
 
         $this->db->select('module.*');
@@ -39,7 +63,9 @@ class Exam_model extends CI_Model {
                 'name'=>$this->input->post('name'),
                 'start_time'=>$this->input->post('startTime'),
                 'end_time'=>$this->input->post('endTime'),
-                'status'=> 1
+                'status'=> 1,
+                'grade_scal'=> $this->input->post('gradeScal'),
+                'weight'=> $this->input->post('weight')
             );
             return $this->db->insert('exam', $data);
         }

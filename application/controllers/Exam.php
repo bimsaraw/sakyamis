@@ -38,7 +38,7 @@ class Exam extends CI_Controller {
       $username = $this->session->userdata('username');
 
       if($this->user_model->validate_permission($username,44)) {
-        $data['title'] = 'Student Marks';
+        $data['title'] = 'Exam Marks';
 
         $data['exams'] = $this->exam_model->get_exams();
 
@@ -50,6 +50,35 @@ class Exam extends CI_Controller {
         $this->load->view('templates/footer');
       } else {
         redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
+    public function student_marks() {
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,47)) {
+        $data['title'] = 'Student Marks';
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('exam/student_marks', $data);
+        $this->load->view('templates/footer');
+      } else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
+    public function get_student_attend_Exams(){
+      $username = $this->session->userdata('username');
+
+      if ($this->user_model->validate_permission($username, 31)) {
+
+        $studentId = $this->input->post('studentId');
+
+        $data= $this->exam_model->get_exams_by_studentId($studentId);
+        
+        header('Content-Type: application/json');
+        echo json_encode($data);
       }
     }
 
@@ -69,9 +98,10 @@ class Exam extends CI_Controller {
       
         $batchId = $this->input->get('batchId');
         $data['title'] = 'Add New Exam /Assignment /Presentation';
-       
+
         $data['branches'] = $this->branches_model->get_branch();
         $data['allocates'] =$this->allocation_model->get_exam_schedules('');
+        $data['gradeScals'] = $this->exam_model->get_grade_scal();
         $this->user_model->save_user_log($username,'Marks added');
 
         $this->load->view('templates/header', $data);
@@ -209,7 +239,9 @@ class Exam extends CI_Controller {
         'name'=>$this->input->post('name'),
         'start_time'=> $startTime,
         'end_time'=>$endTime,
-        'status'=> 1
+        'status'=> 1,
+        'grade_scal'=> $this->input->post('gradeScal'),
+        'weight'=> $this->input->post('weight')
     );
       
       $response = $this->exam_model->clone_exam($data);
@@ -236,7 +268,7 @@ class Exam extends CI_Controller {
     for ($i = 0; $i < count($studentIds); $i++) {
       $studentId = $studentIds[$i];
       $mark = $marks[$i];
-      if ($mark) {
+      if ($mark!=0) {
         $data = array(
           'examId'=>  $examId,
           'studentId'=>  $studentId,

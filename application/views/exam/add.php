@@ -82,11 +82,29 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                                 </div>
                               </div> 
                         <div class="form-row">  
-                            <div class="form-group col-md-9">
+                            <div class="form-group col-md-4">
                               <label>Exam Name</label>
                               <input type="text" name="name" id="name" class="form-control form-control-sm" autocomplete="off" >
                           </div> 
+                          <div class="form-group col-md-2">
+                              <label>Exam Weight <span class="required"> *</span></label>
+                              <div class="input-group mb-2">
+                                <input type="text" name="weight" id="weight" class="form-control form-control-sm" placeholder="50%" autocomplete="off" required >
+                                <div class="input-group-prepend">
+                                  <div class="input-group-text form-control-sm">%</div>
+                                </div>
+                              </div>               
+                          </div> 
+                          <div class="form-group col-md-3">
+                                  <label>Grading Scale  <span class="required"> *</span></label>
+                                  <select class="form-control form-control-sm" name="gradeScal" id="gradeScal"required >
+                                      <?php foreach($gradeScals as $gradeScal)  {?>
+                                      <option value="<?=$gradeScal['id']  ?>"><?=$gradeScal['id']  ?></option>
+                                      <?php }?>
+                                  </select>
+                                </div>
                         </div>
+                      
                       <div class="form-row">     
                         <div class="col-md-3">
                           <button type="submit" class="btn btn-primary btn-sm">Save Exam</button>
@@ -130,6 +148,23 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                                       <option value="8">MOCK exam </option>
                                   </select>
                             </div>
+                            <div class="form-group col-md-4">
+                              <label>Exam Weight</label>
+                              <div class="input-group mb-2">
+                                <input type="text" name="weight" id="weight" class="form-control form-control-sm" placeholder="50%" autocomplete="off" required >
+                                <div class="input-group-prepend">
+                                  <div class="input-group-text form-control-sm">%</div>
+                                </div>
+                              </div>               
+                          </div> 
+                          <div class="form-group col-md-3">
+                                  <label>Grading Scale  <span class="required"> *</span></label>
+                                  <select class="form-control form-control-sm" name="gradeScal" id="gradeScal"required >
+                                      <?php foreach($gradeScals as $gradeScal)  {?>
+                                      <option value="<?=$gradeScal['id']  ?>"><?=$gradeScal['id']  ?></option>
+                                      <?php }?>
+                                  </select>
+                                </div>
                   </div>
                 <table class="table table-stripped" id="dataTable">
                           <thead>
@@ -225,6 +260,8 @@ $(document).ready(function() {
           });
 
   });
+
+ 
 
   $('#batchId').bind('change',function() {
  

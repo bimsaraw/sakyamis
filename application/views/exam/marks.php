@@ -37,6 +37,7 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                               <th>Name</th>
                               <th>Start Time</th>
                               <th>End Time</th>
+                              <th>Graded Scheme</th>
                               <th>Action</th>
                             </tr>
                           </thead>
@@ -88,6 +89,7 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                                 <td><?= $exam['name'];?> </td>
                                 <td><?= $exam['start_time'];?> </td>
                                 <td><?= $exam['end_time'];?> </td>
+                                <td><?= $exam['grade_scal'];?> </td>
                                 <td><button class="btn btn-primary btn-sm" onclick="add_marks('<?=$exam['batchId']; ?>','<?=$exam['id']; ?>','<?=$exam['moduleName']; ?>','<?php echo $purposeCaption; ?>')"  data-toggle="modal" data-backdrop="static" data-keyboard="false"  data-target="#marksModal"><i class="fa fa-paperclip" aria-hidden="true"></i> Exam Marks</button> </div></td>
                             </tr>
                             <?php $count++; }?>
@@ -117,6 +119,7 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
             <div class="form-group">
             <h6 id="moduleName"></h6>
             <input name="examId" id="examId" type="hidden">        
+            <button type="submit" class="btn btn-outline-primary btn-sm">Save Marks</button>
             <table class="table table-stripped" id="marksTable" style="display:none;">
                           <thead>
                             <tr>
@@ -134,10 +137,11 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                                 </div>
                               </tbody>
                         </table>
+          
             </div>
         </div>
         <div class="modal-footer">
-        <button type="submit" class="btn btn-outline-primary btn-sm">Save and Finalized Marks</button>
+        <button type="submit" class="btn btn-outline-primary btn-sm">Save Marks</button>
         <?php echo form_close(); ?>
         <button class="btn btn-secondary btn-sm" type="button" data-dismiss="modal">Close</button>
         </div>
@@ -149,9 +153,21 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
 <script>
 
   $(document).ready(function() {
-    $('#marksTable').DataTable(); //data table 
+    //$('#marksTable').DataTable(); //data table 
     $('#dataTable').DataTable(); //data table 
-  
+      $('#marksTable').dataTable({
+      "bPaginate": false
+      });
+
+      $('.marksvalue').change(function() {
+          var value = $(this).val();
+          if(value>100){
+            alert("Sorry.. invalid mark..!")
+          }
+          if(value<0){
+            alert("Sorry.. invalid mark..!")
+          }
+      });
   })
  
 </script>
@@ -182,8 +198,8 @@ function add_marks(batchId,examId,moduleName,purpose){
                             t.row.add( [
                                 counter,
                                 val.studentId +'<input type="hidden" name="studentId[]" class="form-control form-control-sm" readonly value='+val.studentId+'>',
-                                '<input type="text" name="marks[]" class="form-control form-control-sm" id="mark_'+counter+'">',
-                                '<button type="button" class="btn btn-warning btn-sm" onclick="lock_marks('+counter+')" ><i class="fa fa-lock"></i></button>'
+                                '<input type="text" name="marks[]" class="form-control form-control-sm marksvalue" value="0" id="mark_'+counter+'">',
+                                '<button type="button" class="btn btn-warning btn-sm" onClick="lock_marks('+counter+')" ><i class="fa fa-lock"></i></button>'
                             ] ).draw( false );
                             counter++;
                   });
@@ -194,6 +210,7 @@ function add_marks(batchId,examId,moduleName,purpose){
     }
 
     function lock_marks(index){
-        $("$mark_"+index).prop('readonly','true');
+        $("#mark_"+index).attr('readonly','readonly');
+
     }
 </script>

@@ -63,12 +63,13 @@
           <div class="dropdown-divider"></div>
 
           <h6 class="dropdown-header">Advance Options:</h6>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/marks">Exam Marks</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/marks">Add Exam Marks</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/student_marks">Student Exam Results</a>
          
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">Reports:</h6>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Available exam List</a>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Available exam List</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Exam Grade List</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Exam Result Summary</a>
 
       </div>
   </li>
