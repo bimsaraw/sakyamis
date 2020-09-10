@@ -130,7 +130,7 @@ class Exam extends CI_Controller {
     }
 
     public function get_exams(){
-      $data = $this->exam_model->find_exams();
+      $data = $this->exam_model->get_find_exam();
       header('Content-Type: application/json');
       echo json_encode($data);
     }

@@ -29,10 +29,9 @@ class Exam_model extends CI_Model {
       return $query->result_array();
   }
 
-  public function find_exams() {
+  public function get_find_exam() {
     $this->db->select('*');
     $this->db->from('exam');
-    
     $this->db->where('branchId',$this->input->post('branchId'));
     $this->db->where('batchId',$this->input->post('batchId'));
     $this->db->where('moduleId',$this->input->post('moduleId'));
