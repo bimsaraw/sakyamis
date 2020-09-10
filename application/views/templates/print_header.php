@@ -36,6 +36,5 @@ if($username=="") {
 <link href="<?php echo base_url(); ?>css/timetablejs.css" rel="stylesheet">
 <link href="<?php echo base_url(); ?>css/bootstrap-colorpicker.css" rel="stylesheet">
 <link href="<?php echo base_url(); ?>css/main.css" rel="stylesheet">
-</head>
 
-<body id="page-top">
+</head>

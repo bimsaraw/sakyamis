@@ -17,6 +17,29 @@ class Exam_model extends CI_Model {
         return $query->result_array();
     }
 
+    public function get_single_exam($examId) {
+      $this->db->select('exam.*,branch.name as branchName,module.name as moduleName,course.name as courseName');
+      $this->db->from('exam');
+      $this->db->join('branch','branch.id=exam.branchId');
+      $this->db->join('module','module.id=exam.moduleId');
+      $this->db->join('batch','batch.id=exam.batchId');
+      $this->db->join('course','course.id=batch.courseId');
+      $this->db->where('exam.id',$examId);
+      $query = $this->db->get();
+      return $query->result_array();
+  }
+
+  public function find_exams() {
+    $this->db->select('*');
+    $this->db->from('exam');
+    
+    $this->db->where('branchId',$this->input->post('branchId'));
+    $this->db->where('batchId',$this->input->post('batchId'));
+    $this->db->where('moduleId',$this->input->post('moduleId'));
+    $query = $this->db->get();
+    return $query->result_array();
+}
+
     public function get_exams_by_studentId($studentId) {
       $this->db->select('exam.*,branch.name as branchName,module.name as moduleName, student.full_name as studentName,course.name as courseName,exam_marks.mark,marks_gradescal.grade');
       $this->db->from('exam_marks');
@@ -33,6 +56,17 @@ class Exam_model extends CI_Model {
       $query = $this->db->get();
       return $query->result_array();
   }
+
+  public function get_examsresult_by_examId($examId) {
+    $this->db->select('exam_marks.*,marks_gradescal.grade');
+    $this->db->from('exam_marks');
+    $this->db->join('exam','exam.id=exam_marks.examId');
+    $this->db->join('marks_gradescal','(marks_gradescal.id=exam.grade_scal) AND (exam_marks.mark BETWEEN marks_gradescal.value1 AND marks_gradescal.value2)','inner');
+    $this->db->where('examId',$examId);
+    $this->db->order_by('studentId','ASC');
+    $query = $this->db->get();
+    return $query->result_array();
+}
 
   public function get_grade_scal(){
     $this->db->select('id');

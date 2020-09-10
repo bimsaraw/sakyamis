@@ -68,9 +68,8 @@
          
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">Reports:</h6>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Exam Grade List</a>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Exam Result Summary</a>
-
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/result_parameter">Exam Result Summary</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Batch Graduated List</a>
       </div>
   </li>
 

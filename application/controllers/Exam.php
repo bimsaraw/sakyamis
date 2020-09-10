@@ -34,6 +34,26 @@ class Exam extends CI_Controller {
       }
     }
 
+    public function results_summary(){
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,44)) {
+        $data['title'] = 'Exams Result Summary';
+        $examId=  $this->input->get('examId'); 
+        $data['results'] = $this->exam_model->get_examsresult_by_examId($examId);
+        $data['exam'] = $this->exam_model->get_single_exam($examId);
+
+        $this->user_model->save_user_log($username,'Viewed exam result summary.');
+
+        $this->load->view('templates/report_header', $data);
+        $this->load->view('exam/report_exam_summ', $data);
+        $this->load->view('templates/report_footer');
+
+      } else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
     public function marks() {
       $username = $this->session->userdata('username');
 
@@ -47,6 +67,25 @@ class Exam extends CI_Controller {
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('exam/marks', $data);
+        $this->load->view('templates/footer');
+      } else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
+    public function result_parameter() {
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,44)) {
+        $data['title'] = 'Exam Result sheet parameter';
+
+        $data['branches'] = $this->branches_model->get_branch();
+
+        $this->user_model->save_user_log($username,'Viewed Exam Result sheet.');
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('exam/resultSheet_parameter', $data);
         $this->load->view('templates/footer');
       } else {
         redirect('/?msg=noperm', 'refresh');
@@ -90,6 +129,11 @@ class Exam extends CI_Controller {
       echo json_encode($data);
     }
 
+    public function get_exams(){
+      $data = $this->exam_model-> find_exams();
+      header('Content-Type: application/json');
+      echo json_encode($data);
+    }
 
     public function add() {
       $username = $this->session->userdata('username');
