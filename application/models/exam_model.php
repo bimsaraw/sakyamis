@@ -208,7 +208,7 @@ class Exam_model extends CI_Model {
             $query = $this->db->get();
             return $query->result_array();
           }
-
+//get exam applied students
           public function get_examApply_studentIds ($examId){
             $this->db->where('examId',$examId);
             $query = $this->db->get('exam_student_enroll');

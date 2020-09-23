@@ -213,7 +213,7 @@ class Exam extends CI_Controller {
         echo json_encode($data);
       }
     }
-
+//batch students
     public function get_batch_student(){
       $batchId = $this->input->post('batchId');
       $examId =  $this->input->post('examId');
