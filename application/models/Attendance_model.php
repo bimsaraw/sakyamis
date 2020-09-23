@@ -6,13 +6,14 @@ class Attendance_model extends CI_Model {
     $this->load->database();
   }
 
-  public function save_attendance($studentId,$date,$time,$is_pending_payment,$remarks) {
+  public function save_attendance($studentId,$date,$time,$is_pending_payment,$remarks,$branchId) {
     $data = array(
       'studentId'=>$studentId,
       'date'=>$date,
       'time'=>$time,
       'is_pending_payment'=>$is_pending_payment,
-      'remarks'=>$remarks
+      'remarks'=>$remarks,
+      'branchId'=>$branchId
     );
 
     return $this->db->insert('attendance',$data);

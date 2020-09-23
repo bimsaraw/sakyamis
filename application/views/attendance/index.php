@@ -13,19 +13,32 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Student Attendance - Entrance</h5>
-                    <hr>
+                <a class="btn btn-secondary btn-sm float-right" href="<?= base_url(); ?>index.php/attendance/full_screen">Full Screen View</a>
+                    <h5 class="card-title">Student Attendance - Entrance <?= date('Y-M-d');?></h5>
                     <form id="frmAttendance">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <select id="branchId" name="branchId" class="form-control form-control-sm" required>
+                                <?php foreach ($branches as $branch) { ?>
+                                    <option value="<?= $branch['id']; ?>"><?= $branch['name']; ?></option>
+                                <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                            <div class="form-row">
+                              <div class="form-group col-md-4">
+                                <input type="text" id="remarks" name="remarks" class="form-control" placeholder="Attend description" autocomplete="off">
+                              </div>
+                            </div>
+                       
                         <div class="form-row">
                           <div class="form-group col-md-2">
                             <input type="text" id="studentId" name="studentId" class="form-control" placeholder="19S08002" autocomplete="off" required>
                           </div>
                           <div class="form-group col-md-10">
-                            <button class="btn btn-primary">Mark Attendance</button>
+                            <button class="btn btn-primary"><i class="fa fa-barcode"></i>Mark Attendance</button>
                           </div>
-                          <div class="form-group col-md-2">
-                            <a class="btn btn-secondary btn-sm" href="<?= base_url(); ?>index.php/attendance/full_screen">Full Screen View</a>
-                          </div>
+               
                         </div>
                     </form>
                     <div id="alertArea" class="alert" style="display:none;">
@@ -88,7 +101,8 @@
 <script>
   $(document).ready(function() {
       var t = $('#dataTable').DataTable();
-
+      document.getElementById("studentId").focus(); 
+      
       $('#frmAttendance').submit(function(e) {
           e.preventDefault();
           var form = $('#frmAttendance');

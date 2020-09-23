@@ -139,7 +139,7 @@ class Exam extends CI_Controller {
       if($this->user_model->validate_permission($username,44)) {
         $data['title'] = 'Exam Result sheet parameter';
 
-        $data['branches'] = $this->branches_model->get_branch();
+        $data['branches'] = $this->branches_model->get_branch_byuser($username);
 
         $this->user_model->save_user_log($username,'Viewed Exam Result sheet.');
 

@@ -93,19 +93,23 @@
                           <thead>
                             <h6 class="text-center" style="text-decoration:underline">Attendance Summary</h6>
                             <tr>
+                              <th>#</th>
                               <th>Student ID</th>
+                              <th>Batch</th>
                               <th>Name with Initials</th>
                               <th>Date</th>
                               <th>Time</th>
                               <th>Remarks</th>
-                              <th></th>
+                            
                             </tr>
                           </thead>
                           <tbody>
 
-                              <?php foreach($students as $student) { ?>
+                              <?php $count=1; foreach($students as $student)  { ?>
                                 <tr <?php if($student['is_pending_payment']) { echo "style='color:red;'"; } ?>>
+                                  <td><?= $count; ?></td>
                                   <td><?= $student['studentId']; ?></td>
+                                  <td><?= $student['batchId']; ?></td>
                                   <td><?= $student['initials_name']; ?></td>
                                   <td><?= $student['date']; ?></td>
                                   <td><?= $student['time']; ?></td>
@@ -122,9 +126,8 @@
                                       //}
                                     ?>
                                   </td>
-
                                 </tr>
-                              <?php } ?>
+                              <?php $count++; } ?>
                           </tbody>
                         </table>
                       </div>
@@ -138,6 +141,7 @@
 <script>
 
   $(document).ready(function() {
+   
       var table = $('#dataTable').DataTable( {
           lengthChange: false,
           buttons: [

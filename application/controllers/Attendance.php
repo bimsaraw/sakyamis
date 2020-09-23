@@ -24,7 +24,7 @@ class Attendance extends CI_Controller {
 
     if($this->user_model->validate_permission($username,24)) {
       $data['title'] = 'Student Attendance - Entrance';
-
+      $data['branches'] = $this->branches_model->get_branch_byuser($username);
       $this->load->view('templates/header', $data);
       $this->load->view('templates/sidebar', $data);
       $this->load->view('attendance/index', $data);
@@ -102,17 +102,19 @@ class Attendance extends CI_Controller {
 
   
   public function mark_attendance_entrance() {
-    $studentId = $this->input->post('studentId');
+    $studentId = $this->input->POST('studentId');
+    $branchId = $this->input->POST('branchId');
+    $remarks = $this->input->POST('remarks');
     $date = date('Y-m-d');
     $time = date('H:i:sa');
-
+    
     if($response = $this->payment_model->validate_payments($studentId,$date)) {
       if($response == 1) {
         echo 'success';
-        $this->attendance_model->save_attendance($studentId,$date,$time,0,'');
+        $this->attendance_model->save_attendance($studentId,$date,$time,0,"-",$branchId);
       } else {
         header('Content-Type: application/json');
-        $this->attendance_model->save_attendance($studentId,$date,$time,1,'Pending Payments');
+        $this->attendance_model->save_attendance($studentId,$date,$time,1,'Pending Payments / '.$remarks,$branchId);
         echo json_encode( $response );
       }
     }

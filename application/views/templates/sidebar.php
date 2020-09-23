@@ -14,6 +14,7 @@
       <div class="dropdown-menu" aria-labelledby="pagesDropdown">
 
           <h6 class="dropdown-header">Standard:</h6>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/attendance">Entrance Attendance</a>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/allocations">Mark Attendance - M</a>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/attendance/automated">Mark Attendance - A</a>
           
@@ -26,6 +27,7 @@
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">Reports:</h6>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/reports/attendance_summary">Classroom Summary</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/reports/attendance_report">Entrance Summary</a>
       </div>
   </li>
   <li class="nav-item dropdown">

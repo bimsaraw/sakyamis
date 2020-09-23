@@ -251,8 +251,10 @@ class Report_model extends CI_Model {
     }
 
     public function attendance_report($data) {
-      $this->db->select('student.studentId,student.initials_name,attendance.date,attendance.time,attendance.is_pending_payment,attendance.visited_finance,attendance.remarks');
+      $this->db->select('student.studentId,course.name as courseName,course_enroll.batchId,student.initials_name,attendance.date,attendance.time,attendance.is_pending_payment,attendance.visited_finance,attendance.remarks');
       $this->db->join('student','attendance.studentId=student.studentId');
+      $this->db->join('course_enroll','attendance.studentId=course_enroll.studentId');
+      $this->db->join('course','course.id=course_enroll.courseId');
       $this->db->where("date BETWEEN '".$data['startDate']."' AND '".$data['endDate']."'");
 
       if($data['courseId']!="") {
