@@ -18,16 +18,24 @@
 
                     <form method="post">
                       <div class="form-row">
+                      <div class="form-group col-md-3">
+                      <label>Branch <span class="required"> *</span></label>
+                                  <select class="form-control form-control-sm" name="branchId" id="branchId" required>
+                                      <option value="">-- Please Select --</option>
+                                    <?php foreach ($branches as $branch) { ?>
+                                      <option value="<?= $branch['id']; ?>" <?php if ($_POST) {if($branch['id'] ===$single_branch->id){echo "selected";}}?>><?= $branch['name'];?></option>
+                                    <?php } ?>
+                                  </select>
+                          </div>
+                        </div>
+                        
+                        <div class="form-row">
                         <div class="form-group col-md-3">
                           <label>Intake</label>
-                          <select class="form-control form-control-sm" name="intakeId" id="intakeId" required>
-                            <?php if($_POST) { ?>
-                              <option value="<?= $_POST['intakeId']; ?>"><?= $single_intake->name; ?></option>
-                            <?php } else { ?>
-                              <option value="">-- Please Select --</option>
-                            <?php } ?>
+                          <select class="form-control form-control-sm" name="intakeId" id="intakeId" >
+                            <option value="">-- Please Select --</option>
                             <?php foreach ($intakes as $intake) { ?>
-                              <option value="<?= $intake['id']; ?>"><?= $intake['name']; ?></option>
+                              <option value="<?= $intake['id']; ?>"  <?php if ($_POST) {if($intake['id'] ===$single_intake->id){echo "selected";}}?>><?= $intake['name']; ?></option>
                             <?php } ?>
                           </select>
                         </div>
@@ -78,7 +86,12 @@
                       <div class="table table-responsive">
                         <table class="table table-stripped" id="dataTable">
                           <thead>
-                            <h6 class="text-center" style="text-decoration:underline">Outstanding Report</h6>
+                            <h6 class="text-center" style="text-decoration:underline" id="report_desc">Outstanding Report
+                            <?= $single_branch->name; ?>
+                            <?php if($single_intake) {echo " - "; echo $single_intake->name;} ?> 
+                            <?php if ($single_batch){echo " - "; echo $single_batch->id; }; ?>
+                            <?php if ($single_course){echo " - "; echo $single_course->name; }; ?> 
+                            </h6>
                             <tr>
                               <th>Student ID</th>
                               <th>Name with Initials</th>
@@ -127,14 +140,26 @@
 <script>
 
   $(document).ready(function() {
+    var report_desc = $('#report_desc').text();
       var table = $('#dataTable').DataTable( {
+
           lengthChange: false,
           buttons: [
               'copyHtml5',
               'excelHtml5',
               'csvHtml5',
-              'print'
-          ]
+          
+          { extend: 'print',
+              
+              customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' )
+                        .prepend(
+                            '<h3>'+ report_desc +' </h3>'
+                        );
+              }
+            }
+            ]
       } );
 
     table.buttons().container()

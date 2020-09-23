@@ -72,6 +72,7 @@
                     <table id="tblTotal" class="table table-stripped">
                       <thead>
                         <tr>
+                          <th>Date</th>
                           <th>Student ID</th>
                           <th>Course</th>
                           <th>Fee Type</th>
@@ -85,7 +86,7 @@
                       </tbody>
                     </table>
                   </div>
-                  <button type="button" id="btnPrint" class="btn btn-warning btn-sm" disabled>Print Report</button>
+                  <!-- <button type="button" id="btnPrint" class="btn btn-warning btn-sm" >Print Report</button> -->
                 </div>
               </div>
             </div>
@@ -133,9 +134,9 @@
           }
       };
 
-      $('#btnPrint').click(function() {
-        var printWindow = window.open('<?= base_url(); ?>index.php/payments/print_cashier_reports?studentId='+studentId+'&courseId='+courseId+'&batchId='+batchId+'&fee_type='+fee_type+'&startDate='+startDate+'&endDate'+endDate, 'Print Report', 'height=1024,width=720');
-      });
+      // $('#btnPrint').click(function() {
+      //   var printWindow = window.open('include base url index.php/payments/print_cashier_reports?studentId='+studentId+'&courseId='+courseId+'&batchId='+batchId+'&fee_type='+fee_type+'&startDate='+startDate+'&endDate'+endDate, 'Print Report', 'height=1024,width=720');
+      // });
 
       $('#frmFilterPayments').submit(function(e) {
           e.preventDefault();
@@ -165,7 +166,7 @@
                grand_total+=parseFloat(val.amount);
 
 
-               markup+="<tr><td>"+val.studentId+"</td><td>"+val.courseName+"</td><td>"+fee_type_name+"</td><td>"+val.type+"</td><td><button onclick=delete_payment('"+val.studentId+"',"+val.pplanId+","+val.installmentId+") target='_blank' class='btn btn-danger btn-sm delete'><i class='fas fa-trash-alt'></i></button></td><td class='text-right'>"+parseFloat(val.amount).toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</td></tr>";
+               markup+="<tr><td>"+val.dateTime+"</td><td>"+val.studentId+"</td><td>"+val.courseName+"</td><td>"+fee_type_name+"</td><td>"+val.type+"</td><td><button onclick=delete_payment('"+val.studentId+"',"+val.pplanId+","+val.installmentId+") target='_blank' class='btn btn-danger btn-sm delete'><i class='fas fa-trash-alt'></i></button></td><td class='text-right'>"+parseFloat(val.amount).toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</td></tr>";
              });
 
              markup+="<tr><td colspan='5'><b>Grand Total</b></td><td class='text-right' style='border-bottom: double; border-top: 1px solid'><b>"+grand_total.toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</b></td></tr>";

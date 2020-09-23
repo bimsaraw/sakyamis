@@ -333,7 +333,7 @@ class Payment_model extends CI_Model {
       $batchId = $this->input->get('batchId');
       $fee_type = $this->input->get('fee_type');
 
-      $this->db->select('payments.studentId, payments.pplanId, payments.installmentId, course.name AS courseName, payments.amount, payments.fee_type AS fee_type, payments.type');
+      $this->db->select('payments.datetime as dateTime,payments.studentId, payments.pplanId, payments.installmentId, course.name AS courseName, payments.amount, payments.fee_type AS fee_type, payments.type');
       $this->db->join('student','student.studentId=payments.studentId','inner');
       $this->db->join('course_enroll','payments.studentId=course_enroll.studentId AND payments.pplanId=course_enroll.pplanId','inner');
       $this->db->join('course','course.id=course_enroll.courseId','inner');

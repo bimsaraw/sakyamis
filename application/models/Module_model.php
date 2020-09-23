@@ -21,6 +21,8 @@ class Module_model extends CI_Model {
         return $response;
     }
 
+    
+
     public function get_module_by_courseId($courseId){
         $this->db->select('*');
         $this->db->from('module');

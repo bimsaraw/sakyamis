@@ -148,13 +148,14 @@ class Reports extends CI_Controller
               $data['intakes'] = $this->inquiry_model->get_intakes();
               $data['batches'] = $this->batch_model->get_batches();
               $data['courses'] = $this->course_model->get_courses();
-
+              $data['branches'] = $this->branches_model->get_branch_byuser($username);
               if ($_POST) {
                 $data['students'] = $this->report_model->outstanding_report($_POST);
 
                 $data['single_batch'] = $this->batch_model->get_single_batch($_POST['batchId']);
                 $data['single_course'] = $this->course_model->get_single_course($_POST['courseId']);
                 $data['single_intake'] = $this->inquiry_model->get_single_intake($_POST['intakeId']);
+                $data['single_branch'] = $this->branches_model->get_single_branch($_POST['branchId']);
               }
 
               $this->load->view('templates/header', $data);
@@ -205,19 +206,28 @@ class Reports extends CI_Controller
           $username = $this->session->userdata('username');
 
           if ($this->user_model->validate_permission($username, 32)) {
-              $data['title'] = 'Total Payments Report';
+                $data['title'] = 'Total Payments Report' ;
 
               $data['intakes'] = $this->inquiry_model->get_intakes();
               $data['batches'] = $this->batch_model->get_batches();
               $data['courses'] = $this->course_model->get_courses();
-
+              $data['branches'] = $this->branches_model->get_branch_byuser($username);
               if ($_POST) {
                 $data['students'] = $this->report_model->payment_report($_POST);
 
                 $data['single_batch'] = $this->batch_model->get_single_batch($_POST['batchId']);
                 $data['single_course'] = $this->course_model->get_single_course($_POST['courseId']);
                 $data['single_intake'] = $this->inquiry_model->get_single_intake($_POST['intakeId']);
+                $data['single_branch'] = $this->branches_model->get_single_branch($_POST['branchId']);
+                
+                $branch = $data['single_branch'];
+                $intake =$data['single_intake'];
+                $course = $data['single_course'];
+                $batch = $data['single_batch'];
+
+                $data['title'] = $branch->name.' - '. $intake->name.'Payment Details' ;
               }
+              
 
               $this->load->view('templates/header', $data);
               $this->load->view('templates/sidebar', $data);

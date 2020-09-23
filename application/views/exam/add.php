@@ -104,6 +104,14 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                                   </select>
                                 </div>
                         </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" id="serf" name="serf">
+                              <label class="form-check-label" for="gridCheck">
+                                Student Examination Request Form
+                              </label>
+                            </div>
+                          </div>
                       
                       <div class="form-row">     
                         <div class="col-md-3">
@@ -135,7 +143,10 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                             <label>Name</label>
                             <input type="text" name="name" id="cloneEname" class="form-control form-control-sm" autocomplete="off">
                           </div>
-                                <div class="form-group col-md-5">
+                                
+                        </div>
+                        <div class="form-row">
+                        <div class="form-group col-md-5">
                                   <label>Purpose  <span class="required"> *</span></label>
                                   <select class="form-control form-control-sm" name="purpose" id="purpose" required >
                                       <option value="1">Final Exam</option>
@@ -147,7 +158,7 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                                       <option value="7">Presentation </option>
                                       <option value="8">MOCK exam </option>
                                   </select>
-                            </div>
+                            </div>  
                             <div class="form-group col-md-4">
                               <label>Exam Weight</label>
                               <div class="input-group mb-2">
@@ -164,8 +175,16 @@ echo '<div class="alert alert-success">'; echo $this->session->flashdata('succes
                                       <option value="<?=$gradeScal['id']  ?>"><?=$gradeScal['id']  ?></option>
                                       <?php }?>
                                   </select>
-                                </div>
-                  </div>
+                          </div>
+                          </div>
+                          <div class="form-group">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" id="serf" name="serf">
+                              <label class="form-check-label" for="gridCheck">
+                                Student Examination Request Form
+                              </label>
+                            </div>
+                          </div>
                 <table class="table table-stripped" id="dataTable">
                           <thead>
                             <tr>

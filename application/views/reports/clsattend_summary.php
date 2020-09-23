@@ -6,14 +6,14 @@
         <li class="breadcrumb-item">
             <a href="#">Dashboard</a>
         </li>
-        <li class="breadcrumb-item active"><?php echo $title; ?></li>
+        <li class="breadcrumb-item active">Attendance Summary report</li>
     </ol>
 
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title"><?php echo $title; ?></h5>
+                    <h5 class="card-title">Attendance Summary report</h5>
                     <hr>
 
                     <form id="frmattendance">

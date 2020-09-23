@@ -1,4 +1,3 @@
-
 <div class="container header" >
 <div class="page-header">
   <div class="row ">
@@ -94,6 +93,7 @@
     <?php } ?>
     
     </div>
+   
     </div>
     </div>
 </div>
@@ -118,7 +118,7 @@
 
 
 
-
+<div class="contentbody" id="cbody">
 <table class="sticky">
 
     <thead>
@@ -132,8 +132,7 @@
 
    <tbody>
         <td>
-
-            <table class="table table-bordered sticky" id="dataTable">
+        <table class="table table-bordered sticky" id="dataTable">
                 <thead>
                     <tr>
                         <th>Student ID</th>
@@ -149,8 +148,8 @@
                     <?php } ?>
                 </tbody>
             </table>
-            </div>
-            </div>
+            
+            
         </td>
     </tbody>
    
@@ -166,4 +165,14 @@
     </tfoot>
 
 </table>
+</div>
 
+<script>
+$(document).ready(function(){
+
+    var rowcount = $('#dataTable tr').length;
+    if (rowcount>23){
+        $('#cbody').addClass("column");
+    }
+})
+</script>

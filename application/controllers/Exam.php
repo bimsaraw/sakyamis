@@ -73,6 +73,66 @@ class Exam extends CI_Controller {
       }
     }
 
+    public function batch_result_summ() {
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,44)) {
+        $data['title'] = 'Batch Graded Summary';
+
+        $batchId = $this->input->GET('batchId');
+        $topArray=array();
+        $rowArray= array();
+        $modules= $this->exam_model->get_modules_byBatch($batchId);
+        $data['branches'] = $this->branches_model->get_branch_byuser($username);
+
+        $students = $this->batch_model->get_batch_students($batchId);
+        
+        foreach($students as $student){
+          $studentId = $student['studentId'];
+          $total =0;
+          $moduleCount = 0;
+          array_push($rowArray,$studentId);
+          foreach($modules as $module){
+              $moduleId = $module['moduleId'];
+              $grade="";
+              $results = $this->exam_model->get_singleStudent_exam_result($studentId,$moduleId);
+                foreach ($results as $result){
+                  $grade=$result['grade'];
+                  $total=$total+ $result['mark'];
+                }
+                $moduleCount++;
+            if ($grade) {
+              array_push($rowArray,$grade);
+             
+            }else {
+              array_push($rowArray,"NA");
+            } 
+            }
+            if($moduleCount>=1){
+              $Avg = $total/$moduleCount;
+            }else{
+              $Avg =0;
+            }
+         
+           array_push($rowArray,$total);
+           array_push($rowArray,number_format($Avg,2)."%");
+           array_push($topArray,$rowArray); 
+           $rowArray= array();
+        }
+
+        $data['modules'] = $modules;
+        $data['results'] = $topArray;
+        $this->user_model->save_user_log($username,'Viewed lecturers.');
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('exam/report_batch_summ', $data);
+        $this->load->view('templates/footer');
+      } else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
     public function result_parameter() {
       $username = $this->session->userdata('username');
 
@@ -91,6 +151,19 @@ class Exam extends CI_Controller {
         redirect('/?msg=noperm', 'refresh');
       }
     }
+    public function samplereport(){
+      $username = $this->session->userdata('username');
+      $data['title'] = 'Exam Result sheet parameter';
+
+      $data['branches'] = $this->branches_model->get_branch();
+
+      $this->user_model->save_user_log($username,'Viewed Exam Result sheet.');
+
+      $this->load->view('templates/header', $data);
+      $this->load->view('templates/sidebar', $data);
+      $this->load->view('exam/samplereport', $data);
+      $this->load->view('templates/footer');
+    }
 
     public function student_marks() {
       $username = $this->session->userdata('username');
@@ -101,6 +174,26 @@ class Exam extends CI_Controller {
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar', $data);
         $this->load->view('exam/student_marks', $data);
+        $this->load->view('templates/footer');
+      } else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
+    public function student_enroll() {
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,48)) {
+        $data['title'] = 'Student Examination Enroll Form';
+
+        $data['exams'] = $this->exam_model->get_exams();
+        $data['branches'] = $this->branches_model->get_branch_byuser($username);
+        
+        $this->user_model->save_user_log($username,'Viewed lecturers.');
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('exam/student_enroll', $data);
         $this->load->view('templates/footer');
       } else {
         redirect('/?msg=noperm', 'refresh');
@@ -124,16 +217,32 @@ class Exam extends CI_Controller {
     public function get_batch_student(){
       $batchId = $this->input->post('batchId');
       $examId =  $this->input->post('examId');
-      $data = $this->exam_model-> get_batchEnroll_studentIds($batchId,$examId);
+      $exam = $this->exam_model->get_single_exam_row($examId);
+      if ($exam->request_form==1){
+        $data = $this->exam_model-> get_examApply_studentIds($examId);
+      }else {
+        $data = $this->exam_model-> get_batchEnroll_studentIds($batchId,$examId);
+      }
+      
       header('Content-Type: application/json');
       echo json_encode($data);
     }
 
-    public function get_exams(){
+    public function find_exams(){
       $data = $this->exam_model->get_find_exam();
       header('Content-Type: application/json');
       echo json_encode($data);
     }
+    
+    public function get_exams_by_branch(){
+      $branchId = $this->input->get('branchId');
+      $data = $this->exam_model->get_exams_by_branch($branchId);
+      header('Content-Type: application/json');
+      echo json_encode($data);
+    }
+
+
+   
 
     public function add() {
       $username = $this->session->userdata('username');
@@ -274,6 +383,12 @@ class Exam extends CI_Controller {
         $date= $allocate['date'];
       }
 
+
+      if ($this->input->post('serf')==true){
+        $serf=1;
+       } else {
+        $serf=0;
+       }  
       $data = array(
         'branchId'=>$branchId,
         'batchId'=>$batchId,
@@ -285,7 +400,8 @@ class Exam extends CI_Controller {
         'end_time'=>$endTime,
         'status'=> 1,
         'grade_scal'=> $this->input->post('gradeScal'),
-        'weight'=> $this->input->post('weight')
+        'weight'=> $this->input->post('weight'),
+        'request_form'=> $serf
     );
       
       $response = $this->exam_model->clone_exam($data);
@@ -305,24 +421,86 @@ class Exam extends CI_Controller {
   }
 
   public function insert_marks(){
-    $studentIds = $this->input->post('studentId');
-    $marks = $this->input->post('marks');
-    $examId = $this->input->post('examId');
-    
-    for ($i = 0; $i < count($studentIds); $i++) {
-      $studentId = $studentIds[$i];
-      $mark = $marks[$i];
-      if ($mark!=0) {
-        $data = array(
-          'examId'=>  $examId,
-          'studentId'=>  $studentId,
-          'mark'=>$mark
-        );
-        $this->exam_model->insert_exam_marks($data);
-      }
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,44)) {
+
+          $studentIds = $this->input->post('studentId');
+          $marks = $this->input->post('marks');
+          $examId = $this->input->post('examId');
+          
+          for ($i = 0; $i < count($studentIds); $i++) {
+            $studentId = $studentIds[$i];
+            $mark = $marks[$i];
+            if ($mark!=0) {
+              $data = array(
+                'examId'=>  $examId,
+                'studentId'=>  $studentId,
+                'mark'=>$mark
+              );
+              $this->exam_model->insert_exam_marks($data);
+            }
+            $this->user_model->save_user_log($username,'Insert Exam Marks');
+          }
+          $this->session->set_flashdata('success', 'Exam Marks insert Successfully..! ExaminationId - ' .$examId);
+          redirect(base_url() . 'index.php/exam/marks');
+    }else {
+      redirect('/?msg=noperm', 'refresh');
     }
-    $this->session->set_flashdata('success', 'Exam Marks insert Successfully..! ExaminationId - ' .$examId);
-    redirect(base_url() . 'index.php/exam/marks');
+  }
+
+  public function get_students_by_batch(){
+    $examId = $this->input->get('examId');
+    $applied_studentIds = array('');
+
+    $exam_details =$this->exam_model->get_single_exam($examId);
+    foreach($exam_details as $exam_detail) {
+      $batchId=$exam_detail['batchId'];
+    }
+    $applied_students = $this->exam_model->get_EFapplied_students($examId);
+    foreach($applied_students as $student) {
+      array_push($applied_studentIds,$student['studentId']);
+    }
+
+    $nas =$this->exam_model->get_EFnon_applied_students($applied_studentIds,$batchId); // Batch non applied students
+    
+    $data=array(
+      'non_applied'=> $nas,// non applied students
+       'applied' => $applied_students //applied students
+    );
+
+    header('Content-Type: application/json');
+    echo json_encode($data);
 
   }
+
+  public function add_EF_student(){
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,48)) {
+
+   $response=  $this->exam_model->add_EF_student();
+    if ($response){
+      echo 1;
+    }else {
+      echo 0;
+    }
+  }else {
+    redirect('/?msg=noperm', 'refresh');
+  }
+  }
+  public function delete_EF_student(){
+    $username = $this->session->userdata('username');
+    if($this->user_model->validate_permission($username,48)) {
+
+    $response=  $this->exam_model->delete_EF_student();
+     if ($response){
+       echo 1;
+     }else {
+       echo 0;
+     }
+    }else {
+      redirect('/?msg=noperm', 'refresh');
+    }
+   }
+
+
 }

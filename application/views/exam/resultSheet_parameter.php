@@ -142,7 +142,7 @@ $(document).ready(function() {
           $.blockUI();
           $.ajax({
            type: "POST",
-           url: '<?php echo base_url(); ?>index.php/exam/get_exams',
+           url: '<?php echo base_url(); ?>index.php/exam/find_exams',
            data: form.serialize(),
            success: function(response) {
              console.log(response);
@@ -155,7 +155,7 @@ $(document).ready(function() {
                                 counter,
                                 val.date,
                                 purposeName,
-                                '<button class="btn btn-primary btn-sm" onclick="printSheet('+val.id +')">Print Result Sheet</a> '
+                                '<button class="btn btn-primary btn-sm" onclick="printSheet('+val.id +')">Print Result Sheet</button> '
                             ] ).draw( false );
                             counter++;
                   });

@@ -60,6 +60,7 @@
           <h6 class="dropdown-header">Standard:</h6>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam">Available Exam</a>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/add">Add New Exam</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/student_enroll">Student Enrollments</a>
           <div class="dropdown-divider"></div>
 
           <h6 class="dropdown-header">Advance Options:</h6>
@@ -69,7 +70,7 @@
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">Reports:</h6>
           <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/result_parameter">Exam Result Summary</a>
-          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/">Batch Graduated List</a>
+          <a class="dropdown-item" href="<?php echo base_url(); ?>index.php/exam/batch_result_summ">Batch Graded Summary</a>
       </div>
   </li>
 

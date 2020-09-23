@@ -164,4 +164,24 @@ class Batch_model extends CI_Model
 
       return $response;
     }
+
+    public function get_batches_byBranch($branchid) {
+      $this->db->select('*');
+      $this->db->from('exam');
+      $this->db->join('batch','batch.id=exam.batchId');
+      $this->db->group_by('batchId');
+      $this->db->where('exam.branchId',$branchid);
+      $this->db->where('batch.status',1);
+
+      $query = $this->db->get();
+      return $query->result_array();
+    }
+
+    public function get_batch_students($batchid){
+      $this->db->select('studentId');
+      $this->db->from('course_enroll');
+      $this->db->where('batchId',$batchid);
+      $query =$this->db->get();
+      return $query->result_array(); 
+    }
 }

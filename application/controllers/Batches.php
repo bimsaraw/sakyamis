@@ -153,4 +153,11 @@ class Batches extends CI_Controller
       header('Content-Type: application/json');
       echo json_encode($data);
   }
+
+  public function get_batches_by_branch(){
+   $branchId = $this->input->get('branchId');
+    $data =$this->batch_model->get_batches_byBranch($branchId);
+    header('Content-Type: application/json');
+    echo json_encode($data);
+  }
 }

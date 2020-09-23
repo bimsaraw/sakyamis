@@ -18,16 +18,23 @@
 
                     <form method="post">
                       <div class="form-row">
+                      <div class="form-group col-md-3">
+                      <label>Branch <span class="required"> *</span></label>
+                                  <select class="form-control form-control-sm" name="branchId" id="branchId" required>
+                                      <option value="">-- Please Select --</option>
+                                    <?php foreach ($branches as $branch) { ?>
+                                      <option value="<?= $branch['id']; ?>" <?php if ($_POST) {if($branch['id'] ===$single_branch->id){echo "selected";}}?>><?= $branch['name'];?></option>
+                                    <?php } ?>
+                                  </select>
+                          </div>
+                        </div>
+                        <div class="form-row">
                         <div class="form-group col-md-3">
                           <label>Intake</label>
-                          <select class="form-control form-control-sm" name="intakeId" id="intakeId" required>
-                            <?php if($_POST) { ?>
-                              <option value="<?= $_POST['intakeId']; ?>"><?= $single_intake->name; ?></option>
-                            <?php } else { ?>
+                          <select class="form-control form-control-sm" name="intakeId" id="intakeId">
                               <option value="">-- Please Select --</option>
-                            <?php } ?>
                             <?php foreach ($intakes as $intake) { ?>
-                              <option value="<?= $intake['id']; ?>"><?= $intake['name']; ?></option>
+                              <option value="<?= $intake['id']; ?>"<?php if ($_POST) {if($intake['id'] ===$single_intake->id){echo "selected";}}?>> <?= $intake['name']; ?></option>
                             <?php } ?>
                           </select>
                         </div>
