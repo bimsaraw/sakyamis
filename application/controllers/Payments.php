@@ -10,6 +10,7 @@ class Payments extends CI_Controller {
       $this->load->model('batch_model');
       $this->load->model('inquiry_model');
       $this->load->model('course_model');
+      $this->load->model('branches_model');
       $this->load->helper('url_helper');
       $this->load->helper('url');
       $this->load->helper('form');
@@ -336,7 +337,7 @@ class Payments extends CI_Controller {
     if($this->user_model->validate_permission($username,11)) {
       $studentId = $this->input->get('studentId');
       $pplanId = $this->input->get('pplanId');
-
+      $data['branches'] = $this->branches_model->get_branch_byuser($username);
       $data['installments'] = $this->payment_model->view_installments_by_pplan($pplanId);
       $data['sum']= $this->payment_model->get_sumof_pplan($pplanId);
       $data['studentId'] = $studentId;
@@ -419,7 +420,7 @@ class Payments extends CI_Controller {
 
     if($this->user_model->validate_permission($username,17)) {
       $data['title'] = 'Cashier Reports';
-
+      $data['branches'] = $this->branches_model->get_branch_byuser($username);
       $data['courses'] = $this->course_model->get_courses();
       $data['batches'] = $this->batch_model->get_batches();
 
@@ -435,29 +436,56 @@ class Payments extends CI_Controller {
     }
   }
 
-  public function filter_payments() {
-    $username = $this->session->userdata('username');
-
-    if(!$this->user_model->validate_permission($username,18)) {
-      $this->user_model->save_user_log($username,'Filtered cashier reports');
-      if($data = $this->payment_model->filter_payments($username)) {
-        header('Content-Type: application/json');
-        echo json_encode( $data );
-      }
-    } else {
-      $this->user_model->save_user_log($username,'Filtered cashier reports');
-      if($data = $this->payment_model->filter_payments("")) {
-        header('Content-Type: application/json');
-        echo json_encode( $data );
-      }
+  public function get_payments_users_by_branch(){
+    $branchId = $this->input->post('branchId');
+    
+    if($data = $this->payment_model->get_users($branchId)) {
+      header('Content-Type: application/json');
+      echo json_encode( $data );
     }
   }
 
-  public function print_cashier_reports() {
-    $this->load->library('pdfgenerator');
+  public function filter_payments() {
+    $username = $this->session->userdata('username');
 
-    $html = $this->load->view('payments/print_cashier_reports', $data, true);
-    $this->pdfgenerator->generate($html, $filename, true, 'A4', 'portrait');
+      if(!$this->user_model->validate_permission($username,18)) {
+        $this->user_model->save_user_log($username,'Filtered cashier reports');
+        if($data = $this->payment_model->filter_payments()) {
+          header('Content-Type: application/json');
+          echo json_encode( $data );
+        }
+
+      } else {
+        $this->user_model->save_user_log($username,'Filtered cashier reports');
+        if($data = $this->payment_model->filter_payments("")) {
+          header('Content-Type: application/json');
+          echo json_encode( $data );
+        }
+      }
+    
+    }
+
+  public function print_cashier_reports() {
+    //$this->load->library('pdfgenerator');
+    $startDate = ""; $endDate = ""; $studentId =""; $courseId = ""; $batchId = ""; $fee_type = ""; $branchId = ""; $userName = "";
+
+      $startDate = $this->input->get('startDate');
+      $endDate = $this->input->get('endDate');
+      $studentId = $this->input->get('studentId');
+      $courseId = $this->input->get('courseId');
+      $batchId = $this->input->get('batchId');
+      $fee_type = $this->input->get('fee_type');
+      $branchId = $this->input->get('branchId');
+      $userName = $this->input->get('user');
+
+
+    $data['payments'] = $this->payment_model->filter_payments();
+
+    $data['title']="Cashier transaction Summary";
+  
+    $this->load->view('payments/print_cashier_reports', $data);
+
+    
   }
 
   public function delete_payment() {

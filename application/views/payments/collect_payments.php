@@ -83,6 +83,14 @@
           </button>
         </div>
         <div class="modal-body">
+        <div class="form-group">
+            <label>Branch <span class="required"> *</span></label>
+                  <select class="form-control form-control-sm" name="branchId" id="branchId" required>
+                    <?php foreach ($branches as $branch) { ?>
+                      <option value="<?= $branch['id']; ?>"><?= $branch['name']; ?></option>
+                    <?php } ?>
+                  </select>
+          </div>
           <div class="form-group">
             <label>Student ID</label>
             <input type="text" id="studentId" name="studentId" class="form-control form-control-sm" readonly>

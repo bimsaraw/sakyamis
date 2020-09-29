@@ -268,6 +268,16 @@ class Payment_model extends CI_Model {
       return $query->result_array();
     }
 
+    public function get_users($branchId) {
+      $this->db->select('username');
+      $this->db->where('branchId',$branchId);
+      $this->db->from('payments');
+      $this->db->group_by('username');
+      $query = $this->db->get();
+
+      return $query->result_array();
+    }
+
     public function get_payment_status($studentId,$pplanId,$installmentId) {
       $this->db->where('studentId',$studentId);
       $this->db->where('pplanId',$pplanId);
@@ -290,6 +300,7 @@ class Payment_model extends CI_Model {
       $date = date('Y-m-d h:i:sa');
       $rate = $this->input->post('rate');
       $fee_type = $this->input->post('fee_type');
+      $branchId = $this->input->post('branchId');
 
       $data = array(
         'studentId'=>$studentId,
@@ -303,7 +314,8 @@ class Payment_model extends CI_Model {
         'datetime'=>$date,
         'rate' => $rate,
         'username'=>$username,
-        'fee_type'=>$fee_type
+        'fee_type'=>$fee_type,
+        'branchId'=>$branchId
       );
 
       return $this->db->insert('payments',$data);
@@ -324,7 +336,7 @@ class Payment_model extends CI_Model {
       return $query->row();
     }
 
-    public function filter_payments($username) {
+    public function filter_payments() {
 
       $startDate = $this->input->get('startDate');
       $endDate = $this->input->get('endDate');
@@ -332,17 +344,24 @@ class Payment_model extends CI_Model {
       $courseId = $this->input->get('courseId');
       $batchId = $this->input->get('batchId');
       $fee_type = $this->input->get('fee_type');
+      $branchId = $this->input->get('branchId');
+      $username = $this->input->get('user');
 
-      $this->db->select('payments.datetime as dateTime,payments.studentId, payments.pplanId, payments.installmentId, course.name AS courseName, payments.amount, payments.fee_type AS fee_type, payments.type');
+      $this->db->select('payments.datetime as dateTime,payments.username,payments.studentId, payments.pplanId, payments.installmentId, course.name AS courseName, payments.amount, payments.fee_type AS fee_type, payments.type');
       $this->db->join('student','student.studentId=payments.studentId','inner');
+      $this->db->join('branch','payments.branchId=branch.id','inner');
       $this->db->join('course_enroll','payments.studentId=course_enroll.studentId AND payments.pplanId=course_enroll.pplanId','inner');
       $this->db->join('course','course.id=course_enroll.courseId','inner');
       $this->db->join('pp_installment','pp_installment.id=payments.installmentId AND pp_installment.pplanId=payments.pplanId','inner');
       $this->db->where('DATE(payments.datetime) BETWEEN "'.$startDate.'" AND "'.$endDate.'"');
-      $this->db->order_by('payments.fee_type','ASC');
+      $this->db->order_by('payments.datetime','DESC');
 
       if($username!="") {
         $this->db->where('payments.username',$username);
+      }
+
+      if($branchId!="") {
+        $this->db->where('payments.branchId',$branchId);
       }
 
       if($studentId!="") {
@@ -367,6 +386,8 @@ class Payment_model extends CI_Model {
 
       return $query->result_array();
     }
+
+    
 
     public function validate_payments($studentId,$date) {
       $this->db->select('student.studentId,student.initials_name,pp_installment.name,pp_installment.amount,pp_installment.currency,pp_installment.date');

@@ -50,8 +50,8 @@
   </head>
   <body>
     <div class="center header">
-      <h1>SIBT - Siksil Institute of Business & Technology </h1>
-      <p>No. 08, Pietersz Place,Kohuwala, Nugegoda. 10250 Sri Lanka</p>
+      <h1>SIKSIL INSTITUTE OF BUSINESS & TECHNOLOGY </h1>
+      <p>No.08,Pietersz Place,Kohuwala,Nugegoda.10250 Sri Lanka</p>
       <p>011 743 0000 | www.sibt.edu.lk</p>
     </div>
     <hr>
@@ -67,7 +67,7 @@
           <td></td>
         </tr>
         <tr>
-          <td><b>Student ID </b></td><td><?= $print->studentId; ?></td>
+          <td><b>INDEX NO: </b></td><td><?= $print->studentId; ?></td>
         </tr>
         <tr>
           <td><b>Student Name </b></td><td><?= $print->studentName; ?></td>
@@ -85,14 +85,10 @@
       <table border=1>
         <tr>
           <th>Installment</th>
-          <th>£ Amount</th>
-          <th>Conv. Rate</th>
           <th>Amount</th>
         </tr>
         <tr>
           <td><?= $print->installmentName; ?></td>
-          <td><?= $print->currency_amount; ?></td>
-          <td><?= $print->rate; ?></td>
           <td><?= number_format($print->amount,2,".",",") ?></td>
         </tr>
       </table>

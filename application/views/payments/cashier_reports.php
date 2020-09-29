@@ -17,6 +17,32 @@
               <hr>
 
               <form id="frmFilterPayments">
+                    <div class="form-row">
+                          <div class="form-group col-md-3">
+                          <label>Branch</label>
+                                  <select class="form-control form-control-sm" name="branchId" id="branchId" required>
+                                      <option value="">-- Select Branch --</option>
+                                    <?php foreach ($branches as $branch) { ?>
+                                      <option value="<?= $branch['id']; ?>"><?= $branch['name']; ?></option>
+                                    <?php } ?>
+                                  </select>
+                          </div>
+                          <div class="form-group col-md-3">
+                          <label>Users</label>
+                                  <select class="form-control form-control-sm" name="user" id="users">
+                                      <option value="">-- Select User --</option>
+                                  </select>
+                          </div>
+                          <div class="form-group col-md-2">
+                              <label>Lecturer Precentage</label>
+                              <div class="input-group mb-2">
+                                <input type="number" name="L_precentage" id="L_precentage" class="form-control form-control-sm" placeholder="50" value="100" autocomplete="off" required >
+                                <div class="input-group-prepend">
+                                  <div class="input-group-text form-control-sm">%</div>
+                                </div>
+                              </div>               
+                          </div>
+                    </div>
                 <div class="form-row">
                   <div class="form-group col-md-2">
                     <label>Date Range</label>
@@ -60,7 +86,8 @@
                   </div>
 
                   <div class="form-group col-md-4">
-                    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Generate Report</button>
+                    <button type="button" id="btnPrint" class="btn btn-warning btn-sm" disabled>Print Report</button>
                   </div>
                 </div>
               </form>
@@ -73,6 +100,7 @@
                       <thead>
                         <tr>
                           <th>Date</th>
+                          <th>User</th>
                           <th>Student ID</th>
                           <th>Course</th>
                           <th>Fee Type</th>
@@ -97,7 +125,7 @@
 
 <script>
   $(function() {
-    console.log('test');
+   
     $('#date').daterangepicker({
         opens: 'right',
         ranges: {
@@ -119,6 +147,7 @@
 
   var t;
   $(document).ready(function() {
+    $('#tblTotal').DataTable(); //data table 
     $('#date').val('');
 
       var buttonCommon = {
@@ -134,13 +163,49 @@
           }
       };
 
-      // $('#btnPrint').click(function() {
-      //   var printWindow = window.open('include base url index.php/payments/print_cashier_reports?studentId='+studentId+'&courseId='+courseId+'&batchId='+batchId+'&fee_type='+fee_type+'&startDate='+startDate+'&endDate'+endDate, 'Print Report', 'height=1024,width=720');
-      // });
+
+      $('#branchId').bind('change',function() {
+ 
+        var branchId = $("#branchId").val();
+
+            $.ajax({
+                  type : "POST",
+                  //set the data type
+                  url: '<?php echo base_url(); ?>index.php/payments/get_payments_users_by_branch', // target element(s) to be updated with server response
+                  data: {branchId:branchId},
+                  cache : false,
+                  //check this in Firefox browser
+                  success : function(response){
+                    $('#users').children().remove().end()
+                    $(' <option value="">-- Please Select --</option>').appendTo('#users');
+                      $.each(response,function(key, val) {
+                        
+                          $('<option value='+val.username+'>'+val.username+'</option>').appendTo('#users');
+                      });
+                  }
+              });
+        });
+
+      $('#btnPrint').click(function() {
+        var branchId = $("#branchId").val();
+        var username = $("#users").val();
+        var L_precentage = $("#L_precentage").val();
+        var startDate = $("#startDate").val();
+        var endDate = $("#endDate").val();
+        var studentId = $("#studentId").val();
+        var courseId = $("#courseId").val();
+        var batchId = $("#batchId").val();
+        var fee_type = $("#fee_type").val();
+
+        var printWindow = window.open('<?php echo base_url(); ?>index.php/payments/print_cashier_reports?studentId='+studentId+'&courseId='+courseId+'&batchId='+batchId+'&fee_type='+fee_type+'&startDate='+startDate+'&endDate='+endDate+'&branchId='+branchId+'&user='+username+'&L_precentage='+L_precentage, 'Print Report', 'height=1024,width=720');
+      });
 
       $('#frmFilterPayments').submit(function(e) {
           e.preventDefault();
           var form = $('#frmFilterPayments');
+          var l_precentage = parseFloat($('#L_precentage').val());
+          var I_presentage = 100-l_precentage;
+
           $.blockUI();
           $.ajax({
            type: "GET",
@@ -150,10 +215,12 @@
              var markup;
              var grand_total =0;
 
+           
+
              $('#btnPrint').removeAttr('disabled');
 
              grand_total = parseFloat(grand_total);
-
+             institute_total = parseFloat(grand_total);
              $.each(response,function(key, val) {
                var fee_type_name;
                if(val.fee_type==1) {
@@ -166,9 +233,12 @@
                grand_total+=parseFloat(val.amount);
 
 
-               markup+="<tr><td>"+val.dateTime+"</td><td>"+val.studentId+"</td><td>"+val.courseName+"</td><td>"+fee_type_name+"</td><td>"+val.type+"</td><td><button onclick=delete_payment('"+val.studentId+"',"+val.pplanId+","+val.installmentId+") target='_blank' class='btn btn-danger btn-sm delete'><i class='fas fa-trash-alt'></i></button></td><td class='text-right'>"+parseFloat(val.amount).toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</td></tr>";
+               markup+="<tr><td>"+val.dateTime+"</td><td>"+val.username+"</td><td>"+val.studentId+"</td><td>"+val.courseName+"</td><td>"+fee_type_name+"</td><td>"+val.type+"</td><td><button onclick=delete_payment('"+val.studentId+"',"+val.pplanId+","+val.installmentId+") target='_blank' class='btn btn-danger btn-sm delete'><i class='fas fa-trash-alt'></i></button></td><td class='text-right'>"+parseFloat(val.amount).toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</td></tr>";
              });
-
+             var institution_total = grand_total*I_presentage/100;
+             var Lecturer_total = grand_total*l_precentage/100;
+             markup+="<tr><td colspan='5'><b>For institute "+I_presentage+"% </b></td><td class='text-right'><b>"+institution_total.toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</b></td></tr>";
+             markup+="<tr><td colspan='5'><b>For Lecture "+l_precentage+"%</b></td><td class='text-right'><b>"+Lecturer_total.toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</b></td></tr>";
              markup+="<tr><td colspan='5'><b>Grand Total</b></td><td class='text-right' style='border-bottom: double; border-top: 1px solid'><b>"+grand_total.toFixed(2).replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")+"</b></td></tr>";
 
              $('#tblTotal tbody').html(markup);
