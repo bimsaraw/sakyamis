@@ -484,7 +484,7 @@ class Payments extends CI_Controller {
     $data['title']="Cashier transaction Summary";
   
     $this->load->view('payments/print_cashier_reports', $data);
-
+    
     
   }
 

@@ -127,7 +127,8 @@
                         <th>Date Time</th>
                         <th>User</th>
                         <th>Student ID</th>
-                        <th>Course</th>
+                        <th>Batch</th>
+                        <th>Installment</th>
                         <th>Fee Type</th>
                         <th>Payment Method</th>
                         <th>Amount</th>
@@ -139,7 +140,8 @@
                         <td><?= $payment['dateTime']; ?> </td>
                         <td><?= $payment['username']; ?> </td>
                         <td><?= $payment['studentId']; ?> </td>
-                        <td><?= $payment['courseName']; ?> </td>
+                        <td><?= $payment['batchId']; ?> </td>
+                        <td><?= $payment['instName']; ?> </td>
                         <td><?php
                         $fee_type_name="";
                         if($payment['fee_type']==1) {
@@ -188,3 +190,12 @@
     </div>
   </body>
 </html>
+
+<script>
+  window.onload = function() { 
+    
+    window.focus();
+    window.print();
+    //window.close();
+  }
+</script>
