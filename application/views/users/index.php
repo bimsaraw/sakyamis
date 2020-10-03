@@ -38,9 +38,10 @@
                                 <tr>
                                     <td><?php echo $user['name']; ?></td>
                                     <td>
-                                      <a class="btn btn-outline-primary btn-sm change_pwd" id="user_<?= $user['username']; ?>" data-username="<?= $user['username']; ?>" data-toggle="modal" href="#changepwdModal"><i class="far fa-edit"></i></a>
-                                      <button class="btn btn-primary btn-sm" onclick="get_permissions('<?= $user['username']; ?>')"><i class="far fa-user"></i></button>
-                                      <a href="<?= base_url(); ?>index.php/users/remove?username=<?= $user['username']; ?>" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                                      <a class="btn btn-outline-primary btn-sm change_pwd" title="Change Password" id="user_<?= $user['username']; ?>" data-username="<?= $user['username']; ?>" data-toggle="modal" href="#changepwdModal"><i class="far fa-edit"></i></a>
+                                      <button class="btn btn-primary btn-sm"  title="Change Permissions" onclick="get_permissions('<?= $user['username']; ?>')"><i class="far fa-user"></i></button>
+                                      <button class="btn btn-outline-primary btn-sm change_pwd"  id="user_<?= $user['username']; ?>" onclick="user_branch('<?= $user['username']; ?>')" data-username="<?= $user['username']; ?>" data-toggle="modal" title="Manage Branches" href="#userbranch"><i class="fas fa-random"></i></button>
+                                      <a href="<?= base_url(); ?>index.php/users/remove?username=<?= $user['username']; ?>"  title="Delete User" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -169,6 +170,51 @@
     </div>
 </div>
 
+<div class="modal fade" id="userbranch" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+           <h5 class="modal-title" id="modalUser"> </h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+            </button>
+          </div>
+        
+          <div class="modal-body">
+               <div class="row">
+                  <div class="col-md-6">
+                   
+                      <div class="form-group">
+                        <label for="exampleFormControlSelect2">User Non-Active Branches</label>
+                        <input type="hidden" value="" id="branchUsername" name="branchUsername" >
+                        <select multiple class="form-control"  id="List_NAB" size='8'>
+                         
+                        </select>
+                        <br>
+                        <button class="btn btn-primary btn-sm" id="add_branch">Add branch </button>
+                     
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+              
+                  <div class="form-group">
+                        <label for="exampleFormControlSelect2">User Active Branches</label>
+                      
+                        <select multiple class="form-control"  id="List_AB" size='8'>
+                         
+                        </select>
+                        <br>
+                        <button class="btn btn-danger btn-sm" id="delete_branch">Delete branch </button>
+                     
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    
+    </div>
+</div>
+
 <script>
   function get_permissions(username) {
       $.blockUI();
@@ -222,6 +268,34 @@
       $.unblockUI();
   }
 
+function user_branch(username){
+  $('#branchUsername').val(username);
+  $.ajax({
+          type : "POST",
+          //set the data type
+          url: '<?php echo base_url(); ?>index.php/users/get_user_branch', // target element(s) to be updated with server response
+          data: {username:username},
+          cache : false,
+          //check this in Firefox browser
+          success : function(response){
+            console.log(response);
+            $('#modalUser').html('User Branches Allocate -' + response['username']);
+            $("#List_NAB").empty(); $("#List_AB").empty();
+              if(response['branches_notIn']!=0) {
+                    $.each(response['branches_notIn'],function(key, val) {
+                      $("#List_NAB").append('<option value='+val.id+'>'+val.id+' - '+val.name+'</option>');
+                    });
+                  }
+              if(response['branches_in']!=0) {
+                $.each(response['branches_in'],function(key, val) {
+                  $("#List_AB").append('<option value='+val.id+'>'+val.id+' - '+val.name+'</option>');
+                });
+              }
+          }
+      });
+}
+
+
   $(document).ready(function() {
     $('.user-passwords').change(function(){
       var newPassword = $('#newPassword2').val();
@@ -274,5 +348,66 @@
       }
           $.unblockUI();
     });
+
+
+    $('#add_branch').click(function(){
+        var branchIds = $('#List_NAB option:selected')
+                .toArray().map(item => item.value);
+        var username= $('#branchUsername').val();    
+        
+              $.ajax({
+                type : "POST",
+                //set the data type
+                url: '<?php echo base_url(); ?>index.php/users/add_user_branch', // target element(s) to be updated with server response
+                data: {userName:username,branchIds:branchIds},
+                cache : false,
+                //check this in Firefox browser
+                success : function(response){
+                  console.log(response);
+                    $("#List_NAB").empty(); $("#List_AB").empty();
+                      if(response['branches_notIn']!=0) {
+                            $.each(response['branches_notIn'],function(key, val) {
+                              $("#List_NAB").append('<option value='+val.id+'>'+val.id+' - '+val.name+'</option>');
+                            });
+                          }
+                      if(response['branches_in']!=0) {
+                        $.each(response['branches_in'],function(key, val) {
+                          $("#List_AB").append('<option value='+val.id+'>'+val.id+' - '+val.name+'</option>');
+                        });
+                      }
+                }
+            });
+        
+       });
+
+       $('#delete_branch').click(function(){
+        var branchIds = $('#List_AB option:selected')
+                .toArray().map(item => item.value);
+        var username= $('#branchUsername').val();    
+        
+              $.ajax({
+                type : "POST",
+                //set the data type
+                url: '<?php echo base_url(); ?>index.php/users/delete_user_branches', // target element(s) to be updated with server response
+                data: {userName:username,branchIds:branchIds},
+                cache : false,
+                //check this in Firefox browser
+                success : function(response){
+                  console.log(response);
+                    $("#List_NAB").empty(); $("#List_AB").empty();
+                      if(response['branches_notIn']!=0) {
+                            $.each(response['branches_notIn'],function(key, val) {
+                              $("#List_NAB").append('<option value='+val.id+'>'+val.id+' - '+val.name+'</option>');
+                            });
+                          }
+                      if(response['branches_in']!=0) {
+                        $.each(response['branches_in'],function(key, val) {
+                          $("#List_AB").append('<option value='+val.id+'>'+val.id+' - '+val.name+'</option>');
+                        });
+                      }
+                }
+            });
+        
+       });
   });
 </script>

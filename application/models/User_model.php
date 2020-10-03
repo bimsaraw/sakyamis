@@ -241,4 +241,27 @@ class User_model extends CI_Model {
 
       return $this->db->insert('user_logs', $data);
     }
+
+    public function get_userbranch_notIN($username){
+      $this->db->select('branch.*');
+      $this->db->from('branch');
+      $this->db->where('branch.id NOT IN (SELECT branchId FROM user_branch WHERE username="'.$username.'")');
+
+      $query = $this->db->get();
+      return $query->result_array();
+    }
+    public function add_user_branch($branchId,$username){
+      $data = array(
+        'username' =>$username,
+        'branchId' =>$branchId 
+      );
+      $query= $this->db->insert('user_branch', $data);
+      return 1;
+    }
+
+    public function delete_user_branch($branchId,$username){
+      $this->db->where('username', $username);
+      $this->db->where('branchId', $branchId);
+      return  $this->db->delete('user_branch');
+    }
 }

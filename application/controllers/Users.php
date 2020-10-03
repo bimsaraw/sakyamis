@@ -7,6 +7,7 @@ class Users extends CI_Controller {
         $this->load->library('session');
         $this->load->helper('url_helper');
         $this->load->model('user_model');
+        $this->load->model('branches_model');
         $this->load->library('session');
         $this->load->helper('form');
     }
@@ -193,4 +194,76 @@ class Users extends CI_Controller {
     		$this->load->view('home');
     		$this->load->view('templates/footer');
     }
+
+    public function get_user_branch(){
+      $username = $this->session->userdata('username');
+
+      if($this->user_model->validate_permission($username,49)) {
+      
+            $P_username= $this->input->post('username');
+            $branches_notIn = $this->user_model->get_userbranch_notIN($P_username);
+            $branches_in = $this->branches_model->get_branch_byuser($P_username);
+
+            $data=array(
+              'branches_notIn'=> $branches_notIn,
+              'branches_in' => $branches_in,
+              'username'=> $P_username);
+
+          header('Content-Type: application/json');
+          echo json_encode( $data );
+      }  else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
+    public function add_user_branch(){
+      $username = $this->session->userdata('username');
+    
+      if($this->user_model->validate_permission($username,49)) {
+      
+        $branchIds =$this->input->post('branchIds');
+        $p_username = $this->input->post('userName');
+        foreach($branchIds as $branchId) {
+            $response = $this->user_model->add_user_branch($branchId,$p_username);
+        }
+      
+            $branches_notIn = $this->user_model->get_userbranch_notIN($p_username);
+            $branches_in = $this->branches_model->get_branch_byuser($p_username);
+
+            $data=array(
+              'branches_notIn'=> $branches_notIn,
+              'branches_in' => $branches_in);
+
+          header('Content-Type: application/json');
+          echo json_encode( $data );
+
+      }  else {
+        redirect('/?msg=noperm', 'refresh');
+      }
+    }
+
+    public function delete_user_branches(){
+      $username = $this->session->userdata('username');
+      if($this->user_model->validate_permission($username,49)) {
+        $branchIds =$this->input->post('branchIds');
+        $p_username = $this->input->post('userName');
+       
+        foreach($branchIds as $branchId) {
+         $this->user_model->delete_user_branch($branchId,$p_username);
+
+        }
+        $branches_notIn = $this->user_model->get_userbranch_notIN($p_username);
+        $branches_in = $this->branches_model->get_branch_byuser($p_username);
+
+        $data=array(
+          'branches_notIn'=> $branches_notIn,
+          'branches_in' => $branches_in);
+
+        header('Content-Type: application/json');
+        echo json_encode( $data );
+    }  else {
+    redirect('/?msg=noperm', 'refresh');
+    }
+      
+  }
 }
