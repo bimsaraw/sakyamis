@@ -2,7 +2,7 @@
     <footer class="sticky-footer">
         <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright © SIKSIL Institute <?= date('Y'); ?>. Solution by <a href="https://lk.linkedin.com/in/bimsara-walallawita">Dinuth Shamen</a>.</span>
+            <span>Copyright © SIKSIL Institute <?= date('Y'); ?>. Solution by <a href="https://lk.linkedin.com/in/bimsara-walallawita">Bimsara Walallawita</a>.</span>
         </div>
         </div>
     </footer>

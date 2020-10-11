@@ -113,7 +113,7 @@ class Exam_model extends CI_Model {
       $this->db->join('marks_gradescal','(marks_gradescal.id=exam.grade_scal) AND (exam_marks.mark BETWEEN marks_gradescal.value1 AND marks_gradescal.value2)','inner');
       $this->db->where('module.id',$moduleId);
       $this->db->where('exam_marks.studentId',$studentId);
-      $this->db->where('mark >','40');
+      $this->db->where('mark >','39');
       $this->db->order_by('examId','DESC');
       $this->db->group_by('moduleId');
       $query =$this->db->get();
