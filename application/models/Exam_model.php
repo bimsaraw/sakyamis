@@ -210,7 +210,22 @@ class Exam_model extends CI_Model {
           }
 //get exam applied students
           public function get_examApply_studentIds ($examId){
+            $this->db->select('studentId');
+            $this->db->from('exam_marks');
             $this->db->where('examId',$examId);
+            $query1 = $this->db->get();
+            $data = $query1->result_array();
+
+            $studentIds = array('');
+
+            foreach($data as $row){
+               array_push($studentIds,$row['studentId']);
+             }
+            
+
+            $this->db->where('examId',$examId);
+            $this->db->where_not_in('studentId',$studentIds);
+            $this->db->order_by('studentId','asc');
             $query = $this->db->get('exam_student_enroll');
             return $query->result_array();
           }
